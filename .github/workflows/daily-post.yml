@@ -1,0 +1,52 @@
+name: Miztore Daily Post
+
+on:
+  schedule:
+    - cron: "30 11 * * *" # هر روز ۱۵:۰۰ به وقت ایران (UTC+3:30)
+  workflow_dispatch: {} # اجرای دستی — از دکمه‌ی Actions یا از طریق API (برای دستور /post ربات)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: miztore-daily-post
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Generate render
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node automation/generate.js
+
+      - name: Commit output + state
+        run: |
+          git config user.name "miztore-bot"
+          git config user.email "miztore-bot@users.noreply.github.com"
+          git add outputs/ state.json
+          git diff --cached --quiet || git commit -m "Daily render $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Publish to Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+          TELEGRAM_ADMIN_CHAT_ID: ${{ secrets.TELEGRAM_ADMIN_CHAT_ID }}
+        run: node automation/publish.js
+
+      - name: Commit dedup audit log
+        run: |
+          git add state.json
+          git diff --cached --quiet || git commit -m "Mark used $(date -u +%Y-%m-%d)"
+          git push
