@@ -38,7 +38,10 @@ async function callGemini(env, userPrompt) {
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
       contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-      generationConfig: { maxOutputTokens: 300, temperature: 0.9, responseMimeType: "application/json" },
+      // این مدل بخشی از maxOutputTokens رو صرف «فکرکردنِ» داخلی می‌کنه
+      // (thoughtsTokenCount) — با ۳۰۰ توکن، تقریباً همه‌ش صرفِ فکرکردن می‌شد و
+      // برای JSON واقعی چیزی نمی‌موند (باگِ واقعی که دیدیم: خروجیِ نصفه).
+      generationConfig: { maxOutputTokens: 2048, temperature: 0.9, responseMimeType: "application/json" },
     }),
   });
 
