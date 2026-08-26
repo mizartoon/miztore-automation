@@ -29,7 +29,7 @@ const SYSTEM_PROMPT = `تو کپشن‌نویسِ برند میزطوری هست
 }`;
 
 async function callGemini(env, userPrompt) {
-  const model = env.GEMINI_CAPTION_MODEL || "gemini-2.5-flash";
+  const model = env.GEMINI_CAPTION_MODEL || "gemini-3.6-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
 
   const res = await fetch(url, {
