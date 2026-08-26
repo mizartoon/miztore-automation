@@ -52,7 +52,14 @@ async function renderPost({ photoBytes, headline, cta, format }) {
   const photoX = cfg.photoBox.x + Math.round((cfg.photoBox.w - pw) / 2);
   const photoY = cfg.photoBox.y + Math.round((cfg.photoBox.h - ph) / 2);
 
-  const escape = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  // Telesk گلیف em-dash/en-dash (—/–) ندارد — قبل از escape با «،» جایگزین می‌شود
+  // تا هیچ‌وقت باکسِ خالی (tofu) روی عکسِ نهایی ظاهر نشود.
+  const escape = (s) =>
+    String(s)
+      .replace(/[—–]/g, "،")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
 
   const textSvg = `
     <svg width="${cfg.canvasW}" height="${cfg.canvasH}" xmlns="http://www.w3.org/2000/svg">
