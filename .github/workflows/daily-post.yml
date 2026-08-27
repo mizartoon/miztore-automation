@@ -3,7 +3,12 @@ name: Miztore Daily Post
 on:
   schedule:
     - cron: "30 11 * * *" # هر روز ۱۵:۰۰ به وقت ایران (UTC+3:30)
-  workflow_dispatch: {} # اجرای دستی — از دکمه‌ی Actions یا از طریق API (برای دستور /post ربات)
+  workflow_dispatch: # اجرای دستی — از دکمه‌ی Actions یا از طریق API (دستورهای /post و /test_miztore ربات)
+    inputs:
+      dry_run:
+        description: "true = فقط پیش‌نمایش برای ادمین، پست واقعی نه"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -28,6 +33,7 @@ jobs:
       - name: Generate render
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}
         run: node automation/generate.js
 
       - name: Commit output + state

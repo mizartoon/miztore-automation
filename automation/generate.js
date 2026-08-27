@@ -18,6 +18,7 @@ const CTA_TEXT = "ببرش"; // متنِ ثابتِ روی خودِ عکس — �
 
 async function main() {
   const env = process.env;
+  const dryRun = env.DRY_RUN === "true";
 
   const picked = pickNextImage();
   if (!picked) {
@@ -45,12 +46,16 @@ async function main() {
 
     const fullCaption = `${caption}\n\n🔗 <a href="https://miztore.com/product-category/wearable/t-shirt/">مشاهده در فروشگاه</a>`;
 
+    // dry-run: چیزی مصرف نمی‌شه — عکس فوراً به جلوی pool برمی‌گرده تا فردا
+    // (یا اجرای واقعی بعدی) دوباره در دسترس باشه.
+    if (dryRun) requeueImage(category, key);
+
     fs.writeFileSync(
       path.join(__dirname, "last-run.json"),
-      JSON.stringify({ ok: true, key, category, outRelPath, headline, caption: fullCaption }, null, 2)
+      JSON.stringify({ ok: true, dryRun, key, category, outRelPath, headline, caption: fullCaption }, null, 2)
     );
 
-    console.log(`✅ رندر شد: ${outRelPath}`);
+    console.log(`✅ رندر شد${dryRun ? " (dry-run)" : ""}: ${outRelPath}`);
   } catch (err) {
     requeueImage(category, key);
     console.error("::error::" + (err && err.stack ? err.stack : err));
