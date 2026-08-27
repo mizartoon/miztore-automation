@@ -15,6 +15,15 @@ const GITHUB_OWNER = "mizartoon";
 const GITHUB_REPO = "miztore-library";
 const GITHUB_BRANCH = "main";
 const CTA_TEXT = "ببرش"; // متنِ ثابتِ روی خودِ عکس — کنترل‌شده، نه AI
+const CATEGORY_FALLBACK_URL = "https://miztore.com/product-category/wearable/t-shirt/";
+
+// اسم فایل جدید → لینک مستقیم محصول (اگه طرح شناسایی/مچ شده بود)، وگرنه null
+// (data/product-links.json از design-identification.json + rename-map.json +
+// product-catalog.json ساخته شده — به scripts/build-product-links.js نگاه کن)
+const PRODUCT_LINKS_PATH = path.join(__dirname, "..", "data", "product-links.json");
+const productLinks = fs.existsSync(PRODUCT_LINKS_PATH)
+  ? JSON.parse(fs.readFileSync(PRODUCT_LINKS_PATH, "utf-8"))
+  : {};
 
 async function main() {
   const env = process.env;
@@ -44,7 +53,9 @@ async function main() {
     fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });
     fs.writeFileSync(outAbsPath, buffer);
 
-    const fullCaption = `${caption}\n\n🔗 <a href="https://miztore.com/product-category/wearable/t-shirt/">مشاهده در فروشگاه</a>`;
+    // لینک دکمه‌ی شیشه‌ای: اگه طرح این عکس مچِ یه محصول واقعی بود، مستقیم به
+    // همون صفحه؛ وگرنه به صفحه‌ی دسته‌بندیِ تیشرت (fallback عمومی).
+    const buyUrl = productLinks[key] || CATEGORY_FALLBACK_URL;
 
     // dry-run: چیزی مصرف نمی‌شه — عکس فوراً به جلوی pool برمی‌گرده تا فردا
     // (یا اجرای واقعی بعدی) دوباره در دسترس باشه.
@@ -52,7 +63,7 @@ async function main() {
 
     fs.writeFileSync(
       path.join(__dirname, "last-run.json"),
-      JSON.stringify({ ok: true, dryRun, key, category, outRelPath, headline, caption: fullCaption }, null, 2)
+      JSON.stringify({ ok: true, dryRun, key, category, outRelPath, headline, caption, buyUrl }, null, 2)
     );
 
     console.log(`✅ رندر شد${dryRun ? " (dry-run)" : ""}: ${outRelPath}`);

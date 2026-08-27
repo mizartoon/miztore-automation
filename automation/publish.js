@@ -26,15 +26,17 @@ async function main() {
   const outputUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${lastRun.outRelPath}`;
 
   try {
+    const buttonOpts = { buttonText: "🛍 مشاهده در فروشگاه", buttonUrl: lastRun.buyUrl };
+
     if (lastRun.dryRun) {
       if (!env.TELEGRAM_ADMIN_CHAT_ID) throw new Error("TELEGRAM_ADMIN_CHAT_ID تنظیم نشده — پیش‌نمایش رو کجا بفرستم؟");
       const previewCaption = `🧪 <b>پیش‌نمایش</b> (${lastRun.category}) — پست نشده، عکس هنوز تو pool هست.\n\n${lastRun.caption}`;
-      await sendPhotoByUrl(env, env.TELEGRAM_ADMIN_CHAT_ID, outputUrl, previewCaption);
+      await sendPhotoByUrl(env, env.TELEGRAM_ADMIN_CHAT_ID, outputUrl, previewCaption, buttonOpts);
       console.log("✅ پیش‌نمایش به ادمین فرستاده شد (پست واقعی انجام نشد).");
       return;
     }
 
-    await sendPhotoByUrl(env, env.TELEGRAM_CHANNEL_ID, outputUrl, lastRun.caption);
+    await sendPhotoByUrl(env, env.TELEGRAM_CHANNEL_ID, outputUrl, lastRun.caption, buttonOpts);
     markUsed(lastRun.key);
     await notifyAdmin(env, `✅ میزطوری پست شد (${lastRun.category}): ${lastRun.key}\n${lastRun.headline}`);
     console.log("✅ به تلگرام پست شد.");

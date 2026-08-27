@@ -1,14 +1,21 @@
-async function sendPhotoByUrl(env, chatId, photoUrl, caption) {
+async function sendPhotoByUrl(env, chatId, photoUrl, caption, { buttonText, buttonUrl } = {}) {
   const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendPhoto`;
+  const params = {
+    chat_id: chatId,
+    photo: photoUrl,
+    caption,
+    parse_mode: "HTML",
+  };
+  // «دکمه‌ی شیشه‌ای» تلگرام = inline keyboard button (زیر عکس، نه لینکِ توی متن)
+  if (buttonUrl) {
+    params.reply_markup = JSON.stringify({
+      inline_keyboard: [[{ text: buttonText || "مشاهده در فروشگاه", url: buttonUrl }]],
+    });
+  }
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      chat_id: chatId,
-      photo: photoUrl,
-      caption,
-      parse_mode: "HTML",
-    }),
+    body: new URLSearchParams(params),
   });
   const body = await res.json();
   if (!res.ok || body.ok === false) {
