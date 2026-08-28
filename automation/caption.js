@@ -72,4 +72,44 @@ async function generateCaption(env, { category }) {
   }
 }
 
-module.exports = { generateCaption };
+// ---------------------------------------------------------------------------
+// تنوع کنترل‌شده — به‌جای یک CTA ثابت روی همه‌ی عکس‌ها، از یک لیستِ کوچیکِ
+// تأییدشده انتخاب تصادفی می‌شه (نه AI — طبق همون توصیه‌ی قبلی: متنِ روی خودِ
+// عکس باید همیشه از یه مجموعه‌ی کنترل‌شده بیاد، نه تولیدِ آزادِ مدل).
+// ---------------------------------------------------------------------------
+const CTA_POOL = ["ببرش", "مال خودت کن", "بذار تو کشو", "همینو کم داشتی", "امتحانش کن"];
+
+function pickCTA() {
+  return CTA_POOL[Math.floor(Math.random() * CTA_POOL.length)];
+}
+
+// ---------------------------------------------------------------------------
+// نسخه‌ی اینستاگرامِ کپشن — هشتگ + سؤالِ تعاملی. اینستاگرام برخلاف تلگرام از
+// هشتگ برای دیده‌شدن استفاده می‌کنه، و سؤال باعثِ کامنت بیشتر (سیگنالِ
+// الگوریتم) می‌شه — برای همین این‌جا (فقط اینستاگرام) جدا از قانونِ
+// «بدون هشتگ»ِ تلگرامه. هشتگ‌ها از یک لیستِ ثابتِ تأییدشده‌ن، نه AI.
+// ---------------------------------------------------------------------------
+const HASHTAGS_BASE = ["#میزطوری", "#Miztore", "#پوشاک_ایرانی", "#استریت_ویر"];
+const HASHTAGS_BY_CATEGORY = {
+  tshirt: ["#تیشرت", "#تیشرت_طرحدار"],
+  hoodie: ["#هودی"],
+  pullover: ["#پلیور"],
+  croptop: ["#کراپ_تاپ"],
+  tank: ["#تاپ"],
+  longsleeve: ["#آستین_بلند"],
+  misc: [],
+};
+const ENGAGEMENT_QUESTIONS = [
+  "نظرت چیه؟ 👇",
+  "مشکی می‌بری یا سفید؟",
+  "برای خودت می‌خوای یا هدیه؟",
+  "کدوم تیکه‌ی این طرح بیشتر به دلت نشست؟",
+];
+
+function buildInstagramCaption(baseCaption, category) {
+  const question = ENGAGEMENT_QUESTIONS[Math.floor(Math.random() * ENGAGEMENT_QUESTIONS.length)];
+  const tags = [...HASHTAGS_BASE, ...(HASHTAGS_BY_CATEGORY[category] || [])].join(" ");
+  return `${baseCaption}\n\n${question}\n\n${tags}`;
+}
+
+module.exports = { generateCaption, pickCTA, buildInstagramCaption };

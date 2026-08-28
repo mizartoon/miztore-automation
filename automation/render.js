@@ -33,6 +33,15 @@ const FORMATS = {
     cta: { x: 1020, y: 1015, fontSize: 40 },
     brand: { x: 60, y: 1015, fontSize: 26 },
   },
+  // استوری اینستاگرام — طبق وایرفریم: بالای ۲۵۰px و پایین ۲۵۰px پوشیده
+  // می‌شه (نوار پروفایل/CTA اینستاگرام)، پس متن داخل همون safe zone می‌مونه.
+  story: {
+    canvasW: 1080, canvasH: 1920,
+    photoBox: { x: 60, y: 400, w: 960, h: 1100 },
+    headline: { x: 1020, y: 330, fontSize: 64 },
+    cta: { x: 1020, y: 1620, fontSize: 44 },
+    brand: { x: 60, y: 1620, fontSize: 28 },
+  },
 };
 
 async function fetchBytes(url) {
