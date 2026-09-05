@@ -7,7 +7,7 @@
 const fs = require("fs");
 const path = require("path");
 const { pickNextImage, requeueImage } = require("./state.js");
-const { renderPost, fetchBytes } = require("./render.js");
+const { renderPost, fetchBytes, pickTemplateName } = require("./render.js");
 const { generateCaption, pickCTA, buildInstagramCaption, CATEGORY_LABEL_FA } = require("./caption.js");
 
 const GITHUB_OWNER = "mizartoon";
@@ -51,13 +51,16 @@ async function main() {
     const { headline, caption } = await generateCaption(env, { category });
     const cta = pickCTA();
     const categoryLabel = CATEGORY_LABEL_FA[category] || "میزطوری";
+    // یک قالب برای هر سه فرمتِ همین پست — تا تلگرام/پست/استوریِ یک پست
+    // ناهم‌خوان نشن (هر پست یک ظاهر، نه قاطیِ سه تا خانواده‌ی مختلف).
+    const templateName = pickTemplateName();
 
     const dateStr = new Date().toISOString().slice(0, 10);
     const baseName = `${dateStr}-${key.replace(/\//g, "-")}`;
 
     const outputs = {};
     for (const format of ["telegram", "post", "story"]) {
-      const buffer = await renderPost({ photoBytes, headline, cta, categoryLabel, format });
+      const buffer = await renderPost({ photoBytes, headline, cta, categoryLabel, format, templateName });
       const outRelPath = `outputs/${format}-${baseName}`;
       const outAbsPath = path.join(__dirname, "..", outRelPath);
       fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });
@@ -82,6 +85,7 @@ async function main() {
           dryRun,
           key,
           category,
+          templateName,
           outputs, // { telegram, post, story } → مسیر نسبیِ هر فایل
           headline,
           caption,

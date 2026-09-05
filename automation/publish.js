@@ -59,7 +59,7 @@ async function main() {
 
     if (lastRun.dryRun) {
       if (!env.TELEGRAM_ADMIN_CHAT_ID) throw new Error("TELEGRAM_ADMIN_CHAT_ID تنظیم نشده — پیش‌نمایش رو کجا بفرستم؟");
-      const previewCaption = `🧪 <b>پیش‌نمایش تلگرام</b> (${lastRun.category}) — پست نشده، عکس هنوز تو pool هست.\n\n${lastRun.caption}`;
+      const previewCaption = `🧪 <b>پیش‌نمایش تلگرام</b> (${lastRun.category} — قالب: ${lastRun.templateName}) — پست نشده، عکس هنوز تو pool هست.\n\n${lastRun.caption}`;
       await sendPhotoByUrl(env, env.TELEGRAM_ADMIN_CHAT_ID, rawUrl(lastRun.outputs.telegram), previewCaption, telegramButton);
       await sendInstagramPackage(env, lastRun);
       console.log("✅ پیش‌نمایشِ کامل (تلگرام + اینستاگرام) به ادمین فرستاده شد.");
@@ -69,7 +69,7 @@ async function main() {
     await sendPhotoByUrl(env, env.TELEGRAM_CHANNEL_ID, rawUrl(lastRun.outputs.telegram), lastRun.caption, telegramButton);
     await sendInstagramPackage(env, lastRun);
     markUsed(lastRun.key);
-    await notifyAdmin(env, `✅ میزطوری پست شد (${lastRun.category}): ${lastRun.key}\n${lastRun.headline}\n\n📸 نسخه‌ی اینستاگرام هم بالاتر فرستاده شد.`);
+    await notifyAdmin(env, `✅ میزطوری پست شد (${lastRun.category} — قالب: ${lastRun.templateName}): ${lastRun.key}\n${lastRun.headline}\n\n📸 نسخه‌ی اینستاگرام هم بالاتر فرستاده شد.`);
     console.log("✅ به تلگرام پست شد + پکیجِ اینستاگرام برای ادمین فرستاده شد.");
   } catch (err) {
     console.error("::error::" + (err && err.stack ? err.stack : err));
