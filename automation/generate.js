@@ -8,7 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const { pickNextImage, requeueImage } = require("./state.js");
 const { renderPost, fetchBytes } = require("./render.js");
-const { generateCaption, pickCTA, buildInstagramCaption } = require("./caption.js");
+const { generateCaption, pickCTA, buildInstagramCaption, CATEGORY_LABEL_FA } = require("./caption.js");
 
 const GITHUB_OWNER = "mizartoon";
 const GITHUB_REPO = "miztore-library";
@@ -50,13 +50,14 @@ async function main() {
 
     const { headline, caption } = await generateCaption(env, { category });
     const cta = pickCTA();
+    const categoryLabel = CATEGORY_LABEL_FA[category] || "میزطوری";
 
     const dateStr = new Date().toISOString().slice(0, 10);
     const baseName = `${dateStr}-${key.replace(/\//g, "-")}`;
 
     const outputs = {};
     for (const format of ["telegram", "post", "story"]) {
-      const buffer = await renderPost({ photoBytes, headline, cta, format });
+      const buffer = await renderPost({ photoBytes, headline, cta, categoryLabel, format });
       const outRelPath = `outputs/${format}-${baseName}`;
       const outAbsPath = path.join(__dirname, "..", outRelPath);
       fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });

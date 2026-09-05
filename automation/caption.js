@@ -166,4 +166,4 @@ function buildInstagramCaption(baseCaption, category) {
   return `${baseCaption}\n\n${question}\n\n${tags}`;
 }
 
-module.exports = { generateCaption, pickCTA, buildInstagramCaption };
+module.exports = { generateCaption, pickCTA, buildInstagramCaption, CATEGORY_LABEL_FA };
