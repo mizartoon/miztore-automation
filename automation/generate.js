@@ -55,8 +55,17 @@ async function main() {
     // ناهم‌خوان نشن (هر پست یک ظاهر، نه قاطیِ سه تا خانواده‌ی مختلف).
     const templateName = pickTemplateName();
 
+    // نکته‌ی مهم: baseName باید per-run یکتا باشه، نه فقط per-day — چون
+    // dry-run بلافاصله عکس رو requeue می‌کنه، ممکنه چند اجرا (dry-run یا
+    // واقعی) تو یه روز دقیقاً همون عکس رو بردارن. اگه فقط تاریخ+کلید بود،
+    // دو اجرا مسیر خروجیِ یکسان می‌ساختن و commitِ دومی روی باینریِ JPEG
+    // merge-conflict می‌خورد (دقیقاً همون خطایی که باعث شد /post چیزی پست
+    // نکنه — مرحله‌ی commit/push شکست خورد، هیچ‌وقت به مرحله‌ی publish نرسید).
     const dateStr = new Date().toISOString().slice(0, 10);
-    const baseName = `${dateStr}-${key.replace(/\//g, "-")}`;
+    const runId = process.env.GITHUB_RUN_ID
+      ? `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT || "1"}`
+      : String(Date.now());
+    const baseName = `${dateStr}-${runId}-${key.replace(/\//g, "-")}`;
 
     const outputs = {};
     for (const format of ["telegram", "post", "story"]) {

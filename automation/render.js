@@ -148,12 +148,27 @@ async function brightEditorialPost({ photoBytes, headline, cta, categoryLabel })
   const photoY = photoBox.y + Math.round((photoBox.h - photo.h) / 2);
 
   const ctaLines = wrapText(cta, 44, 300, 2);
-  const { lines: headlineLines, fontSize: headlineSize } = fitWrappedText(headline, {
-    sizes: [58, 50, 44],
-    maxWidth: 690,
-    maxLines: 2,
-  });
-  const headlineY = headlineLines.length > 1 ? 145 : 165;
+  // فقط ۷۰px بین بالای هوک و برچسبِ دسته هست (بالای برچسب y=235) — اگه
+  // هوک به ۲ خط بشکنه، باید حتماً فونتِ کوچیک‌تر باشه وگرنه رویِ برچسب
+  // می‌افته (باگِ واقعی که یه هوکِ ۴ کلمه‌ای نشونش داد: خطِ دوم رو برچسبِ
+  // دسته می‌افتاد). به‌جای fitWrappedTextِ عمومی (که اگه توی ۲ خط جا بشه
+  // حتی با فونتِ بزرگ قبولش می‌کنه)، این‌جا صریح دو حالته: تک‌خط = فونتِ
+  // کامل، چندخط = همیشه کوچیک‌ترین سایز با فاصله‌ی امن.
+  // maxLines بزرگ (نه ۱) تا واقعاً ببینیم در عرضِ هدف چند خط لازمه —
+  // wrapText با maxLines=1 هیچ‌وقت truncate نمی‌کنه، فقط همه‌چیز رو تویِ
+  // یک خط می‌چپونه (باگِ نسخه‌ی قبلی همین فایل: چک "آیا ۱ خط جواب داد؟"
+  // همیشه true برمی‌گشت چون خودِ تابع کلمه‌ای رو حذف نمی‌کنه).
+  const naturalLines = wrapText(headline, 58, 690, 99);
+  let headlineLines, headlineSize, headlineY;
+  if (naturalLines.length <= 1) {
+    headlineLines = naturalLines;
+    headlineSize = 58;
+    headlineY = 165;
+  } else {
+    headlineLines = wrapText(headline, 40, 690, 2);
+    headlineSize = 40;
+    headlineY = 130;
+  }
   const pallasH = 68;
   const pallasX = 80;
   const pallasY = 1085 - pallasH - 16;
