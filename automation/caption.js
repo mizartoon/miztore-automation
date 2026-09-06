@@ -190,4 +190,36 @@ function buildInstagramCaption(baseCaption, category) {
   return `${baseCaption}\n\n${question}\n\n${tags}`;
 }
 
-module.exports = { generateCaption, pickCTA, buildInstagramCaption, CATEGORY_LABEL_FA };
+// ---------------------------------------------------------------------------
+// نسخه‌ی توییتر/X کپشن — کوتاه، بدون سؤالِ تعاملیِ اینستاگرام (فرمتِ X باهاش
+// سازگار نیست)، حداکثر یکی‌دو هشتگ (نه پنج‌تای اینستاگرام — شلوغی تو X جواب
+// نمی‌ده)، و لینکِ مستقیمِ محصول (برخلافِ کپشنِ اینستاگرام، این‌جا لینک واقعاً
+// کلیک‌پذیره). فقط جمله‌ی اولِ کپشنِ پایه (هوکِ اصلی) رو می‌بره، نه کلِ
+// کپشنِ ۲-۳ جمله‌ای، تا زیرِ محدودیتِ ۲۸۰ کاراکتریِ X بمونه.
+// ---------------------------------------------------------------------------
+const TWITTER_HASHTAGS_BY_CATEGORY = {
+  tshirt: ["#تیشرت"],
+  hoodie: ["#هودی"],
+  pullover: ["#پلیور"],
+  croptop: ["#کراپ_تاپ"],
+  tank: ["#تاپ"],
+  longsleeve: ["#آستین_بلند"],
+  misc: [],
+};
+
+const TWITTER_MAX_LEN = 280;
+// X همیشه لینک رو با t.co کوتاه می‌کنه و همین طولِ ثابت رو برای شمارشِ
+// کاراکتر حساب می‌کنه، صرف‌نظر از طولِ واقعیِ URL.
+const TWITTER_URL_WEIGHT = 23;
+
+function buildTwitterCaption(baseCaption, category, buyUrl) {
+  const tags = ["#میزطوری", ...(TWITTER_HASHTAGS_BY_CATEGORY[category] || [])].join(" ");
+  const firstLine = baseCaption.split("\n")[0].trim();
+  const fixedTail = `\n\n${tags}\n${buyUrl}`;
+  const fixedTailWeight = fixedTail.length - buyUrl.length + TWITTER_URL_WEIGHT;
+  const budget = TWITTER_MAX_LEN - fixedTailWeight;
+  const bodyText = firstLine.length > budget ? `${firstLine.slice(0, Math.max(0, budget - 1)).trim()}…` : firstLine;
+  return `${bodyText}${fixedTail}`;
+}
+
+module.exports = { generateCaption, pickCTA, buildInstagramCaption, buildTwitterCaption, CATEGORY_LABEL_FA };

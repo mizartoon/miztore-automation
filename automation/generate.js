@@ -8,7 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const { pickNextImage, requeueImage } = require("./state.js");
 const { renderPost, fetchBytes, pickTemplateName } = require("./render.js");
-const { generateCaption, pickCTA, buildInstagramCaption, CATEGORY_LABEL_FA } = require("./caption.js");
+const { generateCaption, pickCTA, buildInstagramCaption, buildTwitterCaption, CATEGORY_LABEL_FA } = require("./caption.js");
 
 const GITHUB_OWNER = "mizartoon";
 const GITHUB_REPO = "miztore-library";
@@ -80,7 +80,9 @@ async function main() {
     const baseBuyUrl = productLinks[key] || CATEGORY_FALLBACK_URL;
     const buyUrlTelegram = withUtm(baseBuyUrl, "telegram");
     const buyUrlInstagram = withUtm(baseBuyUrl, "instagram");
+    const buyUrlTwitter = withUtm(baseBuyUrl, "twitter");
     const instagramCaption = buildInstagramCaption(caption, category);
+    const twitterCaption = buildTwitterCaption(caption, category, buyUrlTwitter);
 
     // dry-run: چیزی مصرف نمی‌شه — عکس فوراً به جلوی pool برمی‌گرده تا فردا
     // (یا اجرای واقعی بعدی) دوباره در دسترس باشه.
@@ -99,8 +101,10 @@ async function main() {
           headline,
           caption,
           instagramCaption,
+          twitterCaption,
           buyUrlTelegram,
           buyUrlInstagram,
+          buyUrlTwitter,
         },
         null,
         2

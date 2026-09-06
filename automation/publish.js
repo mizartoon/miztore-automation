@@ -44,6 +44,26 @@ async function sendInstagramPackage(env, lastRun) {
   );
 }
 
+async function sendTwitterPackage(env, lastRun) {
+  if (!env.TELEGRAM_ADMIN_CHAT_ID) return;
+
+  // همون عکسِ پستِ اینستاگرام (۴:۵) — X با هر نسبتی کار می‌کنه، نیازی به
+  // رندرِ جداگانه نیست. کپشن اما جداست: کوتاه‌تر، بدون سؤالِ تعاملی، با
+  // لینکِ کلیک‌پذیر — نه کپیِ کپشنِ اینستاگرام (که در NovinHub هم به‌جای
+  // کپشنِ اختصاصیِ توییتر انتخاب می‌شه اگه این پیام رو نداشته باشیم).
+  await sendPhotoByUrl(
+    env,
+    env.TELEGRAM_ADMIN_CHAT_ID,
+    rawUrl(lastRun.outputs.post),
+    "🐦 <b>توییتر/X</b>\nسیو کن و دستی از طریق نوین‌هاب پست کن — کپشنِ زیر رو استفاده کن، نه کپشنِ اینستاگرام."
+  );
+  await sendMessage(
+    env,
+    env.TELEGRAM_ADMIN_CHAT_ID,
+    `📝 <b>کپشنِ آماده برای توییتر/X</b> (کپی کن):\n\n${lastRun.twitterCaption}`
+  );
+}
+
 async function main() {
   const env = process.env;
   const lastRunPath = path.join(__dirname, "last-run.json");
@@ -62,15 +82,17 @@ async function main() {
       const previewCaption = `🧪 <b>پیش‌نمایش تلگرام</b> (${lastRun.category} — قالب: ${lastRun.templateName}) — پست نشده، عکس هنوز تو pool هست.\n\n${lastRun.caption}`;
       await sendPhotoByUrl(env, env.TELEGRAM_ADMIN_CHAT_ID, rawUrl(lastRun.outputs.telegram), previewCaption, telegramButton);
       await sendInstagramPackage(env, lastRun);
-      console.log("✅ پیش‌نمایشِ کامل (تلگرام + اینستاگرام) به ادمین فرستاده شد.");
+      await sendTwitterPackage(env, lastRun);
+      console.log("✅ پیش‌نمایشِ کامل (تلگرام + اینستاگرام + توییتر) به ادمین فرستاده شد.");
       return;
     }
 
     await sendPhotoByUrl(env, env.TELEGRAM_CHANNEL_ID, rawUrl(lastRun.outputs.telegram), lastRun.caption, telegramButton);
     await sendInstagramPackage(env, lastRun);
+    await sendTwitterPackage(env, lastRun);
     markUsed(lastRun.key);
-    await notifyAdmin(env, `✅ میزطوری پست شد (${lastRun.category} — قالب: ${lastRun.templateName}): ${lastRun.key}\n${lastRun.headline}\n\n📸 نسخه‌ی اینستاگرام هم بالاتر فرستاده شد.`);
-    console.log("✅ به تلگرام پست شد + پکیجِ اینستاگرام برای ادمین فرستاده شد.");
+    await notifyAdmin(env, `✅ میزطوری پست شد (${lastRun.category} — قالب: ${lastRun.templateName}): ${lastRun.key}\n${lastRun.headline}\n\n📸 نسخه‌ی اینستاگرام و 🐦 توییتر هم بالاتر فرستاده شد.`);
+    console.log("✅ به تلگرام پست شد + پکیجِ اینستاگرام و توییتر برای ادمین فرستاده شد.");
   } catch (err) {
     console.error("::error::" + (err && err.stack ? err.stack : err));
     await notifyAdmin(env, `❌ میزطوری: خطا در پست کردن ${lastRun.key}:\n${err.message}`);
