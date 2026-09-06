@@ -68,6 +68,9 @@ RIPNDIP (با ماسکوتِ گربه‌شون، Lord Nermal) — کپشن‌ه�
   چیزی که نمی‌دونی (طرحِ دقیق، رنگ، جنس) رو اختراع نکن. اگه لازمه از پالاس
   به‌عنوانِ راوی/شخصیتِ برند حرف بزنی، به‌عنوانِ صدای برند باش، نه اینکه
   ادعا کنی خودِ پالاس روی این تیشرتِ خاص چاپ شده.
+- درباره‌ی رنگ/سایز/مدلِ همینِ عکس چیزی ادعا نکن (چون نمی‌دونی) — یه خطِ
+  جدا (کنترل‌شده، نه از تو) بعد از کپشنِ تو اضافه می‌شه که به‌طور کلی به
+  تنوعِ رنگ/سایزِ سایت اشاره می‌کنه؛ خودت لازم نیست بهش اشاره کنی.
 
 خودتو قبل از تحویل چک کن:
 ۱) آیا این متن رو هر برندِ دیگه‌ای هم می‌تونست بنویسه؟ اگه آره، به‌اندازه‌ی
@@ -110,7 +113,27 @@ async function callGemini(env, userPrompt) {
 
 function fallback(category) {
   const label = CATEGORY_LABEL_FA[category] || "محصول";
-  return { headline: `یه ${label} دیگه`, caption: `پالاس بازم یه بلایی سرِ کمدمون آورده.\n\nمال خودت کن.` };
+  return {
+    headline: `یه ${label} دیگه`,
+    caption: `پالاس بازم یه بلایی سرِ کمدمون آورده.\n\nمال خودت کن.\n\n${pickVarietyLine()}`,
+  };
+}
+
+// این عکسِ خاص ممکنه فقط تو یه رنگ/سایز موجود باشه (خیلی از عکس‌های کتابخونه
+// به محصولِ واقعیِ مچ‌شده وصل نیستن) — پس کپشن نباید ادعا کنه «همینِ طرح» تو
+// چندتا رنگ/سایزه (دروغِ احتمالی درباره‌ی تصویر). به‌جاش یه اشاره‌ی کلی و
+// راست به این‌که خودِ فروشگاه تنوعِ رنگ/سایز/مدل داره — از یه لیستِ
+// کنترل‌شده (نه AI)، دقیقاً طبقِ همون الگویِ CTA_POOL.
+const VARIETY_LINES = [
+  "رنگ و سایزای دیگه‌شم تو سایت هست.",
+  "مدل و رنگ و سایزِ دلخواهتو تو سایت پیدا کن.",
+  "تنوعِ رنگ و سایز کامل، تو خودِ سایته.",
+  "این یکی رو نه، کلی رنگ و سایزِ دیگه هم داریم.",
+  "رنگ‌بندی و سایزبندیِ کامل رو تو سایت ببین.",
+];
+
+function pickVarietyLine() {
+  return VARIETY_LINES[Math.floor(Math.random() * VARIETY_LINES.length)];
 }
 
 async function generateCaption(env, { category }) {
@@ -119,7 +142,8 @@ async function generateCaption(env, { category }) {
 
   try {
     const prompt = `یک هوک+کپشن برای یک عکسِ محصول از دسته‌ی «${label}» بساز. عکس رو ندیدی، فقط بر اساس نوع پوشاک و صدای برند بنویس.`;
-    return await callGemini(env, prompt);
+    const result = await callGemini(env, prompt);
+    return { headline: result.headline, caption: `${result.caption}\n\n${pickVarietyLine()}` };
   } catch (err) {
     console.error("[caption] Gemini failed, using fallback:", err.message);
     return fallback(category);
