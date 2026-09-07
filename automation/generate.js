@@ -7,8 +7,15 @@
 const fs = require("fs");
 const path = require("path");
 const { pickNextImage, requeueImage } = require("./state.js");
-const { renderPost, fetchBytes, pickTemplateName } = require("./render.js");
+const { renderPost, renderServicePost, fetchBytes, pickTemplateName } = require("./render.js");
 const { generateCaption, pickCTA, buildInstagramCaption, buildTwitterCaption, CATEGORY_LABEL_FA } = require("./caption.js");
+const { getDesignInfo } = require("./design-lookup.js");
+const { pickServicePost, buildServiceCaption } = require("./services.js");
+
+// یه روز از هر ~۵ روز (نه هر روز — تا کانال از پستِ محصول خالی نشه)، به‌جای
+// عکسِ محصول، یه پستِ «خدمات» (قسطیِ دیجی‌پی/تنوعِ رنگ/سایز) می‌ره — طبقِ
+// خواستِ کاربر: «یه سری پست اضافه کن درباره خدمات میزطوری».
+const SERVICE_POST_CHANCE = 0.2;
 
 const GITHUB_OWNER = "mizartoon";
 const GITHUB_REPO = "miztore-library";
@@ -23,17 +30,74 @@ const productLinks = fs.existsSync(PRODUCT_LINKS_PATH)
   ? JSON.parse(fs.readFileSync(PRODUCT_LINKS_PATH, "utf-8"))
   : {};
 
-function withUtm(url, source) {
+function withUtm(url, source, campaign = "daily_post") {
   const u = new URL(url);
   u.searchParams.set("utm_source", source);
   u.searchParams.set("utm_medium", "bot");
-  u.searchParams.set("utm_campaign", "daily_post");
+  u.searchParams.set("utm_campaign", campaign);
   return u.toString();
+}
+
+// خروجی/last-run.json دقیقاً هم‌شکلِ مسیرِ محصوله (publish.js فرقی بین این
+// دو نمی‌ذاره) — فقط بدون عکسِ محصول، بدون pickNextImage/pool. key این‌جا
+// فقط برای audit-logِ state.json (markUsed) استفاده می‌شه، نه دیدوپِ واقعی.
+async function runServicePost(env, dryRun) {
+  const service = pickServicePost();
+  const caption = buildServiceCaption(service);
+
+  const dateStr = new Date().toISOString().slice(0, 10);
+  const runId = process.env.GITHUB_RUN_ID
+    ? `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT || "1"}`
+    : String(Date.now());
+  const baseName = `${dateStr}-${runId}-service-${service.id}`;
+
+  const outputs = {};
+  for (const format of ["telegram", "post", "story"]) {
+    const buffer = await renderServicePost({ format, headline: service.headline, body: service.body, cta: service.cta });
+    const outRelPath = `outputs/${format}-${baseName}`;
+    const outAbsPath = path.join(__dirname, "..", outRelPath);
+    fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });
+    fs.writeFileSync(outAbsPath, buffer);
+    outputs[format] = outRelPath;
+  }
+
+  const buyUrlTelegram = withUtm(CATEGORY_FALLBACK_URL, "telegram", "service_post");
+  const buyUrlInstagram = withUtm(CATEGORY_FALLBACK_URL, "instagram", "service_post");
+  const buyUrlTwitter = withUtm(CATEGORY_FALLBACK_URL, "twitter", "service_post");
+
+  fs.writeFileSync(
+    path.join(__dirname, "last-run.json"),
+    JSON.stringify(
+      {
+        ok: true,
+        dryRun,
+        key: `service/${service.id}`,
+        category: "خدمات",
+        templateName: "service",
+        outputs,
+        headline: service.headline,
+        caption,
+        instagramCaption: caption,
+        twitterCaption: `${caption}\n\n${buyUrlTwitter}`,
+        buyUrlTelegram,
+        buyUrlInstagram,
+        buyUrlTwitter,
+      },
+      null,
+      2
+    )
+  );
+
+  console.log(`✅ پستِ خدمات رندر شد${dryRun ? " (dry-run)" : ""}: ${service.id}`);
 }
 
 async function main() {
   const env = process.env;
   const dryRun = env.DRY_RUN === "true";
+
+  if (Math.random() < SERVICE_POST_CHANCE) {
+    return runServicePost(env, dryRun);
+  }
 
   const picked = pickNextImage();
   if (!picked) {
@@ -48,7 +112,8 @@ async function main() {
     const sourceUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${key}`;
     const photoBytes = await fetchBytes(sourceUrl);
 
-    const { headline, caption } = await generateCaption(env, { category });
+    const designInfo = getDesignInfo(key);
+    const { headline, caption } = await generateCaption(env, { category, designInfo });
     const cta = pickCTA();
     const categoryLabel = CATEGORY_LABEL_FA[category] || "میزطوری";
     // یک قالب برای هر سه فرمتِ همین پست — تا تلگرام/پست/استوریِ یک پست

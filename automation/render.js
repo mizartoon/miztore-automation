@@ -383,6 +383,51 @@ async function minimalFormat({ photoBytes, headline, cta, format }) {
 }
 
 // ===========================================================================
+// پستِ «خدمات» — بدون عکسِ محصول، فقط یه کارتِ برندیِ تمام‌رنگ (نوارِ قرمزِ
+// بالا + هدلاین + متنِ توضیح + بجِ چرخیده‌ی CTA + پالاس). برای معرفیِ
+// امکاناتِ واقعیِ فروشگاه (قسطیِ دیجی‌پی، تنوعِ رنگ/سایز) استفاده می‌شه، نه
+// یه عکسِ خاص — پس محتواش هم از automation/services.js (کاملاً ثابت/
+// کنترل‌شده، نه AI) میاد، نه از caption.js.
+// ===========================================================================
+
+async function renderServicePost({ format, headline, body, cta }) {
+  const CFG = {
+    post: { W: 1080, H: 1350, bandH: 460, headlineY: 190, headlineFs: 68, bodyY: 560, bodyFs: 36, bodyLines: 5, ctaY: 1080, ctaFs: 40, brandY: 1255, pallasH: 70 },
+    telegram: { W: 1080, H: 1080, bandH: 360, headlineY: 150, headlineFs: 54, bodyY: 460, bodyFs: 30, bodyLines: 4, ctaY: 870, ctaFs: 34, brandY: 1000, pallasH: 60 },
+    story: { W: 1080, H: 1920, bandH: 560, headlineY: 220, headlineFs: 66, bodyY: 680, bodyFs: 38, bodyLines: 5, ctaY: 1460, ctaFs: 40, brandY: 1600, pallasH: 74 },
+  }[format];
+
+  const textX = 1000;
+  const { lines: headlineLines, fontSize: headlineSize } = fitWrappedText(headline, {
+    sizes: [CFG.headlineFs, CFG.headlineFs * 0.85, CFG.headlineFs * 0.72],
+    maxWidth: 900,
+    maxLines: 3,
+  });
+  const bodyLines = wrapText(body, CFG.bodyFs, 900, CFG.bodyLines);
+
+  const pallasX = 80;
+  const pallasY = CFG.brandY - CFG.pallasH - 14;
+
+  const svg = `
+    <svg width="${CFG.W}" height="${CFG.H}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="${CFG.W}" height="${CFG.H}" fill="${COLOR_BONE}"/>
+      <rect x="0" y="0" width="${CFG.W}" height="${CFG.bandH}" fill="${COLOR_RED}"/>
+      ${multilineText({ x: textX, y: CFG.headlineY, lines: headlineLines, fontSize: headlineSize, weight: 900, color: COLOR_BONE })}
+      ${multilineText({ x: textX, y: CFG.bodyY, lines: bodyLines, fontSize: CFG.bodyFs, weight: 600, color: COLOR_INK, lineHeight: 1.5 })}
+      ${rotatedCtaBadge({ cta, x: textX, y: CFG.ctaY, fontSize: CFG.ctaFs })}
+      <text x="80" y="${CFG.brandY}" text-anchor="start"
+            font-family="Telesk" font-weight="800" font-size="32" fill="${COLOR_INK}" opacity="0.7">MIZTORE</text>
+    </svg>
+  `;
+
+  const [textPng, pallas] = await Promise.all([renderSvgToPng(svg, CFG.W), pallasPng(CFG.pallasH)]);
+  return compose(CFG.W, CFG.H, COLOR_BONE, [
+    { input: textPng, left: 0, top: 0 },
+    { input: pallas, left: pallasX, top: pallasY },
+  ]);
+}
+
+// ===========================================================================
 // رجیستری قالب‌ها — انتخابِ تصادفیِ وزن‌دار. برای اضافه‌کردنِ خانواده‌ی
 // بعدی فقط یه entry جدید این‌جا لازمه.
 // ===========================================================================
@@ -436,4 +481,4 @@ async function renderPost({ photoBytes, headline, cta, categoryLabel, format, te
   return renderer({ photoBytes, headline, cta, categoryLabel: categoryLabel || "میزطوری" });
 }
 
-module.exports = { renderPost, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
+module.exports = { renderPost, renderServicePost, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
