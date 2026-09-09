@@ -150,9 +150,39 @@ function rotatedCtaBadge({ cta, x, y, fontSize }) {
 // رو بگیره، لبه تا لبه — نه یه عکسِ کوچیکِ وسطِ بوم با حاشیه‌ی تار دورش.
 // یعنی fit:"cover" رویِ خودِ عکس (ممکنه لبه‌هاش کراپ بشه)، و متن/نوار مستقیم
 // روش سوار می‌شه، نه توی یه منطقه‌ی جدا.
+//
+// ولی cover خام خطرناکه: قاب‌های خیلی کشیده (مثلاً استوری ۹:۱۶) رو در برابرِ
+// عکسِ نسبتاً مربعی (رگال + تیشرت + صندلی) ممکنه ۲۵-۳۰٪ از عرض رو کراپ کنن —
+// یعنی دقیقاً همون جایی که طرحِ چاپ‌شده ممکنه بیفته بیرون (کاربر: «دقت کن
+// طرح نزنه از قالب بیرون»). پس اول حساب می‌کنیم کراپِ لازم چقدره؛ اگه معقوله
+// (زیرِ آستانه) مستقیم cover می‌کنیم، اگه خیلی زیاده به‌جاش با یه پس‌زمینه‌ی
+// تارِ کوچیک پر می‌کنیم (نه نوارِ بزرگِ قبلی) تا کلِ عکس/طرح همچنان دیده بشه.
+const MAX_SAFE_CROP_RATIO = 0.14;
+
 async function coverFill(photoBytes, W, H) {
-  return sharp(photoBytes)
-    .resize({ width: W, height: H, fit: "cover", position: "attention" })
+  const meta = await sharp(photoBytes).metadata();
+  const srcAspect = meta.width / meta.height;
+  const targetAspect = W / H;
+
+  const cropRatio =
+    srcAspect > targetAspect
+      ? 1 - targetAspect / srcAspect // عرض کراپ می‌شه
+      : 1 - srcAspect / targetAspect; // ارتفاع کراپ می‌شه
+
+  if (cropRatio <= MAX_SAFE_CROP_RATIO) {
+    return sharp(photoBytes).resize({ width: W, height: H, fit: "cover", position: "attention" }).toBuffer();
+  }
+
+  // کراپِ لازم برای این نسبت‌ابعاد خیلی زیاده — پسِ‌زمینه‌ی تارشده (کراپش
+  // مهم نیست چون خودِ طرح روش نیست) + کلِ عکسِ بدونِ کراپ روش سوار می‌شه.
+  const [blurredBg, safePhoto] = await Promise.all([
+    sharp(photoBytes).resize({ width: W, height: H, fit: "cover", position: "attention" }).blur(45).modulate({ brightness: 0.65 }).toBuffer(),
+    sharp(photoBytes).resize({ width: W, height: H, fit: "inside" }).toBuffer({ resolveWithObject: true }),
+  ]);
+  const x = Math.round((W - safePhoto.info.width) / 2);
+  const y = Math.round((H - safePhoto.info.height) / 2);
+  return sharp(blurredBg)
+    .composite([{ input: safePhoto.data, left: x, top: y }])
     .toBuffer();
 }
 
