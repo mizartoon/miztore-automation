@@ -52,7 +52,7 @@ async function runServicePost(env, dryRun) {
   const baseName = `${dateStr}-${runId}-service-${service.id}`;
 
   const outputs = {};
-  for (const format of ["telegram", "post", "story"]) {
+  for (const format of ["telegram", "post", "story", "twitter"]) {
     const buffer = await renderServicePost({ format, headline: service.headline, body: service.body, cta: service.cta });
     const outRelPath = `outputs/${format}-${baseName}`;
     const outAbsPath = path.join(__dirname, "..", outRelPath);
@@ -113,8 +113,8 @@ async function main() {
     const photoBytes = await fetchBytes(sourceUrl);
 
     const designInfo = getDesignInfo(key);
-    const { headline, caption } = await generateCaption(env, { category, designInfo });
-    const cta = pickCTA();
+    const { headline, caption, cta: generatedCta } = await generateCaption(env, { category, designInfo });
+    const cta = generatedCta || pickCTA();
     const categoryLabel = CATEGORY_LABEL_FA[category] || "میزطوری";
     // یک قالب برای هر سه فرمتِ همین پست — تا تلگرام/پست/استوریِ یک پست
     // ناهم‌خوان نشن (هر پست یک ظاهر، نه قاطیِ سه تا خانواده‌ی مختلف).
@@ -133,7 +133,7 @@ async function main() {
     const baseName = `${dateStr}-${runId}-${key.replace(/\//g, "-")}`;
 
     const outputs = {};
-    for (const format of ["telegram", "post", "story"]) {
+    for (const format of ["telegram", "post", "story", "twitter"]) {
       const buffer = await renderPost({ photoBytes, headline, cta, categoryLabel, format, templateName });
       const outRelPath = `outputs/${format}-${baseName}`;
       const outAbsPath = path.join(__dirname, "..", outRelPath);

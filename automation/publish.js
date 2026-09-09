@@ -54,8 +54,8 @@ async function sendTwitterPackage(env, lastRun) {
   await sendPhotoByUrl(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
-    rawUrl(lastRun.outputs.post),
-    "🐦 <b>توییتر/X</b>\nسیو کن و دستی از طریق نوین‌هاب پست کن — کپشنِ زیر رو استفاده کن، نه کپشنِ اینستاگرام."
+    rawUrl(lastRun.outputs.twitter || lastRun.outputs.post),
+    "🐦 <b>توییتر/X</b> (۱۶:۹)\nسیو کن و دستی از طریق نوین‌هاب پست کن — کپشنِ زیر رو استفاده کن، نه کپشنِ اینستاگرام."
   );
   await sendMessage(
     env,

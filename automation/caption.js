@@ -86,6 +86,7 @@ RIPNDIP (با ماسکوتِ گربه‌شون، Lord Nermal) — کپشن‌ه�
 دقیقاً یک شیء JSON با این شکل برگردان، بدون هیچ متن اضافه:
 {
   "headline": "یک عبارت خیلی کوتاه (۲-۵ کلمه) برای چاپ روی خودِ عکس — ضربه‌ای، بدون نقطه در پایان",
+  "cta": "دکمه‌ی روی عکس: ۲-۴ کلمه، امری و باانرژی، هر بار متفاوت و اگه می‌شه به خودِ همین طرح ربط داشته باشه (مثلاً اگه طرح درباره‌ی گربه‌ست، CTA هم بوی همون رو بده). بدون نقطه.",
   "caption": "۲-۳ جمله‌ی کوتاه برای متنِ زیرِ پست، با صدای بالا، در پایان یک CTA مستقیم و کوتاه."
 }`;
 
@@ -151,6 +152,7 @@ function fallback(category) {
   const label = CATEGORY_LABEL_FA[category] || "محصول";
   return {
     headline: `یه ${label} دیگه`,
+    cta: pickCTA(),
     caption: `پالاس بازم یه بلایی سرِ کمدمون آورده.\n\nمال خودت کن.\n\n${pickVarietyLine()}`,
   };
 }
@@ -191,7 +193,13 @@ async function generateCaption(env, { category, designInfo }) {
       prompt = `یک هوک+کپشن برای یک عکسِ محصول از دسته‌ی «${label}» بساز. عکس رو ندیدی، فقط بر اساس نوع پوشاک و صدای برند بنویس.`;
     }
     const result = await callGemini(env, prompt);
-    return { headline: result.headline, caption: `${result.caption}\n\n${pickVarietyLine()}` };
+    return {
+      headline: result.headline,
+      // CTAِ روی عکس هم حالا هر بار تازه و مرتبط با همون طرحه؛ اگه مدل
+      // نداد یا زیادی بلند بود، برمی‌گردیم رو لیستِ ثابت.
+      cta: result.cta && result.cta.trim().split(/\s+/).length <= 5 ? result.cta.trim() : pickCTA(),
+      caption: `${result.caption}\n\n${pickVarietyLine()}`,
+    };
   } catch (err) {
     console.error("[caption] Gemini failed, using fallback:", err.message);
     return fallback(category);
