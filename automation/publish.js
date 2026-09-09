@@ -10,29 +10,29 @@
 const fs = require("fs");
 const path = require("path");
 const { markUsed } = require("./state.js");
-const { sendPhotoByUrl, sendMessage, notifyAdmin } = require("./telegram.js");
+const { sendPhotoFile, sendMessage, notifyAdmin } = require("./telegram.js");
 
-const GITHUB_OWNER = "mizartoon";
-const GITHUB_REPO = "miztore-automation";
-const GITHUB_BRANCH = "main";
-
-function rawUrl(relPath) {
-  return `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${relPath}`;
+// عکس‌ها مستقیم از رویِ دیسکِ همین اجرا آپلود می‌شن، نه با لینکِ raw گیت‌هاب:
+// publish.js فقط ~۱ ثانیه بعدِ push اجرا می‌شه و CDNِ گیت‌هاب هنوز فایلِ تازه
+// رو serve نمی‌کنه (تلگرام: «failed to get HTTP URL content»). فایل همین‌جا
+// رویِ دیسکه، پس اصلاً نیازی به CDN نیست.
+function localPath(relPath) {
+  return path.join(__dirname, "..", relPath);
 }
 
 async function sendInstagramPackage(env, lastRun) {
   if (!env.TELEGRAM_ADMIN_CHAT_ID) return;
 
-  await sendPhotoByUrl(
+  await sendPhotoFile(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
-    rawUrl(lastRun.outputs.post),
+    localPath(lastRun.outputs.post),
     "📸 <b>اینستاگرام — پست</b> (۴:۵)\nسیو کن و دستی پست کن."
   );
-  await sendPhotoByUrl(
+  await sendPhotoFile(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
-    rawUrl(lastRun.outputs.story),
+    localPath(lastRun.outputs.story),
     "📱 <b>اینستاگرام — استوری</b> (۹:۱۶)\nسیو کن و دستی تو استوری بذار. لینکِ محصول رو با استیکرِ Link به استوری اضافه کن:\n" +
       lastRun.buyUrlInstagram
   );
@@ -51,10 +51,10 @@ async function sendTwitterPackage(env, lastRun) {
   // رندرِ جداگانه نیست. کپشن اما جداست: کوتاه‌تر، بدون سؤالِ تعاملی، با
   // لینکِ کلیک‌پذیر — نه کپیِ کپشنِ اینستاگرام (که در NovinHub هم به‌جای
   // کپشنِ اختصاصیِ توییتر انتخاب می‌شه اگه این پیام رو نداشته باشیم).
-  await sendPhotoByUrl(
+  await sendPhotoFile(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
-    rawUrl(lastRun.outputs.twitter || lastRun.outputs.post),
+    localPath(lastRun.outputs.twitter || lastRun.outputs.post),
     "🐦 <b>توییتر/X</b> (۱۶:۹)\nسیو کن و دستی از طریق نوین‌هاب پست کن — کپشنِ زیر رو استفاده کن، نه کپشنِ اینستاگرام."
   );
   await sendMessage(
@@ -80,14 +80,14 @@ async function main() {
     if (lastRun.dryRun) {
       if (!env.TELEGRAM_ADMIN_CHAT_ID) throw new Error("TELEGRAM_ADMIN_CHAT_ID تنظیم نشده — پیش‌نمایش رو کجا بفرستم؟");
       const previewCaption = `🧪 <b>پیش‌نمایش تلگرام</b> (${lastRun.category} — قالب: ${lastRun.templateName}) — پست نشده، عکس هنوز تو pool هست.\n\n${lastRun.caption}`;
-      await sendPhotoByUrl(env, env.TELEGRAM_ADMIN_CHAT_ID, rawUrl(lastRun.outputs.telegram), previewCaption, telegramButton);
+      await sendPhotoFile(env, env.TELEGRAM_ADMIN_CHAT_ID, localPath(lastRun.outputs.telegram), previewCaption, telegramButton);
       await sendInstagramPackage(env, lastRun);
       await sendTwitterPackage(env, lastRun);
       console.log("✅ پیش‌نمایشِ کامل (تلگرام + اینستاگرام + توییتر) به ادمین فرستاده شد.");
       return;
     }
 
-    await sendPhotoByUrl(env, env.TELEGRAM_CHANNEL_ID, rawUrl(lastRun.outputs.telegram), lastRun.caption, telegramButton);
+    await sendPhotoFile(env, env.TELEGRAM_CHANNEL_ID, localPath(lastRun.outputs.telegram), lastRun.caption, telegramButton);
     await sendInstagramPackage(env, lastRun);
     await sendTwitterPackage(env, lastRun);
     markUsed(lastRun.key);

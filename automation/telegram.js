@@ -1,43 +1,42 @@
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const fs = require("fs");
+const path = require("path");
 
-// راست بلافاصله بعدِ push به raw.githubusercontent.com اشاره می‌کنه — گاهی
-// CDNِ گیت‌هاب چند ثانیه طول می‌کشه تا فایلِ تازه‌کامیت‌شده رو serve کنه، و
-// تلگرام تا اون موقع «failed to get HTTP URL content» برمی‌گردونه (نه
-// خطای واقعیِ ما). قبل از این fix، همین باعثِ fail کاملِ اجرا می‌شد —
-// دقیقاً طبقِ همون منطقِ retry-loopِ push تو workflow.
-const RETRYABLE_PATTERN = /failed to get http url content/i;
-const RETRY_DELAYS_MS = [3000, 6000, 10000];
-
-async function sendPhotoByUrl(env, chatId, photoUrl, caption, { buttonText, buttonUrl } = {}) {
-  const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendPhoto`;
-  const params = {
-    chat_id: chatId,
-    photo: photoUrl,
-    caption,
-    parse_mode: "HTML",
-  };
+function buildReplyMarkup({ buttonText, buttonUrl }) {
   // «دکمه‌ی شیشه‌ای» تلگرام = inline keyboard button (زیر عکس، نه لینکِ توی متن)
-  if (buttonUrl) {
-    params.reply_markup = JSON.stringify({
-      inline_keyboard: [[{ text: buttonText || "مشاهده در فروشگاه", url: buttonUrl }]],
-    });
-  }
+  if (!buttonUrl) return null;
+  return JSON.stringify({
+    inline_keyboard: [[{ text: buttonText || "مشاهده در فروشگاه", url: buttonUrl }]],
+  });
+}
 
-  for (let attempt = 0; ; attempt++) {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(params),
-    });
-    const body = await res.json();
-    if (res.ok && body.ok !== false) return body.result;
+/**
+ * عکس رو مستقیم از رویِ دیسکِ همین runner آپلود می‌کنه (multipart)، نه با URL.
+ *
+ * چرا: قبلاً عکس رو با لینکِ raw.githubusercontent.com می‌فرستادیم، ولی
+ * publish.js فقط ~۱ ثانیه بعدِ push اجرا می‌شه و CDNِ گیت‌هاب هنوز فایلِ
+ * تازه رو serve نمی‌کنه؛ تلگرام «failed to get HTTP URL content» می‌داد و
+ * کلِ اجرا fail می‌شد (حتی با retry، چون گاهی بیشتر از ۲۰ ثانیه طول می‌کشه).
+ * آپلودِ مستقیم این وابستگی رو کامل حذف می‌کنه — فایل همین‌جا رویِ دیسکه.
+ */
+async function sendPhotoFile(env, chatId, filePath, caption, { buttonText, buttonUrl } = {}) {
+  const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendPhoto`;
 
-    const description = body.description || String(res.status);
-    const canRetry = RETRYABLE_PATTERN.test(description) && attempt < RETRY_DELAYS_MS.length;
-    if (!canRetry) throw new Error(`Telegram sendPhoto failed: ${description}`);
-    console.error(`[telegram] sendPhoto retry ${attempt + 1}/${RETRY_DELAYS_MS.length} (${description})`);
-    await sleep(RETRY_DELAYS_MS[attempt]);
+  const form = new FormData();
+  form.append("chat_id", String(chatId));
+  if (caption) form.append("caption", caption);
+  form.append("parse_mode", "HTML");
+  const replyMarkup = buildReplyMarkup({ buttonText, buttonUrl });
+  if (replyMarkup) form.append("reply_markup", replyMarkup);
+
+  const bytes = fs.readFileSync(filePath);
+  form.append("photo", new Blob([bytes], { type: "image/jpeg" }), path.basename(filePath) || "photo.jpg");
+
+  const res = await fetch(url, { method: "POST", body: form });
+  const body = await res.json();
+  if (!res.ok || body.ok === false) {
+    throw new Error(`Telegram sendPhoto failed: ${body.description || res.status}`);
   }
+  return body.result;
 }
 
 async function sendMessage(env, chatId, text) {
@@ -63,4 +62,4 @@ async function notifyAdmin(env, text) {
   }
 }
 
-module.exports = { sendPhotoByUrl, sendMessage, notifyAdmin };
+module.exports = { sendPhotoFile, sendMessage, notifyAdmin };
