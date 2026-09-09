@@ -142,12 +142,14 @@ async function compose(W, H, bg, layers) {
 
 async function brightEditorialPost({ photoBytes, headline, cta, categoryLabel }) {
   const W = 1080, H = 1350;
-  const photoBox = { x: 350, y: 320, w: 690, h: 650 };
+  // عکس رو غالب کردیم (کارتِ بزرگِ مشکی/قرمزِ CTA که قبلاً نصفِ عرض رو
+  // می‌خورد حذف شد، جاش یه بجِ چرخیده‌ی کوچیک) — طبقِ فیدبکِ کاربر که
+  // «سایز عکس تو قالب خیلی کوچیکه».
+  const photoBox = { x: 60, y: 320, w: 960, h: 780 };
   const photo = await fitPhoto(photoBytes, photoBox.w, photoBox.h);
   const photoX = photoBox.x + Math.round((photoBox.w - photo.w) / 2);
   const photoY = photoBox.y + Math.round((photoBox.h - photo.h) / 2);
 
-  const ctaLines = wrapText(cta, 44, 300, 2);
   // فقط ۷۰px بین بالای هوک و برچسبِ دسته هست (بالای برچسب y=235) — اگه
   // هوک به ۲ خط بشکنه، باید حتماً فونتِ کوچیک‌تر باشه وگرنه رویِ برچسب
   // می‌افته (باگِ واقعی که یه هوکِ ۴ کلمه‌ای نشونش داد: خطِ دوم رو برچسبِ
@@ -169,9 +171,9 @@ async function brightEditorialPost({ photoBytes, headline, cta, categoryLabel })
     headlineSize = 40;
     headlineY = 130;
   }
-  const pallasH = 68;
+  const pallasH = 70;
   const pallasX = 80;
-  const pallasY = 1085 - pallasH - 16;
+  const pallasY = 1280 - pallasH - 14;
 
   const svg = `
     <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
@@ -182,14 +184,8 @@ async function brightEditorialPost({ photoBytes, headline, cta, categoryLabel })
       ${pill({ x: 820, y: 235, w: 220, h: 34, fill: COLOR_INK })}
       <text x="930" y="258" text-anchor="middle" font-family="Telesk" font-weight="700" font-size="17" fill="${COLOR_BONE}">${escape(categoryLabel)}</text>
       ${multilineText({ x: 1030, y: headlineY, lines: headlineLines, fontSize: headlineSize, weight: 900, color: COLOR_INK })}
-      <rect x="80" y="370" width="420" height="560" rx="32" fill="${COLOR_INK}"/>
-      <rect x="108" y="398" width="364" height="504" rx="20" fill="${COLOR_RED}"/>
-      ${multilineText({ x: 440, y: 500, lines: ctaLines, fontSize: 44, weight: 800, color: COLOR_BONE })}
-      ${pill({ x: 830, y: 1015, w: 210, h: 44, fill: COLOR_INK })}
-      <text x="935" y="1043" text-anchor="middle" font-family="Telesk" font-weight="700" font-size="19" fill="${COLOR_BONE}">فروشگاه میزطوری</text>
-      ${pill({ x: 80, y: 1085, w: 230, h: 52, fill: COLOR_INK })}
-      <text x="195" y="1118" text-anchor="middle" font-family="Telesk" font-weight="700" font-size="22" fill="${COLOR_BONE}">MIZTORE.COM</text>
-      <text x="1040" y="1160" text-anchor="end" font-family="Telesk" font-weight="900" font-size="60" fill="${COLOR_INK}">MIZTORE</text>
+      ${rotatedCtaBadge({ cta, x: 1000, y: 1190, fontSize: 42 })}
+      <text x="80" y="1280" text-anchor="start" font-family="Telesk" font-weight="900" font-size="52" fill="${COLOR_INK}">MIZTORE</text>
     </svg>
   `;
 
@@ -203,7 +199,8 @@ async function brightEditorialPost({ photoBytes, headline, cta, categoryLabel })
 
 async function brightEditorialTelegram({ photoBytes, headline, cta, categoryLabel }) {
   const W = 1080, H = 1080;
-  const photoBox = { x: 65, y: 100, w: 650, h: 590 };
+  // تا لبه‌ی پنلِ مشکی (x=750) بزرگ شده، طبقِ فیدبکِ کاربر درباره‌ی سایزِ عکس.
+  const photoBox = { x: 30, y: 60, w: 700, h: 660 };
   const photo = await fitPhoto(photoBytes, photoBox.w, photoBox.h);
   const photoX = photoBox.x + Math.round((photoBox.w - photo.w) / 2);
   const photoY = photoBox.y + Math.round((photoBox.h - photo.h) / 2);
@@ -305,9 +302,10 @@ function rotatedCtaBadge({ cta, x, y, fontSize }) {
 
 async function v2Format({ photoBytes, headline, cta, format }) {
   const CFG = {
-    post: { W: 1080, H: 1350, photoBox: { x: 60, y: 280, w: 960, h: 820 }, headline: { x: 1020, y: 150, fs: 72 }, cta: { x: 1020, y: 1255, fs: 42 }, brand: { x: 60, y: 1255, fs: 28 }, pallasH: 74 },
-    telegram: { W: 1080, H: 1080, photoBox: { x: 60, y: 220, w: 960, h: 680 }, headline: { x: 1020, y: 130, fs: 60 }, cta: { x: 1020, y: 1015, fs: 36 }, brand: { x: 60, y: 1015, fs: 24 }, pallasH: 64 },
-    story: { W: 1080, H: 1920, photoBox: { x: 60, y: 400, w: 960, h: 1100 }, headline: { x: 1020, y: 330, fs: 64 }, cta: { x: 1020, y: 1620, fs: 40 }, brand: { x: 60, y: 1620, fs: 26 }, pallasH: 74 },
+    post: { W: 1080, H: 1350, photoBox: { x: 40, y: 260, w: 1000, h: 870 }, headline: { x: 1020, y: 150, fs: 72 }, cta: { x: 1020, y: 1255, fs: 42 }, brand: { x: 60, y: 1255, fs: 28 }, pallasH: 74 },
+    telegram: { W: 1080, H: 1080, photoBox: { x: 40, y: 190, w: 1000, h: 730 }, headline: { x: 1020, y: 130, fs: 60 }, cta: { x: 1020, y: 1015, fs: 36 }, brand: { x: 60, y: 1015, fs: 24 }, pallasH: 64 },
+    story: { W: 1080, H: 1920, photoBox: { x: 40, y: 380, w: 1000, h: 1140 }, headline: { x: 1020, y: 330, fs: 64 }, cta: { x: 1020, y: 1620, fs: 40 }, brand: { x: 60, y: 1620, fs: 26 }, pallasH: 74 },
+    twitter: { W: 1200, H: 675, photoBox: { x: 40, y: 40, w: 700, h: 595 }, headline: { x: 1160, y: 140, fs: 50 }, headlineMaxWidth: 420, cta: { x: 1160, y: 560, fs: 32 }, brand: { x: 780, y: 600, fs: 22 }, pallasH: 52 },
   }[format];
 
   const photo = await fitPhoto(photoBytes, CFG.photoBox.w, CFG.photoBox.h);
@@ -316,7 +314,7 @@ async function v2Format({ photoBytes, headline, cta, format }) {
 
   const { lines: headlineLines, fontSize: headlineSize } = fitWrappedText(headline, {
     sizes: [CFG.headline.fs, CFG.headline.fs * 0.85, CFG.headline.fs * 0.72],
-    maxWidth: CFG.photoBox.w,
+    maxWidth: CFG.headlineMaxWidth || CFG.photoBox.w,
     maxLines: 2,
   });
   const headlineY = headlineLines.length > 1 ? CFG.headline.y - headlineSize * 0.6 : CFG.headline.y;
@@ -348,9 +346,10 @@ async function v2Format({ photoBytes, headline, cta, format }) {
 
 async function minimalFormat({ photoBytes, headline, cta, format }) {
   const CFG = {
-    post: { W: 1080, H: 1350, photoBox: { x: 60, y: 280, w: 960, h: 820 }, headline: { x: 1020, y: 150, fs: 56 }, cta: { x: 1020, y: 1240, fs: 34 }, brand: { x: 60, y: 1240, fs: 30 } },
-    telegram: { W: 1080, H: 1080, photoBox: { x: 60, y: 220, w: 960, h: 680 }, headline: { x: 1020, y: 130, fs: 48 }, cta: { x: 1020, y: 990, fs: 30 }, brand: { x: 60, y: 990, fs: 26 } },
-    story: { W: 1080, H: 1920, photoBox: { x: 60, y: 400, w: 960, h: 1100 }, headline: { x: 1020, y: 330, fs: 58 }, cta: { x: 1020, y: 1600, fs: 34 }, brand: { x: 60, y: 1600, fs: 28 } },
+    post: { W: 1080, H: 1350, photoBox: { x: 40, y: 260, w: 1000, h: 870 }, headline: { x: 1020, y: 150, fs: 56 }, cta: { x: 1020, y: 1240, fs: 34 }, brand: { x: 60, y: 1240, fs: 30 } },
+    telegram: { W: 1080, H: 1080, photoBox: { x: 40, y: 190, w: 1000, h: 730 }, headline: { x: 1020, y: 130, fs: 48 }, cta: { x: 1020, y: 990, fs: 30 }, brand: { x: 60, y: 990, fs: 26 } },
+    story: { W: 1080, H: 1920, photoBox: { x: 40, y: 380, w: 1000, h: 1140 }, headline: { x: 1020, y: 330, fs: 58 }, cta: { x: 1020, y: 1600, fs: 34 }, brand: { x: 60, y: 1600, fs: 28 } },
+    twitter: { W: 1200, H: 675, photoBox: { x: 40, y: 40, w: 700, h: 595 }, headline: { x: 1160, y: 140, fs: 44 }, headlineMaxWidth: 420, cta: { x: 1160, y: 560, fs: 28 }, brand: { x: 780, y: 600, fs: 22 } },
   }[format];
 
   const photo = await fitPhoto(photoBytes, CFG.photoBox.w, CFG.photoBox.h);
@@ -359,7 +358,7 @@ async function minimalFormat({ photoBytes, headline, cta, format }) {
 
   const { lines: headlineLines, fontSize: headlineSize } = fitWrappedText(headline, {
     sizes: [CFG.headline.fs, CFG.headline.fs * 0.85, CFG.headline.fs * 0.72],
-    maxWidth: CFG.photoBox.w,
+    maxWidth: CFG.headlineMaxWidth || CFG.photoBox.w,
     maxLines: 2,
   });
   const headlineY = headlineLines.length > 1 ? CFG.headline.y - headlineSize * 0.6 : CFG.headline.y;

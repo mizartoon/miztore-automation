@@ -89,8 +89,9 @@ RIPNDIP (با ماسکوتِ گربه‌شون، Lord Nermal) — کپشن‌ه�
   "caption": "۲-۳ جمله‌ی کوتاه برای متنِ زیرِ پست، با صدای بالا، در پایان یک CTA مستقیم و کوتاه."
 }`;
 
-async function callGemini(env, userPrompt) {
-  const model = env.GEMINI_CAPTION_MODEL || "gemini-3.6-flash";
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function callGeminiModel(env, model, userPrompt) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
 
   const res = await fetch(url, {
@@ -106,13 +107,44 @@ async function callGemini(env, userPrompt) {
     }),
   });
 
-  if (!res.ok) throw new Error(`Gemini HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  if (!res.ok) {
+    const err = new Error(`Gemini HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`);
+    err.status = res.status;
+    throw err;
+  }
 
   const data = await res.json();
   const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "";
   const parsed = JSON.parse(text);
   if (!parsed.headline || !parsed.caption) throw new Error("Gemini خروجی ناقص داد");
   return parsed;
+}
+
+// مدلِ اصلی (gemini-3.6-flash) این اواخر مدام 503 «high demand» می‌ده — این
+// دقیقاً همون چیزیه که باعث شد کپشنِ همه‌ی پست‌ها بشه متنِ ثابتِ fallback
+// (کاربر: «کپشن تمام پست‌ها شده...»). به‌جای یه تلاشِ تک، این‌جا: هر مدل
+// تا ۲ بار (فقط رویِ خطاهایِ موقتیِ ۵۰۳/۴۲۹ با یه مکث کوتاه)، بعد مدلِ
+// دومِ پایدارتر — و فقط اگه همه‌شون شکست خوردن، caption بره سراغِ متنِ ثابت.
+async function callGemini(env, userPrompt) {
+  const models = [env.GEMINI_CAPTION_MODEL || "gemini-3.6-flash", env.GEMINI_CAPTION_FALLBACK_MODEL || "gemini-2.5-flash"];
+  let lastErr;
+  for (const model of models) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        return await callGeminiModel(env, model, userPrompt);
+      } catch (err) {
+        lastErr = err;
+        console.error(`[caption] Gemini (${model}) attempt ${attempt + 1} failed: ${err.message}`);
+        const retryable = err.status === 503 || err.status === 429;
+        if (retryable && attempt === 0) {
+          await sleep(4000);
+          continue;
+        }
+        break;
+      }
+    }
+  }
+  throw lastErr;
 }
 
 function fallback(category) {
