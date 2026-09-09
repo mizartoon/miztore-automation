@@ -146,21 +146,13 @@ function rotatedCtaBadge({ cta, x, y, fontSize }) {
   `;
 }
 
-async function fitPhoto(photoBytes, boxW, boxH) {
-  const resized = await sharp(photoBytes)
-    .resize({ width: boxW, height: boxH, fit: "inside" })
-    .toBuffer({ resolveWithObject: true });
-  return { buffer: resized.data, w: resized.info.width, h: resized.info.height };
-}
-
-// پس‌زمینه‌ی تارشده که کل یک باکس (یا کلِ بوم) رو پر می‌کنه — فقط برای پرکردنِ
-// فضا، هیچ‌وقت خودِ عکسِ اصلی/تیزِ روش نیست، پس کراپ‌شدنش مشکلی برای «طرح
-// هرگز کراپ نشه» ایجاد نمی‌کنه (طرح جای دیگه، بدونِ کراپ، روش سوار می‌شه).
-async function blurredCoverFill(photoBytes, W, H) {
+// کاربر صریح خواسته: خودِ عکس (نه یه نسخه‌ی تارِ جدا) باید کاملاً پشتِ صفحه
+// رو بگیره، لبه تا لبه — نه یه عکسِ کوچیکِ وسطِ بوم با حاشیه‌ی تار دورش.
+// یعنی fit:"cover" رویِ خودِ عکس (ممکنه لبه‌هاش کراپ بشه)، و متن/نوار مستقیم
+// روش سوار می‌شه، نه توی یه منطقه‌ی جدا.
+async function coverFill(photoBytes, W, H) {
   return sharp(photoBytes)
     .resize({ width: W, height: H, fit: "cover", position: "attention" })
-    .blur(48)
-    .modulate({ brightness: 0.62, saturation: 0.9 })
     .toBuffer();
 }
 
@@ -193,9 +185,9 @@ const ACCENTS = {
 // twitter افقیه: عکس چپ (با پس‌زمینه‌ی تارِ خودش)، ستونِ توپرِ راست برای متن.
 // ---------------------------------------------------------------------------
 const LAYOUTS = {
-  post: { W: 1080, H: 1350, pad: 60, topBandH: 235, bottomBandH: 265, headlineFs: 58, charH: 96 },
-  telegram: { W: 1080, H: 1080, pad: 56, topBandH: 195, bottomBandH: 210, headlineFs: 50, charH: 82 },
-  story: { W: 1080, H: 1920, pad: 60, topBandH: 300, bottomBandH: 300, headlineFs: 60, charH: 104 },
+  post: { W: 1080, H: 1350, pad: 60, topBandH: 190, bottomBandH: 210, headlineFs: 58, charH: 96 },
+  telegram: { W: 1080, H: 1080, pad: 56, topBandH: 160, bottomBandH: 175, headlineFs: 50, charH: 82 },
+  story: { W: 1080, H: 1920, pad: 60, topBandH: 230, bottomBandH: 250, headlineFs: 60, charH: 104 },
   twitter: { W: 1200, H: 675, pad: 44, photo: { x: 40, y: 40, w: 680, h: 595 }, textX: 1156, textLeft: 760, headlineFs: 42, charH: 66, horizontal: true },
 };
 
@@ -206,12 +198,9 @@ async function renderProduct({ photoBytes, headline, cta, categoryLabel, format,
 
   if (L.horizontal) return renderProductHorizontal({ photoBytes, headline, cta, categoryLabel, L, accent });
 
-  const [bgFill, photo] = await Promise.all([
-    blurredCoverFill(photoBytes, L.W, L.H),
-    fitPhoto(photoBytes, L.W - L.pad * 2, L.H - L.topBandH - L.bottomBandH),
-  ]);
-  const photoX = Math.round((L.W - photo.w) / 2);
-  const photoY = L.topBandH + Math.round((L.H - L.topBandH - L.bottomBandH - photo.h) / 2);
+  // خودِ عکس (نه یه کپیِ تارِ جدا) کاملاً لبه‌تا‌لبه‌ی بوم رو پر می‌کنه —
+  // نوارهای متن مستقیم روش سوار می‌شن، نه توی یه حاشیه‌ی جدا.
+  const photoFull = await coverFill(photoBytes, L.W, L.H);
 
   const textRight = L.W - L.pad;
   const headlineMaxWidth = L.W - L.pad * 2;
@@ -261,20 +250,14 @@ async function renderProduct({ photoBytes, headline, cta, categoryLabel, format,
 
   const textPng = renderSvgToPng(svg, L.W);
   return compose(L.W, L.H, COLOR_BONE, [
-    { input: bgFill, left: 0, top: 0 },
+    { input: photoFull, left: 0, top: 0 },
     { input: textPng, left: 0, top: 0 },
-    { input: photo.buffer, left: photoX, top: photoY },
     character && variant !== "chip" ? { input: character.buffer, left: charX, top: charY } : null,
   ]);
 }
 
 async function renderProductHorizontal({ photoBytes, headline, cta, categoryLabel, L, accent }) {
-  const [bgFill, photo] = await Promise.all([
-    blurredCoverFill(photoBytes, L.photo.w, L.photo.h),
-    fitPhoto(photoBytes, L.photo.w - 24, L.photo.h - 24),
-  ]);
-  const photoX = L.photo.x + Math.round((L.photo.w - photo.w) / 2);
-  const photoY = L.photo.y + Math.round((L.photo.h - photo.h) / 2);
+  const photoFull = await coverFill(photoBytes, L.photo.w, L.photo.h);
 
   const headlineMaxWidth = L.textX - L.textLeft;
   const { lines: headlineLines, fontSize: headlineFs } = fitHeadline(headline, { maxWidth: headlineMaxWidth, baseSize: L.headlineFs });
@@ -307,8 +290,7 @@ async function renderProductHorizontal({ photoBytes, headline, cta, categoryLabe
   const textPng = renderSvgToPng(svg, L.W);
   return compose(L.W, L.H, COLOR_BONE, [
     { input: textPng, left: 0, top: 0 },
-    { input: bgFill, left: L.photo.x, top: L.photo.y },
-    { input: photo.buffer, left: photoX, top: photoY },
+    { input: photoFull, left: L.photo.x, top: L.photo.y },
     character ? { input: character.buffer, left: charX, top: charY } : null,
   ]);
 }

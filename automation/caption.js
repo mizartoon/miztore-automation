@@ -148,12 +148,26 @@ async function callGemini(env, userPrompt) {
   throw lastErr;
 }
 
+// وقتی Gemini بعدِ همه‌ی تلاش‌ها (هر دو مدل) شکست بخوره، این fallbackِ آخره —
+// کاربر صریح گفته: «یه تیشرت دیگه» و «کمد» دیگه استفاده نشه، و چیزِ تکراری
+// هم ننویسیم. پس به‌جای یک متنِ ثابت، یه استخرِ کوچیکِ متنوع (هرکدوم خودش
+// یه هوک+کپشنِ کامل، نه فقط جای‌گذاریِ category تو یه قالبِ ثابت).
+const FALLBACK_POOL = [
+  { headline: "این یکی خاصه", caption: "پالاس خودش این‌و انتخاب کرد." },
+  { headline: "طرحِ امروزِ میزطوری", caption: "یه چیزی که رو تنت خوب می‌شینه." },
+  { headline: "تازه از راه رسید", caption: "این یکی رو از دست نده." },
+  { headline: "یه چیزِ متفاوت", caption: "میزطوری همیشه یه چیزی برای گفتن داره." },
+  { headline: "بپوشش، حرف بزن", caption: "لباس فقط پارچه نیست، یه پیامه." },
+  { headline: "امروز نوبتِ این طرحه", caption: "پالاس خودش تأییدش کرده." },
+];
+
 function fallback(category) {
-  const label = CATEGORY_LABEL_FA[category] || "محصول";
+  const pick = FALLBACK_POOL[Math.floor(Math.random() * FALLBACK_POOL.length)];
+  const cta = pickCTA();
   return {
-    headline: `یه ${label} دیگه`,
-    cta: pickCTA(),
-    caption: `پالاس بازم یه بلایی سرِ کمدمون آورده.\n\nمال خودت کن.\n\n${pickVarietyLine()}`,
+    headline: pick.headline,
+    cta,
+    caption: `${pick.caption}\n\n${cta}.\n\n${pickVarietyLine()}`,
   };
 }
 
