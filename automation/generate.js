@@ -64,7 +64,7 @@ async function runServicePost(env, dryRun) {
 
   const outputs = {};
   for (const format of ["telegram", "post", "story", "twitter"]) {
-    const buffer = await renderServicePost({ format, headline: service.headline, body: service.body, cta: service.cta });
+    const buffer = await renderServicePost({ format, headline: service.headline, body: service.body, cta: service.cta, id: service.id });
     const outRelPath = `outputs/${format}-${baseName}`;
     const outAbsPath = path.join(__dirname, "..", outRelPath);
     fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });
