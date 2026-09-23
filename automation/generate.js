@@ -7,8 +7,10 @@
 const fs = require("fs");
 const path = require("path");
 const { pickNextImage, requeueImage } = require("./state.js");
-const { renderPost, renderServicePost, fetchBytes, pickTemplateName } = require("./render.js");
-const { generateCaption, pickCTA, buildInstagramCaption, buildTwitterCaption, CATEGORY_LABEL_FA } = require("./caption.js");
+const { renderPost, renderDetail, renderInfo, renderServicePost, fetchBytes } = require("./render.js");
+const { buildInstagramCaption, buildTwitterCaption, CATEGORY_LABEL_FA } = require("./caption.js");
+const { writePost } = require("./copywriter.js");
+const { getProductFacts } = require("./product-facts.js");
 const { getDesignInfo } = require("./design-lookup.js");
 const { pickServicePost, buildServiceCaption } = require("./services.js");
 
@@ -113,34 +115,42 @@ async function main() {
     const photoBytes = await fetchBytes(sourceUrl);
 
     const designInfo = getDesignInfo(key);
-    const { headline, caption, cta: generatedCta } = await generateCaption(env, { category, designInfo });
-    const cta = generatedCta || pickCTA();
     const categoryLabel = CATEGORY_LABEL_FA[category] || "میزطوری";
-    // یک قالب برای هر سه فرمتِ همین پست — تا تلگرام/پست/استوریِ یک پست
-    // ناهم‌خوان نشن (هر پست یک ظاهر، نه قاطیِ سه تا خانواده‌ی مختلف).
-    const templateName = pickTemplateName();
+    // اطلاعاتِ واقعیِ فروشگاه (قیمت/رنگ/سایز) + متن و جایِ طرح از رویِ خودِ عکس
+    const facts = await getProductFacts({ productUrl: productLinks[key], category });
+    const copy = await writePost(env, { photoBytes, category, label: categoryLabel, designInfo, facts });
+    const { headline, caption, designBox } = copy;
+    console.log(`✍️ متن از ${copy.source} | طرح ${designBox ? "پیدا شد" : "پیدا نشد"} | اطلاعات: ${facts ? facts.scope : "ندارد"}`);
 
     // نکته‌ی مهم: baseName باید per-run یکتا باشه، نه فقط per-day — چون
-    // dry-run بلافاصله عکس رو requeue می‌کنه، ممکنه چند اجرا (dry-run یا
-    // واقعی) تو یه روز دقیقاً همون عکس رو بردارن. اگه فقط تاریخ+کلید بود،
-    // دو اجرا مسیر خروجیِ یکسان می‌ساختن و commitِ دومی روی باینریِ JPEG
-    // merge-conflict می‌خورد (دقیقاً همون خطایی که باعث شد /post چیزی پست
-    // نکنه — مرحله‌ی commit/push شکست خورد، هیچ‌وقت به مرحله‌ی publish نرسید).
+    // dry-run بلافاصله عکس رو requeue می‌کنه، ممکنه چند اجرا تو یه روز دقیقاً
+    // همون عکس رو بردارن؛ مسیرِ یکسان = merge-conflictِ باینری تو commit.
     const dateStr = new Date().toISOString().slice(0, 10);
     const runId = process.env.GITHUB_RUN_ID
       ? `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT || "1"}`
       : String(Date.now());
     const baseName = `${dateStr}-${runId}-${key.replace(/\//g, "-")}`;
 
-    const outputs = {};
-    for (const format of ["telegram", "post", "story", "twitter"]) {
-      const buffer = await renderPost({ photoBytes, headline, cta, categoryLabel, format, templateName });
-      const outRelPath = `outputs/${format}-${baseName}`;
+    const write = (name, buffer) => {
+      const outRelPath = `outputs/${name}-${baseName}`;
       const outAbsPath = path.join(__dirname, "..", outRelPath);
       fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });
       fs.writeFileSync(outAbsPath, buffer);
-      outputs[format] = outRelPath;
+      return outRelPath;
+    };
+
+    const outputs = {};
+    for (const format of ["telegram", "post", "story", "twitter"]) {
+      outputs[format] = write(format, await renderPost({ photoBytes, headline, categoryLabel, facts, designBox, format }));
     }
+    // کاروسلِ اینستاگرام: پستِ اصلی ← طرح از نزدیک ← اطلاعاتِ خرید
+    const carousel = [outputs.post];
+    const detail = await renderDetail({ photoBytes, designBox }).catch((e) => (console.error("detail:", e.message), null));
+    if (detail) carousel.push(write("detail", detail));
+    const info = await renderInfo({ facts, categoryLabel }).catch((e) => (console.error("info:", e.message), null));
+    if (info) carousel.push(write("info", info));
+    outputs.carousel = carousel;
+    const templateName = "frame";
 
     const baseBuyUrl = productLinks[key] || CATEGORY_FALLBACK_URL;
     const buyUrlTelegram = withUtm(baseBuyUrl, "telegram");
@@ -162,7 +172,8 @@ async function main() {
           key,
           category,
           templateName,
-          outputs, // { telegram, post, story } → مسیر نسبیِ هر فایل
+          outputs, // { telegram, post, story, twitter, carousel[] } → مسیرِ نسبیِ هر فایل
+          copySource: copy.source,
           headline,
           caption,
           instagramCaption,
@@ -176,7 +187,7 @@ async function main() {
       )
     );
 
-    console.log(`✅ رندر شد${dryRun ? " (dry-run)" : ""}: ${Object.values(outputs).join(", ")}`);
+    console.log(`✅ رندر شد${dryRun ? " (dry-run)" : ""}: ${Object.values(outputs).flat().join(", ")}`);
   } catch (err) {
     requeueImage(category, key);
     console.error("::error::" + (err && err.stack ? err.stack : err));

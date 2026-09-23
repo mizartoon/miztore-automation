@@ -254,10 +254,11 @@ const ENGAGEMENT_QUESTIONS = [
   "کدوم تیکه‌ی این طرح بیشتر به دلت نشست؟",
 ];
 
+// کپشن حالا کامل از copywriter.js میاد (هوک + جزئیات + اقدامِ خرید، با دیدنِ
+// خودِ عکس)؛ سؤالِ ثابتِ تهِ کپشن حذف شد چون تکراری و غیرطبیعی بود. فقط هشتگ.
 function buildInstagramCaption(baseCaption, category) {
-  const question = ENGAGEMENT_QUESTIONS[Math.floor(Math.random() * ENGAGEMENT_QUESTIONS.length)];
   const tags = [...HASHTAGS_BASE, ...(HASHTAGS_BY_CATEGORY[category] || [])].join(" ");
-  return `${baseCaption}\n\n${question}\n\n${tags}`;
+  return `${baseCaption}\n\n${tags}`;
 }
 
 // ---------------------------------------------------------------------------

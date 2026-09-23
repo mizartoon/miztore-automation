@@ -59,6 +59,27 @@ async function sendPhotoFile(env, chatId, filePath, caption, { buttonText, butto
   });
 }
 
+// چند عکس به‌صورتِ یک آلبوم (برایِ کاروسلِ اینستاگرام: ادمین همه‌ی اسلایدها رو
+// یک‌جا، به همون ترتیب، سیو می‌کنه). کپشن فقط رویِ اولین عکس.
+async function sendMediaGroupFiles(env, chatId, filePaths, caption) {
+  const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMediaGroup`;
+  return withRetry(async () => {
+    const form = new FormData();
+    form.append("chat_id", String(chatId));
+    const media = filePaths.map((p, i) => ({
+      type: "photo",
+      media: `attach://photo${i}`,
+      ...(i === 0 && caption ? { caption, parse_mode: "HTML" } : {}),
+    }));
+    form.append("media", JSON.stringify(media));
+    filePaths.forEach((p, i) => form.append(`photo${i}`, new Blob([fs.readFileSync(p)], { type: "image/jpeg" }), path.basename(p) || `photo${i}.jpg`));
+    const res = await fetch(url, { method: "POST", body: form });
+    const body = await res.json();
+    if (!res.ok || body.ok === false) throw new Error(`Telegram sendMediaGroup failed: ${body.description || res.status}`);
+    return body.result;
+  });
+}
+
 async function sendMessage(env, chatId, text) {
   const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
   return withRetry(async () => {
@@ -84,4 +105,4 @@ async function notifyAdmin(env, text) {
   }
 }
 
-module.exports = { sendPhotoFile, sendMessage, notifyAdmin };
+module.exports = { sendPhotoFile, sendMediaGroupFiles, sendMessage, notifyAdmin };
