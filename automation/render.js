@@ -153,7 +153,7 @@ async function roundedPhoto(buffer, w, h, r) {
 // ---------------------------------------------------------------------------
 const MAX_BLIND_CROP = 0.14;
 
-async function framePhoto(photoBytes, w, h, box) {
+async function framePhoto(photoBytes, w, h, box, reserveBottom = 0) {
   const meta = await sharp(photoBytes).metadata();
   const sw = meta.width;
   const sh = meta.height;
@@ -178,7 +178,11 @@ async function framePhoto(photoBytes, w, h, box) {
       const cy = (bt + bb) / 2;
       // طرح کمی بالاتر از وسطِ قاب بشینه (کارتِ متن معمولاً پایینه)
       const left = Math.round(Math.min(Math.max(cx - winW / 2, 0), sw - winW));
-      const top = Math.round(Math.min(Math.max(cy - winH * 0.46, 0), sh - winH));
+      // عمودی: تا جایی که طرح کامل تو قاب بمونه، قاب رو بالاتر نگه دار (سر و صورتِ مدل بریده نشه)
+      const mpx = winH * margin;
+      // و پایینِ طرح بالاتر از جایِ کارتِ متن (reserveBottom) بیفته تا کارت رویِ طرح نشینه
+      const want = Math.max(bb + mpx - winH * (1 - reserveBottom), 0);
+      const top = Math.round(Math.min(want, Math.max(0, Math.min(bt - mpx, sh - winH))));
       const buffer = await sharp(photoBytes).extract({ left, top, width: winW, height: winH }).resize(w, h).toBuffer();
       const k = w / winW;
       return { buffer, design: { x: (bl - left) * k, y: (bt - top) * k, w: (br - bl) * k, h: (bb - bt) * k } };
@@ -242,13 +246,44 @@ function pill({ x, y, h, text, fill, color, stroke, family = FA, anchor = "right
   return { svg, w, left };
 }
 
-// کارتِ متن: هدلاین + ردیفِ چیپ‌ها، با سایه‌ی سختِ سایت
-function textCard({ headline, chips, maxW, s, anchorRight, anchorY, placeTop }) {
-  const pad = Math.round(26 * s);
-  const { lines, size } = fit(headline, { maxW: maxW - pad * 2, maxLines: 2, sizes: [48, 45, 42, 39, 36, 33].map((v) => Math.round(v * s)) });
-  const lineW = Math.max(...lines.map((l) => textWidth(l, size)));
-  const chipH = Math.round(44 * s);
-  const gapC = Math.round(10 * s);
+// دو خطِ هم‌اندازه به‌جای «یه خطِ بلند + یه کلمه‌ی تنها» — جای خالیِ کارت کم می‌شه
+function balanced(text, size, maxW) {
+  const words = String(text).trim().split(/\s+/).filter(Boolean);
+  const one = words.join(" ");
+  if (textWidth(one, size) <= maxW) return [one];
+  let best = null;
+  for (let i = 1; i < words.length; i++) {
+    const a = words.slice(0, i).join(" ");
+    const b = words.slice(i).join(" ");
+    const wa = textWidth(a, size);
+    const wb = textWidth(b, size);
+    if (wa > maxW || wb > maxW) continue;
+    const score = Math.max(wa, wb);
+    if (!best || score < best.score) best = { lines: [a, b], score };
+  }
+  return best ? best.lines : null;
+}
+
+// کارتِ متن: هدلاینِ درشت + چیپ‌ها، با سایه‌ی سختِ سایت. اگه جا باشه، چیپ‌ها
+// کنارِ خطِ آخر (سمتِ چپ) می‌شینن تا کارت فشرده و بدونِ فضای خالی باشه.
+function textCard({ headline, chips, maxW, s, sizes, anchorRight, anchorY, placeTop }) {
+  const pad = Math.round(24 * s);
+  let lines = null;
+  let size = sizes[sizes.length - 1];
+  for (const sz of sizes) {
+    const l = balanced(headline, sz, maxW - pad * 2);
+    if (l) {
+      lines = l;
+      size = sz;
+      break;
+    }
+  }
+  if (!lines) lines = fit(headline, { maxW: maxW - pad * 2, maxLines: 3, sizes: [size] }).lines;
+  const lineWs = lines.map((l) => textWidth(l, size));
+  const lineW = Math.max(...lineWs);
+  const lh = Math.round(size * 1.28);
+  const chipH = Math.round(Math.max(40 * s, size * 0.7));
+  const gapC = Math.round(8 * s);
   const chipObjs = [];
   let chipsW = 0;
   for (const c of chips) {
@@ -258,25 +293,36 @@ function textCard({ headline, chips, maxW, s, anchorRight, anchorY, placeTop }) 
     chipsW += w + (chipObjs.length ? gapC : 0);
     chipObjs.push({ ...c, w });
   }
-  const innerW = Math.max(lineW, chipsW);
-  const w = Math.round(Math.min(maxW, innerW + pad * 2));
-  const textH = Math.round(lines.length * size * 1.32);
-  const h = Math.round(pad * 0.9 + textH + (chipObjs.length ? chipH + pad * 0.55 : 0) + pad * 0.7);
+  const lastW = lineWs[lineWs.length - 1];
+  const inline = chipObjs.length && lastW + Math.round(22 * s) + chipsW <= Math.max(lineW, maxW * 0.62 - pad * 2);
+  const innerW = inline ? Math.max(lineW, lastW + Math.round(22 * s) + chipsW) : Math.max(lineW, chipsW);
+  const w = Math.round(innerW + pad * 2);
+  const textH = lines.length * lh;
+  const chipRowH = chipObjs.length && !inline ? chipH + Math.round(12 * s) : 0;
+  const h = Math.round(pad * 0.85 + textH + chipRowH + pad * 0.55);
   const x = Math.round(anchorRight - w);
   const y = Math.round(placeTop ? anchorY : anchorY - h);
   const sh = Math.round(9 * s);
+  const baseline0 = y + pad * 0.85 + size * 0.95;
   let svg =
-    `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.ink}"/>` +
-    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.b50}" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
-    textLines({ lines, size, x: x + w - pad, y: y + pad * 0.9 + size * 0.98 });
-  let cx = x + w - pad;
-  const cy = y + pad * 0.9 + textH + pad * 0.25;
+    `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${20 * s}" fill="${C.ink}"/>` +
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${20 * s}" fill="${C.b50}" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
+    textLines({ lines, size, x: x + w - pad, y: baseline0, lh: 1.28 });
+  let cx, cy;
+  if (inline) {
+    // چیپ‌ها از لبه‌ی چپِ کارت، هم‌ترازِ خطِ آخر
+    cx = x + pad + chipsW;
+    cy = Math.round(baseline0 + (lines.length - 1) * lh - size * 0.62 - (chipH - size * 0.62) / 2);
+  } else {
+    cx = x + w - pad;
+    cy = Math.round(y + pad * 0.85 + textH + Math.round(4 * s));
+  }
   for (const c of chipObjs) {
     const p = pill({ x: cx, y: cy, h: chipH, text: c.text, fill: c.fill, color: c.color, stroke: c.stroke, family: c.family || FA });
     svg += p.svg;
     cx -= p.w + gapC;
   }
-  return { svg, rect: { x: x - sh, y, w: w + sh, h: h + sh }, h };
+  return { svg, rect: { x: x - sh, y, w: w + sh, h: h + sh }, x, y, w, h };
 }
 
 function factChips(facts) {
@@ -314,25 +360,44 @@ async function renderPost({ photoBytes, headline, categoryLabel, facts, designBo
   const R = Math.round(30 * s);
   const fw = W - m * 2;
   const fh = H - m * 2;
-  const { buffer, design } = await framePhoto(photoBytes, fw, fh, designBox);
+  const reserve = { post: 0.24, telegram: 0.3, story: 0.3 }[format] || 0.25;
+  const { buffer, design } = await framePhoto(photoBytes, fw, fh, designBox, reserve);
   const photo = await roundedPhoto(buffer, fw, fh, R);
   const designAbs = design ? { x: design.x + m, y: design.y + m, w: design.w, h: design.h } : null;
 
   // ناحیه‌ی امنِ استوری (رابطِ اینستاگرام بالا و پایین رو می‌پوشونه)
   const safeTop = format === "story" ? Math.round(210 * s) : m + Math.round(26 * s);
-  const safeBottom = format === "story" ? H - Math.round(300 * s) : H - m - Math.round(28 * s);
+  const safeBottom = format === "story" ? H - Math.round(270 * s) : H - m - Math.round(24 * s);
   const inset = m + Math.round(26 * s);
 
   const icon = await asset("palas-mark.png", { height: Math.round(46 * s) });
   const brand = brandPill({ right: W - inset, top: safeTop, h: Math.round(64 * s), icon });
   const cat = pill({ x: inset, y: safeTop + Math.round(6 * s), h: Math.round(52 * s), text: categoryLabel, fill: C.ink, color: C.b50, anchor: "left" });
 
-  const cs = format === "story" ? s * 1.08 : s;
-  const cardArgs = { headline, chips: factChips(facts), maxW: Math.round(fw * 0.72), s: cs, anchorRight: W - inset };
+  const sizes = (format === "story" ? [84, 78, 72, 66, 60, 54, 50] : [68, 64, 60, 56, 52, 48, 44]).map((v) => Math.round(v * s));
+  const mascotSlot = Math.round((format === "story" ? 250 : 210) * s); // جایِ ماسکوت کنارِ کارت
+  const cardArgs = { headline, chips: factChips(facts), maxW: fw - Math.round(52 * s) - mascotSlot, s, sizes, anchorRight: W - inset };
+  // کارت به لبه‌ی پایینِ قاب چسبیده (نه معلق وسطِ عکس)؛ اگه رویِ طرح می‌افته، بالا
   let card = textCard({ ...cardArgs, anchorY: safeBottom, placeTop: false });
-  if (designAbs && overlap(card.rect, designAbs) > 0.1) {
-    const topCard = textCard({ ...cardArgs, anchorY: safeTop + Math.round(90 * s), placeTop: true });
+  if (designAbs && overlap(card.rect, designAbs) > 0.08) {
+    const topCard = textCard({ ...cardArgs, anchorY: safeTop + Math.round(96 * s), placeTop: true });
     if (overlap(topCard.rect, designAbs) < overlap(card.rect, designAbs)) card = topCard;
+  }
+
+  // ماسکوت کنارِ کارت می‌ایسته، انگار داره متن رو معرفی می‌کنه
+  const over = [brand.layer];
+  const mFile = pickMascot(headline);
+  const meta = await sharp(path.join(ASSET_DIR, mFile)).metadata();
+  const aspect = meta.width / meta.height;
+  const avail = card.x - (m + Math.round(12 * s)); // فضایِ خالیِ چپِ کارت
+  let mH = Math.round(Math.min(Math.max(card.h * 1.9, 230 * s), (format === "story" ? 420 : 330) * s));
+  mH = Math.round(Math.min(mH, avail / 0.94 / aspect));
+  if (mH >= 150 * s) {
+    const mascot = await asset(mFile, { height: mH });
+    const mx = Math.round(card.x - mascot.w * 0.94); // فقط لبه‌ی کارت رو لمس کنه، نه متن رو
+    const my = Math.round(card.y + card.h - mascot.h + Math.round(6 * s));
+    const mRect = { x: mx, y: my, w: mascot.w, h: mascot.h };
+    if (my >= m && (!designAbs || overlap(mRect, designAbs) < 0.06)) over.push({ input: mascot.buffer, left: mx, top: my });
   }
 
   const svg =
@@ -340,7 +405,14 @@ async function renderPost({ photoBytes, headline, categoryLabel, facts, designBo
     brand.svg +
     cat.svg +
     card.svg;
-  return compose(W, H, C.bone, [{ input: photo, left: m, top: m }], svg, [brand.layer]);
+  return compose(W, H, C.bone, [{ input: photo, left: m, top: m }], svg, over);
+}
+
+const MASCOTS = ["palas-full.png", "homay-full.png", "boz-full.png", "palas-full.png"];
+function pickMascot(seed) {
+  let h = 0;
+  for (const ch of String(seed)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return MASCOTS[h % MASCOTS.length];
 }
 
 // توییتر (۱۶:۹): عکس در قابِ چپ، ستونِ متن راست
@@ -358,7 +430,7 @@ async function renderTwitter({ photoBytes, headline, categoryLabel, facts, desig
   const colW = colRight - colLeft;
   const icon = await asset("palas-mark.png", { height: 40 });
   const brand = brandPill({ right: colRight, top: 44, h: 56, icon });
-  const { lines, size } = fit(headline, { maxW: colW, maxLines: 3, sizes: [58, 54, 50, 46, 42, 38] });
+  const { lines, size } = fit(headline, { maxW: colW, maxLines: 3, sizes: [66, 62, 58, 54, 50, 46, 42] });
   const hy = 190;
   let svg =
     `<rect x="${m}" y="${m}" width="${pw}" height="${ph}" rx="${R}" fill="none" stroke="${C.ink}" stroke-width="3"/>` +
@@ -372,9 +444,11 @@ async function renderTwitter({ photoBytes, headline, categoryLabel, facts, desig
     svg += p.svg;
     cx -= p.w + 10;
   }
+  const tm = await asset(pickMascot(headline), { height: 150 });
+  const tLayer = { input: tm.buffer, left: colLeft - 6, top: H - 96 - tm.h + 8 };
   svg += `<line x1="${colLeft}" y1="${H - 92}" x2="${colRight}" y2="${H - 92}" stroke="${C.b400}" stroke-width="2"/>`;
   svg += `<text x="${colRight}" y="${H - 50}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="24" fill="${C.g40}">قسطی با دیجی‌پی · ۷ روز ضمانتِ بازگشت</text>`;
-  return compose(W, H, C.bone, [{ input: photo, left: m, top: m }], svg, [brand.layer]);
+  return compose(W, H, C.bone, [{ input: photo, left: m, top: m }], svg, [brand.layer, tLayer]);
 }
 
 // ---------------------------------------------------------------------------

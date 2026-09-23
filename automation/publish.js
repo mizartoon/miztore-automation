@@ -16,6 +16,10 @@ const { sendPhotoFile, sendMediaGroupFiles, sendMessage, notifyAdmin } = require
 // publish.js فقط ~۱ ثانیه بعدِ push اجرا می‌شه و CDNِ گیت‌هاب هنوز فایلِ تازه
 // رو serve نمی‌کنه (تلگرام: «failed to get HTTP URL content»). فایل همین‌جا
 // رویِ دیسکه، پس اصلاً نیازی به CDN نیست.
+// متنِ داخلِ <pre> تو تلگرام با یه لمس کپی می‌شه (دسکتاپ: دکمه‌ی Copy)
+const escHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const copyBlock = (s) => `<pre>${escHtml(s)}</pre>`;
+
 function localPath(relPath) {
   return path.join(__dirname, "..", relPath);
 }
@@ -39,14 +43,13 @@ async function sendInstagramPackage(env, lastRun) {
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
     localPath(lastRun.outputs.story),
-    "📱 <b>اینستاگرام — استوری</b> (۹:۱۶)\nسیو کن و دستی تو استوری بذار. لینکِ محصول رو با استیکرِ Link به استوری اضافه کن:\n" +
-      lastRun.buyUrlInstagram
+    "📱 <b>اینستاگرام — استوری</b> (۹:۱۶)\nلینکِ کوتاه برای استیکرِ Link (لمس کن تا کپی شه):\n<code>" + escHtml(lastRun.buyUrlInstagram) + "</code>"
   );
-  // کپشن به‌صورت پیامِ جدا و متنی (نه تو caption عکس) که راحت کپی بشه
+  // کپشن به‌صورت پیامِ جدا، داخلِ <pre> که با یه لمس کپی بشه
   await sendMessage(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
-    `📝 <b>کپشنِ آماده برای پست اینستاگرام</b> (کپی کن):\n\n${lastRun.instagramCaption}`
+    `📝 <b>کپشنِ اینستاگرام</b> — لمس کن تا کپی شه:\n${copyBlock(lastRun.instagramCaption)}\n🔗 لینکِ بیو/استوری: <code>${escHtml(lastRun.buyUrlInstagram)}</code>`
   );
 }
 
@@ -66,7 +69,7 @@ async function sendTwitterPackage(env, lastRun) {
   await sendMessage(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
-    `📝 <b>کپشنِ آماده برای توییتر/X</b> (کپی کن):\n\n${lastRun.twitterCaption}`
+    `📝 <b>کپشنِ توییتر/X</b> — لمس کن تا کپی شه:\n${copyBlock(lastRun.twitterCaption)}`
   );
 }
 

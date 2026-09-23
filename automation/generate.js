@@ -32,6 +32,15 @@ const productLinks = fs.existsSync(PRODUCT_LINKS_PATH)
   ? JSON.parse(fs.readFileSync(PRODUCT_LINKS_PATH, "utf-8"))
   : {};
 
+// لینکِ کوتاه (اینستاگرام لینکِ بلندِ فارسیِ encodeشده + UTMِ کامل رو قبول نمی‌کرد):
+// وردپرس خودش ?p=ID و ?product_cat=slug رو به صفحه‌ی اصلی ریدایرکت می‌کنه و
+// utm_source رو هم نگه می‌داره.
+const CAT_SLUG = { tshirt: "t-shirt", hoodie: "hoodie", pullover: "sweatshirt", longsleeve: "t-shirt", croptop: "crop-top" };
+function shortLink({ productId, category }, source) {
+  if (productId) return `https://miztore.com/?p=${productId}&utm_source=${source}`;
+  return `https://miztore.com/?product_cat=${CAT_SLUG[category] || "t-shirt"}&utm_source=${source}`;
+}
+
 function withUtm(url, source, campaign = "daily_post") {
   const u = new URL(url);
   u.searchParams.set("utm_source", source);
@@ -63,9 +72,9 @@ async function runServicePost(env, dryRun) {
     outputs[format] = outRelPath;
   }
 
-  const buyUrlTelegram = withUtm(CATEGORY_FALLBACK_URL, "telegram", "service_post");
-  const buyUrlInstagram = withUtm(CATEGORY_FALLBACK_URL, "instagram", "service_post");
-  const buyUrlTwitter = withUtm(CATEGORY_FALLBACK_URL, "twitter", "service_post");
+  const buyUrlTelegram = shortLink({ category: "tshirt" }, "tg");
+  const buyUrlInstagram = shortLink({ category: "tshirt" }, "ig");
+  const buyUrlTwitter = shortLink({ category: "tshirt" }, "x");
 
   fs.writeFileSync(
     path.join(__dirname, "last-run.json"),
@@ -152,10 +161,10 @@ async function main() {
     outputs.carousel = carousel;
     const templateName = "frame";
 
-    const baseBuyUrl = productLinks[key] || CATEGORY_FALLBACK_URL;
-    const buyUrlTelegram = withUtm(baseBuyUrl, "telegram");
-    const buyUrlInstagram = withUtm(baseBuyUrl, "instagram");
-    const buyUrlTwitter = withUtm(baseBuyUrl, "twitter");
+    const linkTarget = { productId: facts && facts.scope === "product" ? facts.id : null, category };
+    const buyUrlTelegram = shortLink(linkTarget, "tg");
+    const buyUrlInstagram = shortLink(linkTarget, "ig");
+    const buyUrlTwitter = shortLink(linkTarget, "x");
     const instagramCaption = buildInstagramCaption(caption, category);
     const twitterCaption = buildTwitterCaption(caption, category, buyUrlTwitter);
 

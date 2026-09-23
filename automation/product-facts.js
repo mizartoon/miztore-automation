@@ -40,6 +40,7 @@ function summarize(p, scope) {
   const max = Number(range?.max_amount || p.prices?.price || 0);
   return {
     scope,
+    id: scope === "product" ? p.id : null,
     name: scope === "product" ? p.name.trim() : null,
     url: scope === "product" ? decodeURI(p.permalink) : null,
     inStock: !!p.is_in_stock,

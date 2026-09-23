@@ -27,7 +27,7 @@ function load() {
   try {
     const renameMap = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "rename-map.json"), "utf-8"));
     for (const [oldPath, newPath] of Object.entries(renameMap)) {
-      reverseRenameMap[newPath] = oldPath.split("/").pop();
+      reverseRenameMap[newPath] = oldPath;
     }
   } catch {
     // فایل نبود یا خراب بود — یعنی هیچ عکسی lookup پیدا نمی‌کنه، بدون کرش
@@ -46,9 +46,11 @@ function load() {
  */
 function getDesignInfo(key) {
   load();
-  const oldFilename = reverseRenameMap[key];
-  if (!oldFilename) return null;
-  const entry = designIdentification[oldFilename];
+  const oldPath = reverseRenameMap[key];
+  if (!oldPath) return null;
+  // دسته‌های جدید با مسیرِ کامل («hoodie/سایر-005.png») ثبت شدن چون اسمِ
+  // فایل‌ها بینِ پوشه‌ها تکراریه؛ تیشرت‌های قدیمی فقط با اسمِ فایل.
+  const entry = designIdentification[oldPath] || designIdentification[oldPath.split("/").pop()];
   if (!entry || entry.illegible) return null;
   if (!entry.visibleText && !entry.visualSubject) return null;
   return { visibleText: entry.visibleText || null, visualSubject: entry.visualSubject || null };
