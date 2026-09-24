@@ -185,7 +185,7 @@ async function main() {
     const categoryLabel = CATEGORY_LABEL_FA[category] || "میزطوری";
     // اطلاعاتِ واقعیِ فروشگاه (قیمت/رنگ/سایز) + متن و جایِ طرح از رویِ خودِ عکس
     const facts = await getProductFacts({ productUrl: productLinks[key], category });
-    const copy = await writePost(env, { photoBytes, category, label: categoryLabel, designInfo, facts });
+    const copy = await writePost(env, { photoBytes, category, label: categoryLabel, designInfo, facts, key });
     const { headline, caption, designBox } = copy;
     console.log(`✍️ متن از ${copy.source} | طرح ${designBox ? "پیدا شد" : "پیدا نشد"} | اطلاعات: ${facts ? facts.scope : "ندارد"}`);
 
