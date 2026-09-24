@@ -772,9 +772,11 @@ async function productImage(url, w, h) {
 // کارت دو تکه SVG داره: under (سایه + بدنه، زیرِ عکس) و over (خط/متن، رویِ عکس)
 async function productCard({ item, x, y, w, h, s, badge }) {
   const pad = Math.round(18 * s);
-  const nameFit = fit(item.shortName || item.name, { maxW: w - pad * 2, maxLines: 2, sizes: [34, 31, 28, 25, 22].map((v) => Math.round(v * s)) });
+  const narrow = w < 330 * s;
+  const nameFit = fit(item.shortName || item.name, { maxW: w - pad * 2, maxLines: 2, sizes: (narrow ? [26, 24, 22, 20] : [34, 31, 28, 25, 22]).map((v) => Math.round(v * s)) });
   const nameH = Math.round(nameFit.lines.length * nameFit.size * LH);
-  const priceFs = Math.round(26 * s);
+  const priceFit = item.priceText ? fit(item.priceText, { maxW: w - pad * 2, maxLines: 1, sizes: [26, 24, 22, 20, 18].map((v) => Math.round(v * s)) }) : null;
+  const priceFs = priceFit ? priceFit.size : Math.round(26 * s);
   const textH = pad + Math.round(36 * s) + nameH + priceFs + pad;
   const imgH = Math.max(Math.round(80 * s), h - textH);
   const r = Math.round(16 * s);
@@ -857,7 +859,8 @@ async function renderGrid({ format, eyebrow, title, items, badges }) {
 
   const bottomSafe = format === "story" ? H - Math.round(250 * s) : H - Math.round(40 * s);
   const footerH = Math.round(96 * s);
-  const cols = horizontal ? Math.min(4, items.length) : 2;
+  // مربعی (تلگرام) و افقی: یک ردیفِ چهارتایی؛ ۲×۲ اون‌جا عکسِ لباس رو خیلی کوچیک می‌کرد
+  const cols = horizontal || W === H ? Math.min(4, items.length) : 2;
   const grid = await gridLayout({ s, items, top: y, bottom: bottomSafe - footerH, left: inset + Math.round(8 * s), right: W - inset, cols, badges });
   const url = pill({ x: W - inset, y: bottomSafe - Math.round(60 * s), h: Math.round(60 * s), text: "miztore.com", fill: C.red, color: C.b50, family: LATIN });
   const note = `<text x="${W - inset - url.w - Math.round(20 * s)}" y="${bottomSafe - Math.round(20 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(26 * s)}" fill="${C.g40}">قسطی با دیجی‌پی · ۷ روز ضمانتِ بازگشت</text>`;
