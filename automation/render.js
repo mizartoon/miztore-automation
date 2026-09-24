@@ -546,7 +546,7 @@ async function renderTwitter({ photoBytes, headline, categoryLabel, facts, desig
   const tm = await asset(pickMascot(headline), { height: 150 });
   const tLayer = { input: tm.buffer, left: colLeft - 6, top: H - 96 - tm.h + 8 };
   svg += `<line x1="${colLeft}" y1="${H - 92}" x2="${colRight}" y2="${H - 92}" stroke="${C.b400}" stroke-width="2"/>`;
-  svg += `<text x="${colRight}" y="${H - 50}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="24" fill="${C.g40}">قسطی با دیجی‌پی · ۷ روز ضمانتِ بازگشت</text>`;
+  svg += `<text x="${colRight}" y="${H - 50}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="24" fill="${C.g40}">قسطی با دیجی‌پی، ۷ روز ضمانتِ بازگشت</text>`;
   return compose(W, H, C.bone, [{ input: photo, left: m, top: m }], svg, [brand.layer, tLayer]);
 }
 
@@ -747,7 +747,7 @@ function servicePanel(panel, { x, y, w, h, s }) {
       svg += `<text x="${cx + cw / 2}" y="${top + zs * 0.8}" text-anchor="middle" font-family="${LATIN}" font-size="${zs}" fill="${on ? C.b50 : C.ink}">${z}</text>`;
       svg += `<text x="${cx + cw / 2}" y="${top + zs + 14 * s * k + cs * 0.75}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${cs}" fill="${on ? C.b200 : C.g40}">سینه ${faDigits(chest)}</text>`;
     });
-    const foot = fit("عرضِ سینه، سانتی‌متر · تیشرت اسلیم", { maxW: w - pad * 2, maxLines: 1, sizes: [24, 22, 20, 18].map((v) => Math.round(v * s)) });
+    const foot = fit("عرضِ سینه به سانتی‌متر، تیشرت اسلیم", { maxW: w - pad * 2, maxLines: 1, sizes: [24, 22, 20, 18].map((v) => Math.round(v * s)) });
     svg += `<text x="${x + w - pad}" y="${y + h - pad * 0.8}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${foot.size}" fill="${C.g40}">${esc(foot.lines[0] || "")}</text>`;
   } else if (panel.type === "steps") {
     const big = fit(panel.big || "", { maxW: w - pad * 2, maxLines: 1, sizes: [64, 56, 48].map((v) => Math.round(v * s)) });
@@ -963,7 +963,7 @@ async function renderGrid({ format, eyebrow, title, items, badges }) {
   const cols = horizontal || W === H ? Math.min(4, items.length) : 2;
   const grid = await gridLayout({ s, items, top: y, bottom: bottomSafe - footerH, left: inset + Math.round(8 * s), right: W - inset, cols, badges });
   const url = pill({ x: W - inset, y: bottomSafe - Math.round(60 * s), h: Math.round(60 * s), text: "miztore.com", fill: C.red, color: C.onRed, family: LATIN });
-  const note = `<text x="${W - inset - url.w - Math.round(20 * s)}" y="${bottomSafe - Math.round(20 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(26 * s)}" fill="${C.g40}">قسطی با دیجی‌پی · ۷ روز ضمانتِ بازگشت</text>`;
+  const note = `<text x="${W - inset - url.w - Math.round(20 * s)}" y="${bottomSafe - Math.round(20 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(26 * s)}" fill="${C.g40}">قسطی با دیجی‌پی، ۷ روز ضمانتِ بازگشت</text>`;
   const over = [brand.layer];
   if (mascot) over.push({ input: mascot.buffer, left: inset - Math.round(6 * s), top: Math.round(topY + 8 * s) });
   return compose(W, H, C.bone, [svgLayer(W, H, grid.under), ...grid.layers], brand.svg + svg + grid.over + url.svg + note, over);
