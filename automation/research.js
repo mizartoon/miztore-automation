@@ -1,7 +1,11 @@
 /**
- * research.js — قبل از نوشتن، دربارهِ نوشته/موضوعِ طرح تو وب تحقیق می‌شه (Gemini +
- * Google Search). فقط وقتی جواب با منبع تأیید شده باشه استفاده می‌شه؛ وگرنه «نامعلوم»
- * و مدلِ نویسنده حق نداره ریشه‌یِ طرح رو حدس بزنه.
+ * research.js — قبل از نوشتن، دربارهِ نوشته/موضوعِ طرح تحقیق می‌شه. فقط جوابِ تأییدشده
+ * با منبع استفاده می‌شه؛ وگرنه «نامعلوم» و مدلِ نویسنده حق نداره ریشه‌یِ طرح رو حدس بزنه.
+ *   ۱) جستجویِ گوگل از طریقِ Gemini (grounding) — رویِ پلنِ رایگانِ فعلی سهمیه نداره (429)،
+ *      ولی اگه پلن ارتقا پیدا کنه خودبه‌خود کار می‌کنه.
+ *   ۲) گنجور (شعرِ فارسی): اولین شعری که خودِ عبارت عیناً توشه؛ خلاصه مستقیم از عنوانِ
+ *      گنجور ساخته می‌شه، بدونِ تفسیرِ AI. ویکی‌پدیا عمداً نه: فقط هم‌اسمی پیدا می‌کرد
+ *      (مثلاً «به کجا چنین شتابان» → سریال، «مثل یک دختر بجنگ» → آلبومِ خارجی).
  * اولویت: یادداشتِ صاحبِ برند (design-notes.json) > تحقیق > هیچی.
  * نتیجه‌ها تو state.json (research) کش می‌شن تا هر طرح یه بار تحقیق بشه؛ برایِ اصلاح،
  * یادداشت تو data/design-notes.json بذار (همیشه بر تحقیق مقدمه).
@@ -10,7 +14,6 @@ const { loadState, saveState } = require("./state.js");
 
 const MODELS = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash"];
 const KIND_WORDS = /^(تیشرت|تی شرت|هودی|پلیور(\s*دورس)?|دورس|کراپ\s*تاپ|نیم\s*تنه|توت\s*بگ(\s*پارچه\s*ای)?|قاب\s*موبایل|کلاه(\s*نقاب\s*دار|\s*باکت)?|آستین\s*بلند)\s+/;
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // اسمِ طرح: از اسمِ محصول در سایت (بدونِ «تیشرت/هودی…») یا از اسمِ فایل (tshirt/استمرار-گذشتن-2.jpg)
 function designName({ key, siteName }) {
@@ -31,7 +34,7 @@ function cached(name) {
 
 const PROMPT = (name, visibleText) => `یه برندِ ایرانیِ لباس طرحی داره به اسمِ «${name}»${visibleText ? ` (نوشته‌یِ رویِ طرح طبقِ خوانشِ ماشینی، شاید غلط: «${visibleText}»)` : ""}.
 با جستجو پیدا کن این عبارت/موضوع از کجاست: بیتِ کدوم شاعر، تیکه‌ای از کدوم ترانه و خواننده/گروه، دیالوگِ کدوم فیلم، کدوم شخصیت یا آیینِ فرهنگی، یا یه اصطلاح/ضرب‌المثل.
-قانون: فقط چیزی بگو که نتیجه‌هایِ جستجو صریحاً تأییدش کنن. اگه مطمئن نیستی یا چند جوابِ متفاوت هست، found=false. حدس نزن. اسمِ برند یا فروشگاه‌ها منبع حساب نمی‌شن.
+قانون: فقط چیزی بگو که نتیجه‌هایِ جستجو صریحاً تأییدش کنن. یه اثرِ هم‌اسم (آلبوم/سریال/کتابی که فقط اسمش همینه) منبعِ عبارت حساب نمی‌شه. اگه مطمئن نیستی یا چند جوابِ متفاوت هست، found=false. حدس نزن. اسمِ برند یا فروشگاه‌ها منبع حساب نمی‌شن.
 فقط یه JSON بده، بدونِ هیچ متنِ دیگه:
 {"found": true/false, "confidence": "high"|"medium"|"low", "summary": "یک یا دو جمله‌یِ کوتاهِ فارسی: این عبارت/موضوع چیه و مالِ کیه"}`;
 
@@ -71,7 +74,7 @@ async function callGrounded(env, model, text) {
   }
 }
 
-// → { found, summary, sources } یا null (اسم نداشت/کلید نبود/همه‌یِ مدل‌ها شکست خوردن)
+// → { found, summary, sources } یا null (اسم نداشت/کلید نبود/خطایِ شبکه)
 async function researchDesign(env, { key, siteName, visibleText }) {
   const name = designName({ key, siteName });
   if (!name || !env.GEMINI_API_KEY) return null;
@@ -80,29 +83,87 @@ async function researchDesign(env, { key, siteName, visibleText }) {
     console.log(`🔎 تحقیقِ طرح «${name}» (از کش): ${hit.found ? hit.summary : "نامعلوم"}`);
     return hit;
   }
+  const at = new Date().toISOString().slice(0, 10);
+  const save = (result) => {
+    const st = loadState();
+    st.research = st.research || {};
+    st.research[cacheKey(name)] = result;
+    saveState(st);
+    console.log(`🔎 تحقیقِ طرح «${name}» (${result.via}): ${result.found ? result.summary : "نامعلوم (حدس زده نمی‌شه)"}`);
+    return result;
+  };
+
+  // ۱) جستجویِ گوگل
   for (const model of MODELS) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const r = await callGrounded(env, model, PROMPT(name, visibleText));
-        // فقط جوابِ مطمئن و با منبعِ واقعیِ جستجو
-        const ok = r.found === true && r.confidence === "high" && r.sources.length > 0 && typeof r.summary === "string" && r.summary.trim();
-        const result = ok
-          ? { found: true, summary: r.summary.trim(), sources: r.sources, model, at: new Date().toISOString().slice(0, 10) }
-          : { found: false, model, at: new Date().toISOString().slice(0, 10) };
-        const st = loadState();
-        st.research = st.research || {};
-        st.research[cacheKey(name)] = result;
-        saveState(st);
-        console.log(`🔎 تحقیقِ طرح «${name}»: ${result.found ? result.summary : "نامعلوم (حدس زده نمی‌شه)"}`);
-        return result;
-      } catch (err) {
-        console.error(`[research] ${model} try ${attempt + 1}: ${err.message}`);
-        if (err.status === 503 || err.status === 429 || err.name === "AbortError") await sleep(4000);
-        else if (err.status >= 400 && err.status < 500) break;
-      }
+    try {
+      const r = await callGrounded(env, model, PROMPT(name, visibleText));
+      const ok = r.found === true && r.confidence === "high" && r.sources.length > 0 && typeof r.summary === "string" && r.summary.trim();
+      if (ok) return save({ found: true, summary: r.summary.trim(), sources: r.sources, via: "google", at });
+      break; // گوگل چیزِ مطمئنی پیدا نکرد → گنجور هم امتحان بشه
+    } catch (err) {
+      console.error(`[research] google ${model}: ${err.message.slice(0, 90)}`);
+      if (err.status === 503 || err.name === "AbortError") continue;
+      break; // سهمیه/دسترسی نیست → گنجور
     }
   }
-  return null; // کش نمی‌شه تا دفعه‌یِ بعد دوباره امتحان بشه
+
+  // ۲) گنجور
+  const hits = await searchGanjoor(name).catch((e) => (console.error(`[research] ganjoor: ${e.message}`), null));
+  if (hits === null) return null; // خطایِ شبکه → کش نمی‌شه، دفعه‌یِ بعد دوباره
+  if (!hits.length) return save({ found: false, via: "ganjoor", at });
+  const h = hits[0];
+  const where = h.title.split("»").map((s) => s.trim()).filter(Boolean);
+  const summary = `این عبارت تو شعرِ ${where[0]} اومده${where.length > 1 ? ` (${where.slice(1).join("، ")})` : ""}، طبقِ گنجور: «${h.text}»`;
+  return save({ found: true, summary, sources: [{ title: `گنجور: ${h.title}`, uri: h.uri }], via: "ganjoor", at });
 }
 
-module.exports = { researchDesign, cachedResearch: (opts) => cached(designName(opts)), designName };
+// برایِ مقایسه: بدونِ فاصله/نیم‌فاصله/اعراب و با ی/ک یکسان
+const flat = (s) =>
+  String(s || "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/[يىئ]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/[أإآ]/g, "ا")
+    .replace(/ؤ/g, "و")
+    .replace(/ة/g, "ه")
+    .replace(/[ً-ٰٟ]/g, "")
+    .replace(/[\s‌،,.:;!؟?«»"'()\-]+/g, "");
+
+async function getJson(url) {
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), 20000);
+  try {
+    const res = await fetch(url, { headers: { "User-Agent": "miztore-automation/1.0 (+https://miztore.com)" }, signal: c.signal });
+    if (!res.ok) throw new Error(`${new URL(url).host} HTTP ${res.status}`);
+    return await res.json();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+// → [{ title, text, uri, born }] فقط شعرهایی که خودِ عبارت عیناً توشونه، قدیمی‌ترین شاعر اول
+// (یه مصراعِ معروف رو شاعرهایِ بعدی هم نقل کردن؛ قدیمی‌ترین معمولاً اصلشه).
+// عبارتِ کوتاه‌تر از ۳ کلمه تحقیق نمی‌شه (یه کلمه تو هزار تا شعر هست).
+async function searchGanjoor(name) {
+  const words = name.split(/\s+/);
+  if (words.length < 3) return [];
+  const needle = flat(name);
+  const terms = [name];
+  if (words.length > 4) terms.push(words.slice(0, 4).join(" ")); // اعراب/همزه‌یِ متفاوت نذاره جستجو چیزی رو از دست بده
+  const seen = new Set();
+  const out = [];
+  for (const term of terms) {
+    const list = await getJson(`https://api.ganjoor.net/api/ganjoor/poems/search?term=${encodeURIComponent(term)}&PageNumber=1&PageSize=10`);
+    for (const p of Array.isArray(list) ? list : []) {
+      if (seen.has(p.id)) continue;
+      seen.add(p.id);
+      const line = String(p.plainText || "").split(/\n/).find((l) => flat(l).includes(needle));
+      if (!line && !flat(p.plainText).includes(needle)) continue;
+      const born = p.category?.poet?.birthYearInLHijri || p.category?.poet?.deathYearInLHijri || 9999;
+      out.push({ title: p.fullTitle, text: (line || name).trim().slice(0, 200), uri: `https://ganjoor.net${p.fullUrl}`, born });
+    }
+  }
+  return out.sort((a, b) => a.born - b.born);
+}
+
+module.exports = { researchDesign, cachedResearch: (opts) => cached(designName(opts)), designName, searchGanjoor };

@@ -137,12 +137,13 @@ async function runCampaignPost(env, dryRun, type) {
   console.log(`✅ پستِ ${type} رندر شد${dryRun ? " (dry-run)" : ""}: ${r.headline} (${r.copySource})`);
 }
 
-// حالتِ تیره برایِ تنوعِ فید: بعد از هر پستِ روشن ۴۰٪ شانس، هیچ‌وقت دو تیره پشتِ‌سرِهم
-// (در کل حدودِ یک پست از هر سه تا). THEME=light|dark برایِ تست.
+// تمِ تیره پیش‌فرضه (کاربر، ۲۰۲۶-۰۹-۲۵: «تم دارک مد بیشتر به قالب میاد»). روشن فقط گاهی
+// برایِ تنوعِ فید: بعد از پستِ تیره ۲۰٪ شانس، هیچ‌وقت دو روشن پشتِ‌سرِهم (در کل ~۸۵٪ تیره).
+// THEME=light|dark برایِ تست.
 function pickTheme(forced, dryRun) {
   if (forced === "light" || forced === "dark") return forced;
   const st = loadState();
-  const theme = st.lastTheme === "dark" ? "light" : Math.random() < 0.4 ? "dark" : "light";
+  const theme = st.lastTheme === "light" ? "dark" : Math.random() < 0.2 ? "light" : "dark";
   if (!dryRun) {
     st.lastTheme = theme;
     saveState(st);

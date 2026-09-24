@@ -15,7 +15,7 @@ on:
         default: ""
         options: ["", "product", "service", "spotlight", "bestsellers", "collection", "gift", "versus"]
       theme:
-        description: "تم (خالی = خودکار، حدودِ یک‌سوم تیره)"
+        description: "تم (خالی = خودکار، بیشترِ وقت‌ها تیره)"
         type: choice
         default: ""
         options: ["", "light", "dark"]
