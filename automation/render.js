@@ -171,20 +171,10 @@ function textLines({ lines, size, x, y, color = C.ink, anchor = "end", lh = LH, 
 
 async function asset(file, { height, width }) {
   let buf = await sharp(path.join(ASSET_DIR, file)).resize({ height, width }).png().toBuffer();
-  // حالتِ تیره: خطِ دورِ ماسکوت‌ها مشکیه و رویِ بومِ تیره گم می‌شه → حاشیه‌یِ روشنِ «برچسبی»
-  if (C.dark && /-full.png$/.test(file)) buf = await stickerOutline(buf, Math.max(4, Math.round((height || width) * 0.02)));
   const m = await sharp(buf).metadata();
   return { buffer: buf, w: m.width, h: m.height };
 }
 
-async function stickerOutline(buf, r) {
-  const clear = { r: 0, g: 0, b: 0, alpha: 0 };
-  const padded = await sharp(buf).extend({ top: r, bottom: r, left: r, right: r, background: clear }).png().toBuffer();
-  const { width, height } = await sharp(padded).metadata();
-  const mask = await sharp(padded).extractChannel(3).blur(Math.max(0.3, r * 0.55)).threshold(6).png().toBuffer();
-  const halo = await sharp({ create: { width, height, channels: 3, background: LIGHT.bone } }).joinChannel(mask).png().toBuffer();
-  return sharp(halo).composite([{ input: padded }]).png().toBuffer();
-}
 
 async function roundedPhoto(buffer, w, h, r) {
   const mask = Buffer.from(`<svg width="${w}" height="${h}"><rect width="${w}" height="${h}" rx="${r}" ry="${r}" fill="#fff"/></svg>`);
@@ -704,7 +694,7 @@ function servicePanelHeight(panel, w, s) {
     const cols = Math.max(4, Math.floor((w - pad * 2 + gap) / (r * 2 + gap)));
     return Math.ceil(n / cols) * (r * 2 + gap) - gap + pad * 2;
   }
-  if (id === "sizes") return pad * 2 + 2 * 104 * s + 12 * s + 48 * s;
+  if (id === "sizes") return pad * 2 + 2 * 84 * s + 12 * s + 48 * s;
   if (id === "big") return pad * 2 + 96 * s + 30 * s + (panel.sub ? 2 * 34 * s * LH : 0);
   if (id === "list") return pad * 2 + (panel.items || []).length * 72 * s;
   return pad * 2 + 150 * s + 44 * s + 56 * s;
@@ -716,9 +706,21 @@ function servicePanel(panel, { x, y, w, h, s }) {
   const pad = 28 * s;
   if (id === "colors") {
     const names = Object.keys(SWATCH).filter((n) => n !== "کرمی");
-    const r = 22 * s, gap = 14 * s;
-    const cols = Math.max(4, Math.floor((w - pad * 2 + gap) / (r * 2 + gap)));
-    const rows = Math.ceil(names.length / cols);
+    // دایره‌ها تا جایی که پنل جا داره بزرگ می‌شن (پنل فضایِ خالیِ زیرِ دکمه رو پر می‌کنه)
+    const gap = 14 * s;
+    const grid = (rr) => {
+      const cols = Math.max(4, Math.floor((w - pad * 2 + gap) / (rr * 2 + gap)));
+      return { cols, rows: Math.ceil(names.length / cols) };
+    };
+    let r = 22 * s;
+    for (let rr = 40 * s; rr > 22 * s; rr -= 1 * s) {
+      const g = grid(rr);
+      if (g.rows * (rr * 2 + gap) - gap + pad * 2 <= h) {
+        r = rr;
+        break;
+      }
+    }
+    const { cols, rows } = grid(r);
     const gridH = rows * (r * 2 + gap) - gap;
     let yy = y + (h - gridH) / 2 + r;
     names.forEach((n, i) => {
@@ -730,15 +732,20 @@ function servicePanel(panel, { x, y, w, h, s }) {
     // جدولِ سایزِ تیشرت اسلیم از خودِ سایت: عرضِ سینه (سانتی‌متر)
     const table = [["S", 47], ["M", 49], ["L", 51], ["XL", 54], ["XXL", 56], ["XXXL", 60]];
     const cols = 3, gap = 12 * s;
-    const cw = (w - pad * 2 - gap * (cols - 1)) / cols, ch = 104 * s;
+    const cw = (w - pad * 2 - gap * (cols - 1)) / cols;
+    const ch = Math.max(84 * s, Math.min(170 * s, (h - pad * 2 - gap - 48 * s) / 2)); // خانه‌ها کشیده می‌شن تا پنل پر بشه
     table.forEach(([z, chest], i) => {
       const c = i % cols, row = Math.floor(i / cols);
       const cx = x + w - pad - cw - c * (cw + gap);
       const cy = y + pad + row * (ch + gap);
       const on = z === "L";
       svg += `<rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${14 * s}" fill="${on ? C.ink : C.b50}" stroke="${C.ink}" stroke-width="${2.5 * s}"/>`;
-      svg += `<text x="${cx + cw / 2}" y="${cy + 46 * s}" text-anchor="middle" font-family="${LATIN}" font-size="${34 * s}" fill="${on ? C.b50 : C.ink}">${z}</text>`;
-      svg += `<text x="${cx + cw / 2}" y="${cy + 84 * s}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${24 * s}" fill="${on ? C.b200 : C.g40}">سینه ${faDigits(chest)}</text>`;
+      const k = ch / (104 * s);
+      const zs = 34 * s * Math.min(k, 1.35);
+      const cs = 24 * s * Math.min(k, 1.25);
+      const top = cy + (ch - (zs + cs + 14 * s * k)) / 2;
+      svg += `<text x="${cx + cw / 2}" y="${top + zs * 0.8}" text-anchor="middle" font-family="${LATIN}" font-size="${zs}" fill="${on ? C.b50 : C.ink}">${z}</text>`;
+      svg += `<text x="${cx + cw / 2}" y="${top + zs + 14 * s * k + cs * 0.75}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${cs}" fill="${on ? C.b200 : C.g40}">سینه ${faDigits(chest)}</text>`;
     });
     const foot = fit("عرضِ سینه، سانتی‌متر · تیشرت اسلیم", { maxW: w - pad * 2, maxLines: 1, sizes: [24, 22, 20, 18].map((v) => Math.round(v * s)) });
     svg += `<text x="${x + w - pad}" y="${y + h - pad * 0.8}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${foot.size}" fill="${C.g40}">${esc(foot.lines[0] || "")}</text>`;
@@ -841,7 +848,10 @@ async function renderServicePost({ format, headline, body, cta, id, panel }) {
     const pw = W - inset - px;
     const room = bottomY - y;
     const need = pw > 300 * s ? servicePanelHeight(panel, pw, s) : Infinity;
-    if (need <= room) svg += servicePanel(panel, { x: px, y: Math.round(bottomY - need), w: pw, h: need, s });
+    // پنل تا حدی کش میاد که فاصله‌یِ خالیِ زیرِ دکمه پر بشه (نه یه جعبه‌یِ کوچیک ته صفحه)
+    const stretch = { sizes: 1.7, colors: 1.8, list: 1.5, big: 1.5, steps: 1.35 }[panel.type] || 1;
+    const ph = Math.round(Math.min(room, need * stretch));
+    if (need <= room) svg += servicePanel(panel, { x: px, y: Math.round(bottomY - ph), w: pw, h: ph, s });
   }
   return compose(W, H, C.bone, [], svg, [brand.layer, { input: mascot.buffer, left: mx, top: horizontal ? my : Math.max(my, Math.round(y - 40 * s)) }]);
 }
@@ -985,10 +995,243 @@ async function renderVersus({ format, question, a, b }) {
   return compose(W, H, C.bone, [svgLayer(W, H, grid.under), ...grid.layers], brand.svg + grid.over + svg, [brand.layer]);
 }
 
+// ---------------------------------------------------------------------------
+// «معرفیِ محصول»: عکسِ خودِ محصول (زوم رویِ طرح) + یه جنبه‌یِ واقعی از صفحه‌یِ
+// محصول: رنگ‌ها (swatches)، سایزها (chips)، جنس و کیفیت (list)، مدل‌هایِ دوخت (cuts).
+// ---------------------------------------------------------------------------
+const SPOT_PAD = 26;
+
+function swatchLayout(panel, w, s) {
+  const names = panel.colors.filter((n) => SWATCH[n]);
+  const labeled = names.length <= 10;
+  const r = (labeled ? 30 : 21) * s;
+  const gap = 14 * s;
+  const fs = Math.round(21 * s);
+  const cellW = labeled ? Math.max(r * 2, ...names.map((n) => textWidth(n, fs))) + 8 * s : r * 2;
+  const cellH = r * 2 + (labeled ? 38 * s : 0);
+  const cols = Math.max(3, Math.floor((w - SPOT_PAD * 2 * s + gap) / (cellW + gap)));
+  const rows = Math.ceil(names.length / cols);
+  return { names, labeled, r, gap, fs, cellW, cellH, cols, rows, h: SPOT_PAD * 2 * s + rows * cellH + (rows - 1) * gap };
+}
+
+function chipRows(items, w, s, h, family) {
+  const gap = 12 * s;
+  const rows = [[]];
+  let used = 0;
+  for (const t of items) {
+    const cw = textWidth(t, Math.round(h * (family === LATIN ? 0.4 : 0.44)), family) + h * 0.9;
+    if (used && used + gap + cw > w) {
+      rows.push([]);
+      used = 0;
+    }
+    rows[rows.length - 1].push(t);
+    used += (used ? gap : 0) + cw;
+  }
+  return rows;
+}
+
+// متنِ ردیف‌ها بریده نمی‌شه: اول کوچیک‌تر، بعد دوخطی
+function rowFit(text, maxW, s, big = 32) {
+  const sizes = [big, big - 2, big - 4, big - 6, big - 8, big - 10].map((v) => Math.round(v * s));
+  const one = fit(text, { maxW, maxLines: 1, sizes });
+  if (wrap(text, one.size, maxW).length <= 1) return one;
+  return fit(text, { maxW, maxLines: 3, sizes: sizes.slice(2) });
+}
+const listW = (w, s) => w - SPOT_PAD * 2 * s - 38 * s - 16 * s;
+const listRowH = (t, w, s) => {
+  const f = rowFit(t, listW(w, s), s);
+  return Math.max(64 * s, f.lines.length * f.size * LH + 18 * s);
+};
+const cutPillW = (name, s) => textWidth(name, Math.round(52 * s * 0.44)) + 52 * s * 0.9;
+const cutRowH = (rw, w, s) => {
+  const f = rowFit(rw.desc, w - SPOT_PAD * 2 * s - cutPillW(rw.name, s) - 16 * s, s, 28);
+  return Math.max(74 * s, f.lines.length * f.size * LH + 22 * s);
+};
+
+function spotPanelHeight(panel, w, s) {
+  const pad = SPOT_PAD * 2 * s;
+  if (panel.type === "swatches") return swatchLayout(panel, w, s).h;
+  if (panel.type === "chips") return pad + chipRows(panel.items, w - pad, s, 64 * s, LATIN).length * 76 * s - 12 * s + (panel.foot ? 46 * s : 0);
+  if (panel.type === "list") return pad + panel.items.reduce((a, t) => a + listRowH(t, w, s), 0);
+  if (panel.type === "cuts") return pad + panel.rows.reduce((a, rw) => a + cutRowH(rw, w, s), 0);
+  return 0;
+}
+
+function spotPanel(panel, { x, y, w, h, s }) {
+  const pad = SPOT_PAD * s;
+  let svg =
+    `<rect x="${x - 9 * s}" y="${y + 9 * s}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.shadow}"/>` +
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.b50}" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
+  if (panel.type === "swatches") {
+    const L = swatchLayout(panel, w, s);
+    L.names.forEach((n, i) => {
+      const c = i % L.cols,
+        row = Math.floor(i / L.cols);
+      const cx = x + w - pad - L.cellW / 2 - c * (L.cellW + L.gap);
+      const cy = y + pad + row * (L.cellH + L.gap) + L.r;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${L.r}" fill="${SWATCH[n]}" stroke="${C.ink}" stroke-opacity="0.55" stroke-width="${2 * s}"/>`;
+      if (L.labeled) svg += `<text x="${cx}" y="${cy + L.r + 30 * s}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${L.fs}" fill="${C.g40}">${esc(n)}</text>`;
+    });
+  } else if (panel.type === "chips") {
+    const ch = 64 * s;
+    chipRows(panel.items, w - pad * 2, s, ch, LATIN).forEach((row, ri) => {
+      let cx = x + w - pad;
+      row.forEach((t) => {
+        const p = pill({ x: cx, y: y + pad + ri * 76 * s, h: ch, text: t, fill: C.b50, color: C.ink, stroke: C.ink, family: LATIN });
+        svg += p.svg;
+        cx -= p.w + 12 * s;
+      });
+    });
+    if (panel.foot) {
+      const f = fit(panel.foot, { maxW: w - pad * 2, maxLines: 1, sizes: [26, 24, 22, 20].map((v) => Math.round(v * s)) });
+      svg += `<text x="${x + w - pad}" y="${y + h - pad * 0.9}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${f.size}" fill="${C.g40}">${esc(f.lines[0] || "")}</text>`;
+    }
+  } else if (panel.type === "list") {
+    let ry = y + pad;
+    panel.items.forEach((t) => {
+      const rh = listRowH(t, w, s);
+      const cy = ry + rh / 2;
+      const r = 19 * s;
+      const cx = x + w - pad - r;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.red}"/><path d="M${cx - 8 * s} ${cy} l${5.5 * s} ${5.5 * s} l${10.5 * s} ${-10.5 * s}" fill="none" stroke="${C.onRed}" stroke-width="${3.6 * s}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const f = rowFit(t, listW(w, s), s);
+      const y0 = cy - ((f.lines.length - 1) * f.size * LH) / 2 + f.size * 0.36;
+      svg += textLines({ lines: f.lines, size: f.size, x: cx - r - 16 * s, y: y0, lh: LH });
+      ry += rh;
+    });
+  } else if (panel.type === "cuts") {
+    let ry = y + pad;
+    panel.rows.forEach((rw) => {
+      const rh = cutRowH(rw, w, s);
+      const p = pill({ x: x + w - pad, y: ry + rh / 2 - 26 * s, h: 52 * s, text: rw.name, fill: C.ink, color: C.b50 });
+      svg += p.svg;
+      const f = rowFit(rw.desc, w - pad * 2 - p.w - 16 * s, s, 28);
+      const y0 = ry + rh / 2 - ((f.lines.length - 1) * f.size * LH) / 2 + f.size * 0.36;
+      svg += textLines({ lines: f.lines, size: f.size, x: x + w - pad - p.w - 16 * s, y: y0, color: C.g20, lh: LH });
+      ry += rh;
+    });
+  }
+  return svg;
+}
+
+async function spotPhoto(bytes, w, h, fill = 0.5) {
+  const box = await studioDesignBox(bytes).catch(() => null);
+  if (box) return (await studioCrop(bytes, box, w, h, { fill })).buffer;
+  return sharp(bytes).flatten({ background: C.photo }).resize(w, h, { fit: "cover", position: "attention" }).jpeg({ quality: 95 }).toBuffer();
+}
+
+function titleFit(text, maxW, sizes, maxLines) {
+  for (const sz of sizes) {
+    const l = balanced(text, sz, maxW);
+    if (l) return { lines: l, size: sz };
+  }
+  return fit(text, { maxW, maxLines, sizes: [sizes[sizes.length - 1]] });
+}
+
+async function renderSpotlight({ format, photoBytes, kind, name, priceText, eyebrow, title, panel }) {
+  const { W, H } = FORMATS[format];
+  const split = W >= H; // مربعی/افقی: عکس چپ، متن راست
+  const s = (split ? H : W) / 1080;
+  const m = Math.round(26 * s),
+    R = Math.round(30 * s),
+    inset = Math.round(56 * s);
+  const icon = await asset("palas-mark.png", { height: Math.round(46 * s) });
+  const over = [];
+  const under = [];
+  let svg = "";
+  const metaRow = (right, y, maxW) => {
+    let out = "";
+    let x = right;
+    if (priceText) {
+      const p = pill({ x, y, h: Math.round(50 * s), text: priceText, fill: C.red, color: C.onRed });
+      out += p.svg;
+      x -= p.w + Math.round(16 * s);
+    }
+    const nameW = Math.max(60, x - (right - maxW));
+    const nsz = [30, 28, 26, 24, 22].map((v) => Math.round(v * s));
+    let nm = name;
+    if (wrap(nm, nsz[nsz.length - 1], nameW).length > 1) nm = nm.split("،")[0].trim();
+    const f = fit(nm, { maxW: nameW, maxLines: 1, sizes: nsz });
+    if (wrap(nm, f.size, nameW).length > 1) f.lines = [];
+    out += `<text x="${x}" y="${y + Math.round(35 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${f.size}" fill="${C.g40}">${esc(f.lines[0] || "")}</text>`;
+    return out;
+  };
+
+  if (!split) {
+    const story = format === "story";
+    const bottom = story ? H - Math.round(250 * s) : H - Math.round(44 * s);
+    const pw = W - inset * 2;
+    const ph = spotPanelHeight(panel, pw - Math.round(9 * s), s);
+    const mascot = await asset(pickMascot(title), { height: Math.round((story ? 230 : 200) * s) });
+    const tMaxW = pw - mascot.w - Math.round(12 * s);
+    const t = titleFit(title, tMaxW, (story ? [88, 80, 72, 64, 58] : [72, 66, 60, 54, 50]).map((v) => Math.round(v * s)), 2);
+    const gap = Math.round(30 * s);
+    const textH = Math.round(44 * s) + Math.round(t.lines.length * t.size * LH) + Math.round(66 * s);
+    const photoTop = m;
+    const photoH = Math.round(bottom - ph - gap - textH - gap - photoTop);
+    const fw = W - m * 2;
+    const photo = await roundedPhoto(await spotPhoto(photoBytes, fw, photoH), fw, photoH, R);
+    under.push({ input: photo, left: m, top: photoTop });
+    svg += `<rect x="${m}" y="${photoTop}" width="${fw}" height="${photoH}" rx="${R}" fill="none" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
+    const pillTop = story ? Math.round(210 * s) : m + Math.round(26 * s);
+    const brand = brandPill({ right: W - inset, top: pillTop, h: Math.round(64 * s), icon });
+    svg += brand.svg + pill({ x: inset, y: pillTop + Math.round(6 * s), h: Math.round(52 * s), text: kind || "میزطوری", fill: C.ink, color: C.b50, anchor: "left" }).svg;
+    over.push(brand.layer);
+    let y = photoTop + photoH + gap;
+    svg += `<text x="${W - inset}" y="${y + Math.round(30 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(30 * s)}" fill="${C.red}">${esc(eyebrow)}</text>`;
+    y += Math.round(44 * s);
+    svg += textLines({ lines: t.lines, size: t.size, x: W - inset, y: y + t.size, lh: LH });
+    y += Math.round(t.lines.length * t.size * LH) + Math.round(8 * s);
+    svg += metaRow(W - inset, y, tMaxW);
+    over.push({ input: mascot.buffer, left: inset - Math.round(8 * s), top: Math.round(y + 58 * s - mascot.h) });
+    svg += spotPanel(panel, { x: inset + Math.round(9 * s), y: bottom - ph, w: pw - Math.round(9 * s), h: ph, s });
+  } else {
+    const pw0 = Math.round(W * (panel.type === "list" || panel.type === "cuts" ? 0.44 : 0.5)) - m; // متنِ بلندتر → ستونِ متن پهن‌تر
+    const phH = H - m * 2;
+    const photo = await roundedPhoto(await spotPhoto(photoBytes, pw0, phH, 0.8), pw0, phH, R);
+    under.push({ input: photo, left: m, top: m });
+    svg += `<rect x="${m}" y="${m}" width="${pw0}" height="${phH}" rx="${R}" fill="none" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
+    svg += pill({ x: m + Math.round(22 * s), y: m + Math.round(22 * s), h: Math.round(52 * s), text: kind || "میزطوری", fill: C.ink, color: C.b50, anchor: "left" }).svg;
+    const colL = m + pw0 + Math.round(44 * s),
+      colR = W - inset,
+      cw = colR - colL;
+    const brand = brandPill({ right: colR, top: inset, h: Math.round(64 * s), icon });
+    svg += brand.svg;
+    over.push(brand.layer);
+    const ph = spotPanelHeight(panel, cw - Math.round(9 * s), s);
+    const panelTop = H - inset - ph;
+    let y = inset + Math.round(110 * s);
+    const room = panelTop - Math.round(30 * s) - y - Math.round(44 * s) - Math.round(66 * s);
+    let t = null;
+    for (const sz of [66, 60, 54, 48].map((v) => Math.round(v * s))) {
+      const bl = balanced(title, sz, cw);
+      if (bl && bl.length * sz * LH <= room) {
+        t = { lines: bl, size: sz };
+        break;
+      }
+    }
+    for (const sz of [66, 60, 54, 48, 44, 40].map((v) => Math.round(v * s))) {
+      if (t) break;
+      const tt = fit(title, { maxW: cw, maxLines: 3, sizes: [sz] });
+      if (tt.lines.length * sz * LH <= room || sz <= 40 * s) {
+        t = tt;
+        break;
+      }
+    }
+    svg += `<text x="${colR}" y="${y + Math.round(30 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(30 * s)}" fill="${C.red}">${esc(eyebrow)}</text>`;
+    y += Math.round(44 * s);
+    svg += textLines({ lines: t.lines, size: t.size, x: colR, y: y + t.size, lh: LH });
+    y += Math.round(t.lines.length * t.size * LH) + Math.round(8 * s);
+    svg += metaRow(colR, y, cw);
+    svg += spotPanel(panel, { x: colL + Math.round(9 * s), y: panelTop, w: cw - Math.round(9 * s), h: ph, s });
+  }
+  return compose(W, H, C.bone, under, svg, over);
+}
+
 // سازگاری با کدِ قدیمی
 function pickTemplateName() {
   return "frame";
 }
 const TEMPLATES = { frame: {} };
 
-module.exports = { setTheme, renderPost, renderDetail, renderInfo, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
+module.exports = { setTheme, renderSpotlight, renderPost, renderDetail, renderInfo, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };

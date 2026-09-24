@@ -126,4 +126,93 @@ async function customDesign() {
   };
 }
 
-module.exports = { COLLECTIONS, bestsellers, newest, collection, pool, shippingNote, customDesign, faDigits };
+// ---------------------------------------------------------------------------
+// جزئیاتِ کاملِ یک محصول برایِ پستِ «معرفیِ محصول»: رنگ‌ها، سایزها، مدل‌هایِ دوخت،
+// عکس‌هایِ گالری، و جنس/کیفیت — همه از خودِ صفحه‌یِ محصول. توضیحاتِ سایت بخش‌هایِ
+// «دربارهِ … میزطوری» دارن (یه جمله + چند خطِ کوتاه)؛ فقط همون خط‌ها استفاده می‌شن.
+// ---------------------------------------------------------------------------
+const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+function descLines(html) {
+  return String(html || "")
+    .replace(/<\/(p|li|h\d|div)>|<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&zwnj;|&#8204;/g, "‌")
+    .replace(/&amp;/g, "&")
+    .replace(/[ \t]+/g, " ")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+}
+
+function parseSections(html) {
+  const intro = [];
+  const sections = [];
+  let cur = null;
+  for (const l of descLines(html)) {
+    const m = l.match(/^درباره‌?ی?\s+(.+?)\s+میزطوری$/);
+    if (m) {
+      cur = { title: m[1].trim(), lead: null, bullets: [] };
+      sections.push(cur);
+    } else if (!cur) intro.push(l);
+    else if (!cur.lead) cur.lead = l;
+    else cur.bullets.push(l);
+  }
+  return { intro, sections };
+}
+
+// جزئیاتِ فنیِ مهمی که فقط تو پاراگرافِ اولِ هودی/پلیور اومده
+const INTRO_FACTS = [
+  [/دورس\s*۳\s*نخ/, "دورسِ ۳ نخِ ضخیم"],
+  [/کش درجه ۱ به پهنای ۵ سانتی/, "کشِ درجه‌یک ۵ سانتی تو مچ و پایینِ لباس"],
+  [/پلی‌?\s?اورتان/, "چاپِ دیجیتالِ پلی‌اورتان، ماندگار"],
+];
+
+const shortFact = (t) => {
+  let x = t.split("؛")[0].trim();
+  if (x.length > 30 && x.includes("،")) x = x.split("،")[0].trim();
+  // فقط بخشِ اصلیِ جمله (بدونِ «از کارخانه‌هایِ…»، «نسبت به…»)
+  if (x.length > 30) x = x.replace(/\s+(از کارخانه|نسبت به|و مطابق)\s.*$/, "").trim();
+  return x;
+};
+const GENERIC = /^پارچه ۱۰۰٪ پنبه$|^چاپ|^شست/;
+
+async function productDetail(id) {
+  const p = await getJson(`${API}/products/${id}`);
+  const base = compact(p);
+  if (!base || !base.kind) return null; // فقط لباس (کلاه/بگ/قاب توضیحاتِ دقیق ندارن)
+  const attr = (tax) => (p.attributes || []).find((a) => a.taxonomy === tax);
+  const colors = (attr("pa_color")?.terms || []).map((t) => t.name.trim());
+  const sizes = (attr("pa_size")?.terms || []).map((t) => t.name.trim()).filter((z) => SIZE_ORDER.includes(z));
+  sizes.sort((a, b) => SIZE_ORDER.indexOf(a) - SIZE_ORDER.indexOf(b));
+  const cutAttr = (p.attributes || []).find((a) => !a.taxonomy && /برش|مدل/.test(a.name));
+  const cutNames = cutAttr ? cutAttr.terms.map((t) => t.name.trim()) : [];
+  const { intro, sections } = parseSections(p.description);
+  const introText = intro.join(" ");
+  // بخشِ اصلیِ همین نوعِ لباس (تیشرت → کلاسیک، پلیور، هودی، نیم‌تنه)
+  const kindKey = { تیشرت: "تیشرت کلاسیک", هودی: "هودی", پلیور: "پلیور", "کراپ تاپ": "نیم‌تنه" }[base.kind] || base.kind;
+  const main = sections.find((x) => x.title.startsWith(kindKey)) || sections[0] || null;
+  const fabric = [];
+  for (const [re, txt] of INTRO_FACTS) if (re.test(introText)) fabric.push(txt);
+  for (const b of main ? main.bullets : []) if (fabric.length < 5) fabric.push(shortFact(b));
+  // مدل‌هایِ دوخت: هر مدل + خطِ متمایزِ بخشِ خودش
+  const cutKey = (c) => (c === "اسلیم" ? "تیشرت کلاسیک" : c);
+  const cuts = cutNames.map((c) => {
+    const sec = sections.find((x) => x.title.endsWith(cutKey(c)));
+    const d = sec ? sec.bullets.find((b) => !GENERIC.test(b)) || sec.lead : null;
+    return { name: c, desc: d ? shortFact(d) : null };
+  });
+  const images = [...new Set((p.images || []).map((i) => i.src))];
+  return {
+    ...base,
+    colorNames: colors,
+    sizes,
+    cuts: cuts.filter((c) => c.desc),
+    fabric: [...new Set(fabric)].filter(Boolean),
+    fabricTitle: main ? main.title : base.kind,
+    images,
+  };
+}
+
+module.exports = { COLLECTIONS, productDetail, bestsellers, newest, collection, pool, shippingNote, customDesign, faDigits };
