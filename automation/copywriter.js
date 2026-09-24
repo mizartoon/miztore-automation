@@ -37,6 +37,8 @@ const SYSTEM_PROMPT = `تو آدمِ شبکه‌های اجتماعیِ «میز
 {
   "headline": "جمله‌ی رویِ عکس: ۳ تا ۸ کلمه، طبیعی و خودمونی، دربارهِ حس یا آدمی که اینو می‌پوشه (مثلاً یه برداشتِ بامزه یا یه نیمچه‌دیالوگ)، نه توصیفِ چیزی که رویِ طرح کشیده شده. بدونِ ایموجی، بدونِ نقطه‌ی پایانی.",
   "caption": "کپشن: ۲ تا ۴ خطِ کوتاه، هر خط در یک سطرِ جدا.خطِ اول یه هوکِ کاملاً مستقل که به حس‌وحالِ همین محصول بخوره، بدونِ توصیفِ تصویرِ طرح (همون چیزیه که قبل از «بیشتر» دیده می‌شه). وسط اگه جا داشت یه جزئیاتِ واقعی از «واقعیت‌های محصول». خطِ آخر یه کارِ مشخص برای خرید، هر بار با یه جمله‌ی تازه (مثلاً لینک تو بیو، سفارش از سایت، سایزتو دایرکت بپرس). حداکثر یک ایموجی.",
+  "altLine": "جمله‌یِ اسلایدِ دوم (یه عکسِ دیگه از همین طرح، شاید رو یه لباس یا رنگِ دیگه): ۴ تا ۱۰ کلمه، کاملاً آدمیزادی، مثلِ حرفی که یه رفیق زیرِ عکس می‌گه — دربارهِ یه لحظه‌یِ پوشیدنش، یا یه برتریِ میزطوری. با headline و caption فرق داشته باشه. بدونِ ایموجی.",
+  "chartLine": "تیترِ اسلایدِ رنگ و سایز: ۳ تا ۸ کلمه، خودمونی و سرِحال، که آدم رو به انتخابِ رنگ و سایز دعوت کنه (مثلاً دربارهِ ست کردن یا اینکه سایزش هست). هر بار یه جمله‌یِ تازه، نه قالبی. بدونِ ایموجی.",
   "designBox": [ymin, xmin, ymax, xmax],
   "designVisible": true,
   "headTop": 120
@@ -49,6 +51,8 @@ const RESPONSE_SCHEMA = {
   properties: {
     headline: { type: "STRING" },
     caption: { type: "STRING" },
+    altLine: { type: "STRING" },
+    chartLine: { type: "STRING" },
     designBox: { type: "ARRAY", items: { type: "NUMBER" } },
     designVisible: { type: "BOOLEAN" },
     headTop: { type: "NUMBER" },
@@ -136,6 +140,27 @@ function validBox(b) {
 
 // جمله‌های پشتیبان — فقط وقتی هیچ مدلی جواب نداد. طرح رو توصیف نمی‌کنن (کاربر،
 // ۲۰۲۶-۰۹-۲۵: تشخیصِ ماشینیِ طرح معمولاً غلطه)؛ به‌جاش برتری‌های میزطوری.
+// جمله‌هایِ پشتیبانِ اسلایدهایِ کاروسل — چندتا که پشتِ‌سرِهم تکراری نشن
+function fallbackLines() {
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  return {
+    altLine: pick([
+      "اینم یه جورِ دیگه‌ش، ببین کدوم به دلت می‌شینه",
+      "رو هر لباسی بشینه، باز خودشه",
+      "یه عکسِ دیگه، که دلت بیشتر بره",
+      "این طرحو جای دیگه پیدا نمی‌کنی",
+      "برای کادو هم عالیه، از ما گفتن",
+    ]),
+    chartLine: pick([
+      "رنگشو خودت انتخاب کن",
+      "سایزت هست، رنگت هم هست",
+      "با کدوم رنگ ست‌ش می‌کنی؟",
+      "از لاغر تا درشت، سایزت اینجاست",
+      "قبل از سفارش یه نگاه بنداز",
+    ]),
+  };
+}
+
 function fallbackCopy({ label, facts }) {
   const heads = [
     `اینو جای دیگه پیدا نمی‌کنی`,
@@ -153,7 +178,7 @@ function fallbackCopy({ label, facts }) {
     "از هیکلِ لاغر تا سایزهای بزرگ، سایزت هست.",
     "با دیجی‌پی قسطی هم می‌شه برداشت.",
   ]);
-  return { headline, caption: `${headline}.\n${middle}\n${pick(closers)}`, designBox: null, source: "fallback" };
+  return { headline, caption: `${headline}.\n${middle}\n${pick(closers)}`, designBox: null, source: "fallback", ...fallbackLines() };
 }
 
 async function writePost(env, { photoBytes, category, label, designInfo, facts, key }) {
@@ -186,7 +211,13 @@ async function writePost(env, { photoBytes, category, label, designInfo, facts, 
         const designBox = r.designVisible ? validBox(r.designBox) : null;
         // بالایِ سرِ مدل: render.js موقعِ زوم رویِ طرح صورت رو نمی‌بُره (null = آدمی در عکس نیست)
         if (designBox && typeof r.headTop === "number") designBox.headTop = r.headTop >= 0 && r.headTop / 1000 < designBox.top ? r.headTop / 1000 : null;
-        return { headline, caption, designBox, source: model, about };
+        // جمله‌هایِ اسلایدها: اگه مشکل داشتن (ممنوع/خیلی بلند)، از جمله‌هایِ پشتیبان
+        const line = (v, max) => {
+          const t = clean(v || "").replace(/[.。!！]+$/, "").split("\n")[0];
+          return t && t.split(/\s+/).length <= max && !BANNED.some((re) => re.test(t)) ? t : null;
+        };
+        const fb = fallbackLines();
+        return { headline, caption, designBox, source: model, about, altLine: line(r.altLine, 12) || fb.altLine, chartLine: line(r.chartLine, 9) || fb.chartLine };
       } catch (err) {
         lastErr = err;
         console.error(`[copywriter] ${model} try ${attempt + 1}: ${err.message}`);
@@ -330,4 +361,37 @@ ${listText}
   );
 }
 
-module.exports = { writePost, writeCampaign };
+
+// فقط جایِ طرح رویِ یه عکسِ دیگه (اسلایدِ دومِ کاروسل) — تا موقعِ برش طرح بیرون نیفته
+async function locateDesign(env, photoBytes) {
+  if (!env.GEMINI_API_KEY) return null;
+  const small = await sharp(photoBytes).resize({ width: 768, height: 768, fit: "inside" }).jpeg({ quality: 80 }).toBuffer();
+  const body = {
+    contents: [{ role: "user", parts: [{ inline_data: { mime_type: "image/jpeg", data: small.toString("base64") } }, { text: "کادرِ دورِ کلِ طرحِ چاپ‌شده رویِ لباس (تصویر + نوشته‌هاش، نه کلِ لباس) به مقیاسِ ۰ تا ۱۰۰۰: [ymin, xmin, ymax, xmax]. اگه طرح دیده نمی‌شه visible=false." }] }],
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: { type: "OBJECT", properties: { box: { type: "ARRAY", items: { type: "NUMBER" } }, visible: { type: "BOOLEAN" } }, required: ["box", "visible"] },
+      temperature: 0,
+      maxOutputTokens: 300,
+      thinkingConfig: { thinkingLevel: "low" },
+    },
+  };
+  for (const model of MODELS.slice(0, 4)) {
+    const c = new AbortController();
+    const t = setTimeout(() => c.abort(), 30000);
+    try {
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY }, body: JSON.stringify(body), signal: c.signal });
+      const j = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(`${model} HTTP ${res.status}`);
+      const r = JSON.parse(j.candidates?.[0]?.content?.parts?.filter((x) => !x.thought).map((x) => x.text || "").join("") || "{}");
+      return r.visible ? validBox(r.box) : null;
+    } catch (err) {
+      console.error(`[locate] ${err.message}`);
+    } finally {
+      clearTimeout(t);
+    }
+  }
+  return null;
+}
+
+module.exports = { writePost, writeCampaign, locateDesign };

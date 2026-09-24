@@ -11,7 +11,7 @@ const fs = require("fs");
 const path = require("path");
 const store = require("./store.js");
 const sharp = require("sharp");
-const { renderGrid, renderVersus, renderPost, renderSpotlight, renderDetail, fetchBytes } = require("./render.js");
+const { renderGrid, renderVersus, renderPost, renderSpotlight, renderChart, fetchBytes } = require("./render.js");
 const { studioDesignBox } = require("./design-box.js");
 const { writeCampaign } = require("./copywriter.js");
 const { loadState, saveState } = require("./state.js");
@@ -195,22 +195,15 @@ async function runSpotlight(env, { dryRun, write }) {
   for (const format of ["telegram", "post", "story", "twitter"])
     outputs[format] = write(format, await renderSpotlight({ ...base, format, eyebrow: F.eyebrow(d), title: copy.headline, panel: F.panel(d) }));
 
-  // کاروسل: جلد → طرح از نزدیک → بقیه‌یِ جنبه‌ها → عکس‌هایِ دیگه‌یِ گالری
+  // کاروسل: جلد → بقیه‌یِ جنبه‌ها → عکس‌هایِ دیگه‌یِ گالری → رنگ و سایز
+  // («طرح از نزدیک» حذف شد: بزرگ‌نمایی بود و کیفیت نداشت — کاربر، ۲۰۲۶-۰۹-۲۵)
   const carousel = [outputs.post];
-  try {
-    const flat = await sharp(photoBytes).flatten({ background: "#E8E4D9" }).jpeg({ quality: 95 }).toBuffer();
-    const box = await studioDesignBox(flat);
-    const detail = box ? await renderDetail({ photoBytes: flat, designBox: box }) : null;
-    if (detail) carousel.push(write("detail", detail));
-  } catch (e) {
-    console.error("spotlight detail:", e.message);
-  }
   for (const k of foci.filter((x) => x !== focus)) {
     const G = FOCI[k];
     carousel.push(write(`slide-${k}`, await renderSpotlight({ ...base, format: "post", eyebrow: G.eyebrow(d), title: G.slide(d), panel: G.panel(d) })));
   }
   for (const [i, src] of d.images.slice(1, 3).entries()) {
-    if (carousel.length >= 7) break;
+    if (carousel.length >= 6) break;
     try {
       const b = await fetchBytes(src);
       const facts = { scope: "product", priceText: d.priceText, colors: d.colorNames };
@@ -219,6 +212,9 @@ async function runSpotlight(env, { dryRun, write }) {
       console.error("gallery:", e.message);
     }
   }
+  const catOf = { تیشرت: "tshirt", هودی: "hoodie", پلیور: "pullover" }[d.kind];
+  const chart = await renderChart({ facts: { colors: d.colorNames, sizesText: d.sizes.length ? `${d.sizes[0]} تا ${d.sizes[d.sizes.length - 1]}` : null, priceText: d.priceText }, category: catOf, title: null }).catch((e) => (console.error("chart:", e.message), null));
+  if (chart) carousel.push(write("chart", chart));
   outputs.carousel = carousel;
 
   const line = `${d.kind} «${d.shortName}»`;

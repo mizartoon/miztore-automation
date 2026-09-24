@@ -7,9 +7,10 @@
 const fs = require("fs");
 const path = require("path");
 const { pickNextImage, requeueImage, loadState, saveState } = require("./state.js");
-const { setTheme, renderPost, renderDetail, renderInfo, renderServicePost, fetchBytes } = require("./render.js");
+const { setTheme, renderPost, renderAlt, renderChart, renderServicePost, fetchBytes } = require("./render.js");
 const { buildInstagramCaption, buildTwitterCaption, CATEGORY_LABEL_FA } = require("./caption.js");
-const { writePost } = require("./copywriter.js");
+const { writePost, locateDesign } = require("./copywriter.js");
+const { studioDesignBox } = require("./design-box.js");
 const { getProductFacts } = require("./product-facts.js");
 const { getDesignInfo } = require("./design-lookup.js");
 const { pickServicePost, buildServiceCaption } = require("./services.js");
@@ -56,6 +57,27 @@ const CAT_SLUG = { tshirt: "t-shirt", hoodie: "hoodie", pullover: "sweatshirt", 
 function shortLink({ productId, category }, source) {
   if (productId) return `https://miztore.com/?p=${productId}&utm_source=${source}`;
   return `https://miztore.com/?product_cat=${CAT_SLUG[category] || "t-shirt"}&utm_source=${source}`;
+}
+
+// یه عکسِ دیگه از همین طرح: اول از کتابخونه (همون اسم، شماره یا دسته‌یِ دیگه، مثلاً
+// tshirt/x-2.jpg یا hoodie/x.jpg)، وگرنه یه عکسِ دیگه از گالریِ صفحه‌یِ محصول در سایت.
+const baseOf = (k) => String(k).split("/").pop().replace(/\.[a-z]+$/i, "").replace(/-\d+$/, "");
+async function findAltPhoto(key, facts) {
+  const st = loadState();
+  const base = baseOf(key);
+  const sibs = [];
+  for (const [cat, list] of Object.entries(st.manifests || {})) for (const k of list || []) if (k !== key && baseOf(k) === base) sibs.push({ k, cat });
+  if (sibs.length) {
+    const s = sibs[Math.floor(Math.random() * sibs.length)];
+    const bytes = await fetchBytes(`https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${s.k}`);
+    return { bytes, category: s.cat };
+  }
+  if (facts && facts.scope === "product" && facts.id) {
+    const d = await store.productDetail(facts.id);
+    const imgs = (d?.images || []).slice(1);
+    if (imgs.length) return { bytes: await fetchBytes(imgs[Math.floor(Math.random() * imgs.length)]), category: null };
+  }
+  return null;
 }
 
 function withUtm(url, source, campaign = "daily_post") {
@@ -211,12 +233,18 @@ async function main() {
     for (const format of ["telegram", "post", "story", "twitter"]) {
       outputs[format] = write(format, await renderPost({ photoBytes, headline, categoryLabel, facts, designBox, format }));
     }
-    // کاروسلِ اینستاگرام: پستِ اصلی ← طرح از نزدیک ← اطلاعاتِ خرید
+    // کاروسلِ اینستاگرام: پستِ اصلی ← یه عکسِ واقعیِ دیگه از همین طرح ← رنگ و سایز
+    // (کاربر، ۲۰۲۶-۰۹-۲۵: «طرح از نزدیک» کیفیت نداشت و اسلایدِ اطلاعات تو همه‌یِ پست‌ها تکراری بود)
     const carousel = [outputs.post];
-    const detail = await renderDetail({ photoBytes, designBox }).catch((e) => (console.error("detail:", e.message), null));
-    if (detail) carousel.push(write("detail", detail));
-    const info = await renderInfo({ facts, categoryLabel }).catch((e) => (console.error("info:", e.message), null));
-    if (info) carousel.push(write("info", info));
+    const alt = await findAltPhoto(key, facts).catch((e) => (console.error("alt:", e.message), null));
+    if (alt) {
+      const tag = alt.category && alt.category !== category ? `رو ${CATEGORY_LABEL_FA[alt.category] || "لباسِ دیگه"} هم هست` : null;
+      const altBox = (await studioDesignBox(alt.bytes).catch(() => null)) || (await locateDesign(env, alt.bytes).catch(() => null));
+      const buf = await renderAlt({ photoBytes: alt.bytes, line: copy.altLine, tag, designBox: altBox }).catch((e) => (console.error("alt render:", e.message), null));
+      if (buf) carousel.push(write("alt", buf));
+    }
+    const chart = await renderChart({ facts, category, title: copy.chartLine }).catch((e) => (console.error("chart:", e.message), null));
+    if (chart) carousel.push(write("chart", chart));
     outputs.carousel = carousel;
     const templateName = "frame";
 

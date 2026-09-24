@@ -683,6 +683,145 @@ async function renderInfo({ facts, categoryLabel, format = "post" }) {
 }
 
 // ---------------------------------------------------------------------------
+// اسلایدِ دوم: یه عکسِ واقعیِ دیگه از همین طرح (مدل/رنگ/لباسِ دیگه) با کیفیتِ کامل
+// (به‌جایِ «طرح از نزدیک» که بزرگ‌نماییِ یه تیکه از عکس بود و تار درمیومد)
+// ---------------------------------------------------------------------------
+async function renderAlt({ photoBytes, line, tag, designBox = null, format = "post" }) {
+  const { W, H } = FORMATS[format];
+  const m = 26,
+    R = 30,
+    inset = 58;
+  // جمله تو یه نوارِ جدا زیرِ عکس (نه رویِ عکس) تا هیچ‌وقت رویِ طرح نیفته
+  let t = line ? fit(line, { maxW: W - inset * 2 - 20, maxLines: 2, sizes: [50, 46, 42, 38] }) : null;
+  if (t && t.lines.length > 1) t = { size: t.size, lines: balanced(line, t.size, W - inset * 2 - 20) }; // دو خطِ هم‌اندازه، نه یه کلمه‌یِ تنها
+  const bandH = t ? Math.round(t.lines.length * t.size * LH + 70) : 0;
+  const fw = W - m * 2,
+    fh = H - m * 2 - bandH;
+  // برش حولِ جایِ طرح (Gemini/design-box) تا طرح هیچ‌وقت بیرون نیفته؛ بدونِ جایِ طرح، رفتارِ امنِ
+  // framePhoto. («attention»ِ sharp امتحان شد و رویِ کفشِ کنارِ لباس زوم کرد، پس نه.)
+  let buffer;
+  const meta = await sharp(photoBytes).metadata();
+  const r0 = meta.width / meta.height;
+  if (!designBox && r0 > fw / fh && 1 - fw / fh / r0 <= 0.35) {
+    // جایِ طرح معلوم نیست ولی عکس عریضه: طرح معمولاً وسطه، پس برشِ وسط به‌جایِ حاشیه‌یِ تار
+    buffer = await sharp(photoBytes).resize({ width: fw, height: fh, fit: "cover", position: "centre", kernel: "lanczos3" }).toBuffer();
+  } else {
+    buffer = (await framePhoto(photoBytes, fw, fh, designBox ? { ...designBox, headTop: null } : null)).buffer;
+  }
+  const mask = Buffer.from(`<svg width="${fw}" height="${fh}"><path d="M0 ${R} Q0 0 ${R} 0 H${fw - R} Q${fw} 0 ${fw} ${R} V${fh} H0 Z" fill="#fff"/></svg>`);
+  const photo = await sharp(buffer).resize(fw, fh).composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
+  const icon = await asset("palas-mark.png", { height: 46 });
+  const brand = brandPill({ right: W - inset, top: inset, h: 64, icon });
+  // نوارِ پایین پس‌زمینه داره؛ قابِ کلی فقط خط (عکس زیرِ این لایه‌ست)
+  let svg = `<path d="M${m} ${m + fh} H${W - m} V${H - m - R} Q${W - m} ${H - m} ${W - m - R} ${H - m} H${m + R} Q${m} ${H - m} ${m} ${H - m - R} Z" fill="${C.b50}"/>`;
+  svg += `<rect x="${m}" y="${m}" width="${fw}" height="${H - m * 2}" rx="${R}" fill="none" stroke="${C.ink}" stroke-width="3"/>` + brand.svg;
+  svg += `<line x1="${m}" y1="${m + fh}" x2="${W - m}" y2="${m + fh}" stroke="${C.ink}" stroke-width="3"/>`;
+  if (t) svg += textLines({ lines: t.lines, size: t.size, x: W - inset, y: m + fh + 35 + t.size * 0.95 });
+  if (tag) {
+    const p = pill({ x: W - inset, y: m + fh - 80, h: 58, text: tag, fill: LIGHT.red, color: LIGHT.onRed });
+    svg += p.svg;
+  }
+  return compose(W, H, C.bone, [{ input: photo, left: m, top: m }], svg, [brand.layer]);
+}
+
+// ---------------------------------------------------------------------------
+// اسلایدِ رنگ و سایز: همه‌یِ رنگ‌هایِ همین محصول (با اسم) + جدولِ سایزِ خودِ سایت
+// ---------------------------------------------------------------------------
+const SIZE_CHART = require(path.join(__dirname, "..", "data", "size-chart.json"));
+const faDigitsR = (n) => String(n).replace(/\d/g, (d) => "۰۱۲۳۴۵۶۷۸۹"[d]);
+
+function sizeTable(table, { x, y, w }) {
+  // x = لبه‌یِ راست؛ ستون‌ها از راست: سایز | عرضِ سینه | قد
+  const rowH = 46;
+  const cols = [0.3, 0.35, 0.35].map((f) => f * w);
+  let svg = `<text x="${x}" y="${y + 30}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="28" fill="${C.red}">${esc(table.cut)}</text>`;
+  const yy = y + 48;
+  svg += `<rect x="${x - w}" y="${yy}" width="${w}" height="${rowH * (table.rows.length + 1)}" rx="16" fill="${C.b50}" stroke="${C.ink}" stroke-width="2.5"/>`;
+  const cell = (ci, ri, text, { latin = false, size = 26, color = C.ink } = {}) => {
+    const cx = x - cols.slice(0, ci).reduce((a, b) => a + b, 0) - cols[ci] / 2;
+    return `<text x="${cx}" y="${yy + ri * rowH + rowH * 0.66}" text-anchor="middle" ${latin ? "" : 'direction="rtl"'} font-family="${latin ? LATIN : FA}" font-size="${size}" fill="${color}">${esc(text)}</text>`;
+  };
+  ["سایز", "عرض سینه", "قد"].forEach((h, ci) => (svg += cell(ci, 0, h, { color: C.g40, size: 22 })));
+  table.rows.forEach(([z, chest, len], i) => {
+    const ri = i + 1;
+    svg += `<line x1="${x - w + 14}" y1="${yy + ri * rowH}" x2="${x - 14}" y2="${yy + ri * rowH}" stroke="${C.b200}" stroke-width="2"/>`;
+    svg += cell(0, ri, z, { latin: true });
+    svg += cell(1, ri, faDigitsR(chest));
+    svg += cell(2, ri, faDigitsR(len));
+  });
+  return svg;
+}
+
+async function renderChart({ facts, category, title, format = "post" }) {
+  const { W, H } = FORMATS[format];
+  const m = 26,
+    R = 30,
+    inset = 84;
+  const icon = await asset("palas-mark.png", { height: 46 });
+  const brand = brandPill({ right: W - inset, top: inset, h: 64, icon });
+  let svg = `<rect x="${m}" y="${m}" width="${W - m * 2}" height="${H - m * 2}" rx="${R}" fill="${C.bone}" stroke="${C.ink}" stroke-width="3"/>` + brand.svg;
+  let y = 206;
+  svg += `<text x="${W - inset}" y="${y}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="28" fill="${C.red}">رنگ و سایز</text>`;
+  const t = fit(title || "رنگ و سایزتو از این‌جا انتخاب کن", { maxW: W - inset * 2, maxLines: 2, sizes: [58, 52, 46, 42] });
+  svg += textLines({ lines: t.lines, size: t.size, x: W - inset, y: y + 20 + t.size });
+  y += 20 + t.lines.length * t.size * LH + 18;
+
+  // جدولِ سایز (پایین) — اول ارتفاعش حساب می‌شه تا رنگ‌ها بقیه‌یِ جا رو بگیرن
+  const tables = SIZE_CHART[category] || [];
+  const footH = 70;
+  const cw = W - inset * 2;
+  const tw = tables.length > 1 ? (cw - 28) / 2 : cw;
+  const maxRows = Math.max(0, ...tables.map((tb) => tb.rows.length));
+  const tableH = tables.length ? 48 + 46 * (maxRows + 1) : 0;
+  const tableTop = H - m - footH - tableH - 24;
+
+  const colors = (facts?.colors || []).filter((c) => c !== "کرمی" || !(facts.colors || []).includes("کرم"));
+  if (colors.length) {
+    svg += `<text x="${W - inset}" y="${y + 30}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="28" fill="${C.g20}">${faDigitsR(colors.length)} رنگ</text>`;
+    const top = y + 54;
+    const avail = tableTop - 30 - top;
+    const cols = colors.length > 24 ? 7 : colors.length > 12 ? 6 : colors.length > 8 ? 5 : 4;
+    const rows = Math.ceil(colors.length / cols);
+    const cellW = cw / cols;
+    // رنگِ کم → دایره و اسمِ درشت‌تر؛ کلِ بلوک وسطِ جایِ خالی می‌شینه (جایِ خالیِ بزرگ نمی‌مونه)
+    const rowH = Math.min(190, avail / rows);
+    const r = Math.max(14, Math.min(52, rowH * 0.3));
+    const fs = Math.max(16, Math.min(30, rowH * 0.2));
+    const blockTop = top + Math.max(0, (avail - rows * rowH) / 2);
+    colors.forEach((name, i) => {
+      const c = i % cols,
+        row = Math.floor(i / cols);
+      const cx = W - inset - cellW * c - cellW / 2;
+      const cy = blockTop + row * rowH + r + 4;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${SWATCH[name] || C.b400}" stroke="${C.ink}" stroke-opacity="0.55" stroke-width="2"/>`;
+      // اسم کامل (مثلاً «سبز مغز پسته‌ای»)؛ اگه جا نشد کوچیک‌تر، و آخرش دو خط
+      const sizes = [fs, fs - 2, fs - 4, fs - 6].map(Math.round).filter((v) => v >= 12);
+      let f = fit(name, { maxW: cellW - 6, maxLines: 1, sizes });
+      if (f.lines.join(" ") !== name) f = fit(name, { maxW: cellW - 6, maxLines: 2, sizes });
+      f.lines.forEach((ln, li) => {
+        svg += `<text x="${cx}" y="${cy + r + f.size + 4 + li * f.size * 1.15}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${f.size}" fill="${C.g20}">${esc(ln)}</text>`;
+      });
+    });
+  }
+
+  let tx = W - inset;
+  for (const tb of tables) {
+    svg += sizeTable(tb, { x: tx, y: tableTop, w: tw });
+    tx -= tw + 28;
+  }
+  if (!tables.length && facts?.sizesText) {
+    svg += `<text x="${W - inset}" y="${tableTop + 60}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="40" fill="${C.ink}">سایز: ${esc(facts.sizesText)}</text>`;
+  }
+
+  // پایین: قیمت + پرداخت (بدونِ «·» که شبیهِ صفرِ فارسیه)
+  const foot = [tables.length ? "اندازه‌ها به سانتی‌متر" : null, facts?.priceText || null, "قسطی با دیجی‌پی"].filter(Boolean).join("، ");
+  const url = pill({ x: inset, y: H - m - footH + 6, h: 52, text: "miztore.com", fill: C.red, color: C.onRed, family: LATIN, anchor: "left" });
+  const ff = fit(foot, { maxW: W - inset * 2 - url.w - 24, maxLines: 1, sizes: [26, 24, 22, 20] });
+  svg += `<text x="${W - inset}" y="${H - m - footH + 42}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${ff.size}" fill="${C.g40}">${esc(ff.lines[0] || "")}</text>` + url.svg;
+  return compose(W, H, C.bone, [], svg, [brand.layer]);
+}
+
+// ---------------------------------------------------------------------------
 // پستِ خدمات (بدونِ عکسِ محصول)
 // ---------------------------------------------------------------------------
 // پنلِ تصویریِ هر خدمت — فضایِ پایین‌راست رو با یه چیزِ واقعی و مرتبط پر می‌کنه
@@ -1234,4 +1373,4 @@ function pickTemplateName() {
 }
 const TEMPLATES = { frame: {} };
 
-module.exports = { setTheme, renderSpotlight, renderPost, renderDetail, renderInfo, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
+module.exports = { setTheme, renderSpotlight, renderPost, renderDetail, renderInfo, renderAlt, renderChart, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
