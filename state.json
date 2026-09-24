@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 0,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2302,5 +2302,12 @@
       "برایِ برنامه‌نویس‌ها و آدمایِ پشتِ میز"
     ]
   },
-  "lastTheme": "dark"
+  "lastTheme": "dark",
+  "research": {
+    "تنهایی گل و خط": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-09-24"
+    }
+  }
 }
