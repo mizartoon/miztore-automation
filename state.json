@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 0,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2174,7 +2174,6 @@
       "pullover/خوشنویسی-ماه.jpg"
     ],
     "longsleeve": [
-      "longsleeve/فضانورد-و-زمین.jpg",
       "longsleeve/تنهایی-گل-و-خط.jpg",
       "longsleeve/چهره-خط-خطی.jpg",
       "longsleeve/تنها-اردک-در-تاک-تاک-اردک.jpg",
@@ -2300,5 +2299,6 @@
       "برایِ کسی که دلش برایِ دهه‌یِ شصت تنگه",
       "برایِ برنامه‌نویس‌ها و آدمایِ پشتِ میز"
     ]
-  }
+  },
+  "lastTheme": "dark"
 }
