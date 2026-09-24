@@ -6,7 +6,42 @@
  * اجرا پر می‌شن؛ اگه خونده نشد، اون پست کنار گذاشته می‌شه.
  */
 
+// weight: شانسِ نسبیِ انتخاب (پیش‌فرض ۱). ۲۰۲۶-۰۹-۲۵ (کاربر): اولویتِ اول «طرح‌هایِ
+// اختصاصی که فقط میزطوری داره»، بعد تنوعِ رنگ و سایز (با همه چیز ست می‌شه، از لاغر و
+// بچه تا سایزهایِ بزرگ)، و «بهترین انتخاب برایِ هدیه».
 const SERVICE_POSTS = [
+  {
+    id: "exclusive",
+    weight: 3,
+    headline: "این طرح‌ها رو جای دیگه نمی‌بینی",
+    body: "شعر، خوشنویسی، تصویرسازی و شخصیت‌هایی که فقط این‌جا رو لباس می‌شینن؛ طرح‌ها اختصاصیِ خودمونه.",
+    cta: "طرح‌ها رو ببینم",
+    panel: { type: "big", big: "فقط میزطوری", sub: "جای دیگه پیدا نمی‌شه" },
+  },
+  {
+    id: "exclusive-2",
+    weight: 3,
+    headline: "طرحی که تو خیابون تکراری نمی‌شه",
+    body: "هر طرح اختصاصیِ میزطوریه و فقط همین‌جا چاپ می‌شه. شعر، ترانه، نوستالژی، تصویرسازی؛ هر کدوم یه داستان.",
+    cta: "برم سراغِ طرح‌ها",
+    panel: { type: "list", items: ["طرح‌های اختصاصیِ میزطوری", "شعر، ترانه و خوشنویسی", "تصویرسازی و شخصیت‌ها"] },
+  },
+  {
+    id: "match",
+    weight: 2,
+    headline: "با همه چیز ست می‌شه",
+    body: "هر طرح تو کلی رنگ مختلف موجوده؛ رنگی رو بردار که با لباسای خودت جوره.",
+    cta: "رنگِ خودمو پیدا کنم",
+    panel: { type: "list", items: ["با جین و کتونی", "زیرِ کت یا اورشرت", "با شلوارِ پارچه‌ای"] },
+  },
+  {
+    id: "gift",
+    weight: 2,
+    headline: "دنبالِ هدیه‌ای که یادش بمونه؟",
+    body: "یه طرح که به سلیقه‌ش بخوره، تو رنگ و سایزی که می‌خواد. اگه سایز جور نشد، ۷ روز ضمانتِ بازگشت داری.",
+    cta: "یه هدیه پیدا کنم",
+    panel: { type: "steps", big: "بی‌تکرار", sub: "طرحی که جای دیگه پیدا نمی‌شه", steps: ["طرح", "رنگ و سایز", "کادو"] },
+  },
   {
     id: "digipay",
     headline: "قسطی؟ آره، با دیجی‌پی",
@@ -16,15 +51,17 @@ const SERVICE_POSTS = [
   },
   {
     id: "colors",
+    weight: 1.5,
     headline: "یه رنگ که بسنده نیست",
-    body: "هر طرح تو چندتا رنگ مختلف موجوده. رنگِ خودتو تو سایت پیدا کن.",
+    body: "هر طرح تو چندتا رنگ مختلف موجوده، پس با هر چی که داری ست می‌شه. رنگِ خودتو تو سایت پیدا کن.",
     cta: "رنگارو ببینم",
     panel: { type: "colors" },
   },
   {
     id: "sizes",
+    weight: 2,
     headline: "سایزت حتماً هست",
-    body: "از کوچیک تا بزرگ، سایزبندیِ کامل داریم. بهونه‌ی سایز نداشتن دیگه جواب نمی‌ده.",
+    body: "از هیکل‌های لاغر و بچه‌ها تا سایزهای بزرگ؛ برای هر اندازه‌ای یه سایزِ درست داریم.",
     cta: "سایزمو پیدا کنم",
     panel: { type: "sizes" },
   },
@@ -63,7 +100,10 @@ const SERVICE_POSTS = [
 // ctx: { shipping, custom } — مقادیرِ زنده از سایت
 function pickServicePost(ctx = {}) {
   const usable = SERVICE_POSTS.filter((p) => !p.needs || (p.needs === "shipping" ? ctx.shipping : ctx.custom));
-  const p = JSON.parse(JSON.stringify(usable[Math.floor(Math.random() * usable.length)]));
+  const forced = process.env.SERVICE_ID && usable.find((x) => x.id === process.env.SERVICE_ID); // برای تست
+  let r = Math.random() * usable.reduce((a, x) => a + (x.weight || 1), 0);
+  const chosen = forced || usable.find((x) => (r -= x.weight || 1) < 0) || usable[0];
+  const p = JSON.parse(JSON.stringify(chosen));
   const fill = (s) =>
     String(s)
       .replace("{shipping}", ctx.shipping || "")

@@ -25,6 +25,10 @@ const GIFT_THEMES = [
   "برایِ کسی که شوخ‌طبعه و جدی نمی‌گیره",
   "برایِ عاشقِ خوشنویسی و خطِ فارسی",
   "برایِ کسی که هنر و نقاشی دوست داره",
+  "برایِ تولدِ رفیقی که همه چی داره",
+  "برایِ بابا و مامانی که هنوز جوونن",
+  "برایِ زوج‌هایی که دوست دارن ست بپوشن",
+  "برایِ یه همکار که می‌خوای غافلگیرش کنی",
 ];
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -45,7 +49,10 @@ function pickFresh(kind, options) {
 const FALLBACK = {
   bestsellers: () => ({ headline: "این روزها همه اینا رو برمی‌دارن", caption: "پرفروش‌ترین طرح‌هایِ این روزهایِ میزطوری.\nکدومش به تو میاد؟\nلینکِ همه‌شون تو سایته." }),
   collection: (name) => ({ headline: `یه سر به کالکشنِ ${name} بزن`, caption: `چند تا از طرح‌هایِ کالکشنِ ${name}.\nبقیه‌ش هم تو سایته، با کلی رنگ و سایز.` }),
-  gift: (theme) => ({ headline: `هدیه ${theme}`, caption: `چند تا ایده‌یِ هدیه ${theme}.\nقسطی هم می‌شه برداشت؛ لینکش تو سایته.` }),
+  gift: (theme) => ({
+    headline: `هدیه ${theme}`,
+    caption: `چند تا ایده‌یِ هدیه ${theme}.\nاین طرح‌ها فقط تو میزطوری پیدا می‌شن، پس هدیه‌ت تکراری درنمیاد.\nرنگ و سایزشو خودت انتخاب کن؛ جور نشد، ۷ روز ضمانتِ بازگشت داره.\nلینکش تو سایته.`,
+  }),
   versus: () => ({ headline: "کدوم رو می‌پوشی؟", caption: "الف یا ب؟ جوابتو کامنت کن.\nلینکِ هر دو تو سایته." }),
 };
 
@@ -114,7 +121,7 @@ const FOCI = {
     panel: (d) => ({ type: "swatches", colors: d.colorNames }),
     facts: (d) => `رنگ‌ها (${fa(d.colorNames.length)} تا): ${d.colorNames.join("، ")}`,
     fallback: (d) => `${fa(d.colorNames.length)} رنگ، یه ${d.kind}`,
-    short: (d) => `${fa(d.colorNames.length)} رنگ داره، از ${d.colorNames.slice(0, 3).join(" و ")} تا کلی رنگِ دیگه.`,
+    short: (d) => `${fa(d.colorNames.length)} رنگ داره، از ${d.colorNames.slice(0, 3).join(" و ")} تا کلی رنگِ دیگه؛ با هر چی بپوشی ست می‌شه.`,
   },
   sizes: {
     ok: (d) => d.sizes.length >= 3,
@@ -123,7 +130,7 @@ const FOCI = {
     panel: (d) => ({ type: "chips", items: d.sizes, foot: "جدولِ سایزِ دقیق تو صفحه‌یِ محصوله" }),
     facts: (d) => `سایزها: ${d.sizes.join("، ")}`,
     fallback: () => "سایزت حتماً هست",
-    short: (d) => `سایزش از ${d.sizes[0]} تا ${d.sizes[d.sizes.length - 1]} هست.`,
+    short: (d) => `سایزش از ${d.sizes[0]} تا ${d.sizes[d.sizes.length - 1]} هست؛ از هیکلِ لاغر تا سایزهای بزرگ.`,
   },
   fabric: {
     ok: (d) => d.fabric.length >= 2,
@@ -144,7 +151,7 @@ const FOCI = {
     short: (d) => `مدل‌ها: ${d.cuts.map((c) => c.name).join("، ")}.`,
   },
 };
-const FOCUS_TEXT = { colors: "تنوعِ رنگ", sizes: "سایزبندی", fabric: "جنس و کیفیتِ پارچه و چاپ", cuts: "مدل‌هایِ دوخت (برش)" };
+const FOCUS_TEXT = { colors: "تنوعِ رنگ (یعنی با همه چیز ست می‌شه)", sizes: "سایزبندی (برای هر هیکلی، از لاغر تا سایزهای بزرگ)", fabric: "جنس و کیفیتِ پارچه و چاپ", cuts: "مدل‌هایِ دوخت (برش)" };
 
 async function pickSpotlight(dryRun) {
   const st = loadState();
@@ -160,7 +167,11 @@ async function pickSpotlight(dryRun) {
     const foci = Object.keys(FOCI).filter((k) => FOCI[k].ok(d));
     if (foci.length < 2) continue;
     const fresh = foci.filter((k) => k !== rec.lastFocus);
-    const focus = pick(fresh.length ? fresh : foci);
+    // رنگ و سایز بیشتر (کاربر، ۲۰۲۶-۰۹-۲۵)
+    const W = { colors: 3, sizes: 3, fabric: 1, cuts: 1 };
+    const cand = fresh.length ? fresh : foci;
+    let r = Math.random() * cand.reduce((a, k) => a + (W[k] || 1), 0);
+    const focus = cand.find((k) => (r -= W[k] || 1) < 0) || cand[0];
     if (!dryRun) {
       st.spotlight = { recent: [d.id, ...rec.recent].slice(0, 30), lastFocus: focus };
       saveState(st);
