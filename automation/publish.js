@@ -20,6 +20,17 @@ const { sendPhotoFile, sendMediaGroupFiles, sendMessage, notifyAdmin } = require
 const escHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const copyBlock = (s) => `<pre>${escHtml(s)}</pre>`;
 
+// ریشه‌یِ طرح که متن بر اساسش نوشته شده — تا ادمین ببینه و اگه غلط بود اصلاح کنه
+// (فقط پست‌هایِ محصول فیلدِ about دارن؛ خدمات/گروهی نه)
+function aboutLine(lastRun) {
+  if (!("about" in lastRun)) return "";
+  const a = lastRun.about;
+  if (!a) return "\n\n🔎 <b>تحقیقِ طرح:</b> ریشه‌ش پیدا نشد؛ تو متن بهش اشاره نشده.";
+  if (a.from === "note") return `\n\n🔎 <b>دربارهِ طرح (یادداشتِ خودت):</b> ${escHtml(a.text)}`;
+  const src = (a.sources || []).map((s) => `<a href="${escHtml(s.uri).replace(/"/g, "%22")}">${escHtml(s.title || "منبع")}</a>`).join("، ");
+  return `\n\n🔎 <b>تحقیقِ طرح (وب):</b> ${escHtml(a.text)}${src ? `\nمنبع: ${src}` : ""}\nاگه غلطه بگو تا اصلاحش کنم.`;
+}
+
 function localPath(relPath) {
   return path.join(__dirname, "..", relPath);
 }
@@ -49,7 +60,7 @@ async function sendInstagramPackage(env, lastRun) {
   await sendMessage(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
-    `📝 <b>کپشنِ اینستاگرام</b> — لمس کن تا کپی شه:\n${copyBlock(lastRun.instagramCaption)}\n🔗 لینکِ بیو/استوری: <code>${escHtml(lastRun.buyUrlInstagram)}</code>`
+    `📝 <b>کپشنِ اینستاگرام</b> — لمس کن تا کپی شه:\n${copyBlock(lastRun.instagramCaption)}\n🔗 لینکِ بیو/استوری: <code>${escHtml(lastRun.buyUrlInstagram)}</code>${aboutLine(lastRun)}`
   );
 }
 

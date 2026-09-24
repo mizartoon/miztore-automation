@@ -241,6 +241,7 @@ async function main() {
           templateName,
           outputs, // { telegram, post, story, twitter, carousel[] } → مسیرِ نسبیِ هر فایل
           copySource: copy.source,
+          about: copy.about || null, // ریشه‌یِ طرح: یادداشتِ صاحبِ برند یا تحقیقِ وب (برایِ بازبینیِ ادمین)
           headline,
           caption,
           instagramCaption,

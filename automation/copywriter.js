@@ -16,6 +16,7 @@
 
 const sharp = require("sharp");
 const { findDesignNote } = require("./design-notes.js");
+const { researchDesign, cachedResearch } = require("./research.js");
 
 const MODELS = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"];
 
@@ -161,7 +162,12 @@ async function writePost(env, { photoBytes, category, label, designInfo, facts, 
   const small = await sharp(photoBytes).resize({ width: 1024, height: 1024, fit: "inside" }).jpeg({ quality: 85 }).toBuffer();
   const hints = [];
   const note = findDesignNote(key, facts?.name);
+  // بدونِ یادداشت: اول دربارهِ نوشته/موضوعِ طرح تو وب تحقیق می‌شه (research.js)
+  const research = note ? null : await researchDesign(env, { key, siteName: facts?.name, visibleText: designInfo?.visibleText }).catch(() => null);
   if (note) hints.push(`یادداشتِ صاحبِ برند دربارهِ این طرح (مطمئن؛ می‌تونی دقیقاً همینو بگی یا باهاش بازی کنی، ولی چیزی بهش اضافه نکن): ${note}`);
+  else if (research?.found) hints.push(`نتیجه‌یِ تحقیق دربارهِ این طرح (از جستجویِ وب، با منبع): ${research.summary} — می‌تونی همینو بگی یا باهاش بازی کنی، ولی چیزی بهش اضافه نکن.`);
+  else hints.push("ریشه‌یِ این طرح (شاعر/خواننده/فیلم/…) معلوم نیست؛ اصلاً بهش اشاره نکن و حدس نزن.");
+  const about = note ? { from: "note", text: note } : research?.found ? { from: "research", text: research.summary, sources: research.sources } : null;
   // visualSubject (تشخیصِ ماشینیِ تصویر) عمداً فرستاده نمی‌شه: معمولاً غلطه (مثلاً روبندِ زنانِ جنوب → «کلاهخود»)
   if (designInfo?.visibleText) hints.push(`متنِ رویِ طرح (خوانشِ ماشینی، ممکنه غلط باشه؛ فقط برای فهمیدنِ حس‌وحال، نقلش نکن): «${designInfo.visibleText}»`);
   const userText = [`دسته: ${label}`, ...hints, describeFacts(facts, label), "برای همین عکس بنویس."].join("\n");
@@ -180,7 +186,7 @@ async function writePost(env, { photoBytes, category, label, designInfo, facts, 
         const designBox = r.designVisible ? validBox(r.designBox) : null;
         // بالایِ سرِ مدل: render.js موقعِ زوم رویِ طرح صورت رو نمی‌بُره (null = آدمی در عکس نیست)
         if (designBox && typeof r.headTop === "number") designBox.headTop = r.headTop >= 0 && r.headTop / 1000 < designBox.top ? r.headTop / 1000 : null;
-        return { headline, caption, designBox, source: model };
+        return { headline, caption, designBox, source: model, about };
       } catch (err) {
         lastErr = err;
         console.error(`[copywriter] ${model} try ${attempt + 1}: ${err.message}`);
@@ -191,7 +197,7 @@ async function writePost(env, { photoBytes, category, label, designInfo, facts, 
     }
   }
   console.error("[copywriter] همه‌ی مدل‌ها شکست خوردن، متنِ پشتیبان:", lastErr && lastErr.message);
-  return fallbackCopy({ designInfo, label, facts });
+  return { ...fallbackCopy({ designInfo, label, facts }), about };
 }
 
 
@@ -268,12 +274,15 @@ async function askCampaign(env, userText, maxHeadWords) {
 
 const itemLine = (it) => {
   const note = findDesignNote(it.name, it.shortName);
-  return `${it.id} | ${it.kind || "محصول"} «${it.shortName}» | ${it.priceText || ""}${it.collections?.length ? ` | ${it.collections.join("،")}` : ""}${note ? ` | یادداشتِ صاحبِ برند (مطمئن): ${note}` : ""}`;
+  const res = note ? null : cachedResearch({ siteName: it.name }); // پست‌هایِ گروهی فقط از کشِ تحقیق (بدونِ جستجویِ تازه)
+  const about = note ? ` | یادداشتِ صاحبِ برند (مطمئن): ${note}` : res?.found ? ` | تحقیق (با منبع): ${res.summary}` : "";
+  return `${it.id} | ${it.kind || "محصول"} «${it.shortName}» | ${it.priceText || ""}${it.collections?.length ? ` | ${it.collections.join("،")}` : ""}${about}`;
 };
 
 async function writeCampaign(env, { type, items, theme, collectionName, pool, spot }) {
   const listText = (items || []).map(itemLine).join("\n");
   if (type === "spotlight") {
+    if (!findDesignNote(spot.item.name, spot.item.shortName)) await researchDesign(env, { siteName: spot.item.name }).catch(() => null); // کش می‌شه → itemLine
     return askCampaign(
       env,
       `پستِ «معرفیِ محصول» دربارهِ یه جنبه‌یِ واقعیِ یک محصول.
