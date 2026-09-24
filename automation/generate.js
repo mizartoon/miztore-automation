@@ -6,8 +6,8 @@
 
 const fs = require("fs");
 const path = require("path");
-const { pickNextImage, requeueImage } = require("./state.js");
-const { renderPost, renderDetail, renderInfo, renderServicePost, fetchBytes } = require("./render.js");
+const { pickNextImage, requeueImage, loadState, saveState } = require("./state.js");
+const { setTheme, renderPost, renderDetail, renderInfo, renderServicePost, fetchBytes } = require("./render.js");
 const { buildInstagramCaption, buildTwitterCaption, CATEGORY_LABEL_FA } = require("./caption.js");
 const { writePost } = require("./copywriter.js");
 const { getProductFacts } = require("./product-facts.js");
@@ -135,9 +135,25 @@ async function runCampaignPost(env, dryRun, type) {
   console.log(`✅ پستِ ${type} رندر شد${dryRun ? " (dry-run)" : ""}: ${r.headline} (${r.copySource})`);
 }
 
+// حالتِ تیره برایِ تنوعِ فید: بعد از هر پستِ روشن ۴۰٪ شانس، هیچ‌وقت دو تیره پشتِ‌سرِهم
+// (در کل حدودِ یک پست از هر سه تا). THEME=light|dark برایِ تست.
+function pickTheme(forced, dryRun) {
+  if (forced === "light" || forced === "dark") return forced;
+  const st = loadState();
+  const theme = st.lastTheme === "dark" ? "light" : Math.random() < 0.4 ? "dark" : "light";
+  if (!dryRun) {
+    st.lastTheme = theme;
+    saveState(st);
+  }
+  return theme;
+}
+
 async function main() {
   const env = process.env;
   const dryRun = env.DRY_RUN === "true";
+  const theme = pickTheme(env.THEME, dryRun);
+  setTheme(theme);
+  console.log(`🎨 تم: ${theme === "dark" ? "تیره" : "روشن"}`);
 
   const type = pickContentType(env.CONTENT_TYPE);
   console.log(`🎲 نوعِ محتوایِ امروز: ${type}`);

@@ -25,7 +25,11 @@ const { Resvg } = require("@resvg/resvg-js");
 const path = require("path");
 const { studioDesignBox } = require("./design-box.js");
 
-const C = {
+// توکن‌ها بر اساسِ نقش: ink = رنگِ متن/خط، bone = بوم، b50 = سطحِ کارت. حالتِ تیره همین
+// نقش‌ها رو برعکس می‌کنه. photo (پس‌زمینه‌یِ عکس‌هایِ استودیویی) و onRed همیشه ثابتن تا
+// لباسِ مشکی رویِ بومِ مشکی گم نشه.
+const LIGHT = {
+  dark: false,
   ink: "#0B0B0B",
   bone: "#F4F1EA",
   b50: "#FBFAF6",
@@ -34,7 +38,29 @@ const C = {
   red: "#C90000",
   g20: "#3C3C3C",
   g40: "#6D6D6D",
+  shadow: "#0B0B0B",
+  photo: "#E8E4D9",
+  onRed: "#FBFAF6",
 };
+const DARK = {
+  dark: true,
+  ink: "#F4F1EA",
+  bone: "#0E0E0E",
+  b50: "#1A1A1A",
+  b200: "#2B2B2B",
+  b400: "#4A4A4A",
+  red: "#E0201B",
+  g20: "#D6D1C6",
+  g40: "#A39E93",
+  shadow: "#C90000", // سایه‌یِ سختِ قرمز به‌جایِ مشکی
+  photo: "#E8E4D9",
+  onRed: "#FBFAF6",
+};
+const C = { ...LIGHT };
+// یک تم برایِ کلِ اجرا (هر اجرا یک پست می‌سازه)
+function setTheme(name) {
+  Object.assign(C, name === "dark" ? DARK : LIGHT);
+}
 
 const FONT_DIR = path.join(__dirname, "..", "fonts");
 const FONT_FILES = ["Tabliq-Bold.ttf", "Tlesk-Regular.ttf", "Tlesk-Medium.ttf", "Tlesk-Bold.ttf"].map((f) => path.join(FONT_DIR, f));
@@ -144,9 +170,20 @@ function textLines({ lines, size, x, y, color = C.ink, anchor = "end", lh = LH, 
 }
 
 async function asset(file, { height, width }) {
-  const buf = await sharp(path.join(ASSET_DIR, file)).resize({ height, width }).png().toBuffer();
+  let buf = await sharp(path.join(ASSET_DIR, file)).resize({ height, width }).png().toBuffer();
+  // حالتِ تیره: خطِ دورِ ماسکوت‌ها مشکیه و رویِ بومِ تیره گم می‌شه → حاشیه‌یِ روشنِ «برچسبی»
+  if (C.dark && /-full.png$/.test(file)) buf = await stickerOutline(buf, Math.max(4, Math.round((height || width) * 0.02)));
   const m = await sharp(buf).metadata();
   return { buffer: buf, w: m.width, h: m.height };
+}
+
+async function stickerOutline(buf, r) {
+  const clear = { r: 0, g: 0, b: 0, alpha: 0 };
+  const padded = await sharp(buf).extend({ top: r, bottom: r, left: r, right: r, background: clear }).png().toBuffer();
+  const { width, height } = await sharp(padded).metadata();
+  const mask = await sharp(padded).extractChannel(3).blur(Math.max(0.3, r * 0.55)).threshold(6).png().toBuffer();
+  const halo = await sharp({ create: { width, height, channels: 3, background: LIGHT.bone } }).joinChannel(mask).png().toBuffer();
+  return sharp(halo).composite([{ input: padded }]).png().toBuffer();
 }
 
 async function roundedPhoto(buffer, w, h, r) {
@@ -165,7 +202,7 @@ async function framePhoto(photoBytes, w, h, box, reserveBottom = 0, studio = fal
     // و زوم رویِ خودِ طرح، تا طرح دیده بشه نه فقط شکلِ لباس. کارتِ متنِ پایین رویِ طرح نمی‌افته.
     const sbox = await studioDesignBox(photoBytes).catch(() => null);
     if (sbox) return studioCrop(photoBytes, sbox, w, h, { fill: 0.52, reserveBottom });
-    photoBytes = await sharp(photoBytes).flatten({ background: C.b200 }).jpeg({ quality: 95 }).toBuffer();
+    photoBytes = await sharp(photoBytes).flatten({ background: C.photo }).jpeg({ quality: 95 }).toBuffer();
     const { data } = await sharp(photoBytes).resize(8, 8, { fit: "fill" }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
     const bg = { r: data[0], g: data[1], b: data[2] };
     const boxH = Math.round(h * (1 - reserveBottom) * 0.94);
@@ -249,7 +286,7 @@ async function framePhoto(photoBytes, w, h, box, reserveBottom = 0, studio = fal
 // برش حولِ طرح برایِ عکس‌هایِ استودیویی؛ بیرونِ عکس با bone-200 پر می‌شه (هم‌رنگِ پس‌زمینه)
 // fill: سهمِ طرح از عرضِ قاب. طرح تو ناحیه‌یِ بالایِ reserveBottom و کمی بالاتر از وسطش می‌شینه.
 async function studioCrop(bytes, box, w, h, { fill = 0.6, reserveBottom = 0 } = {}) {
-  const flat = await sharp(bytes).flatten({ background: C.b200 }).png().toBuffer();
+  const flat = await sharp(bytes).flatten({ background: C.photo }).png().toBuffer();
   const { width: sw, height: sh } = await sharp(flat).metadata();
   const a = w / h;
   const bl = box.left * sw,
@@ -263,7 +300,7 @@ async function studioCrop(bytes, box, w, h, { fill = 0.6, reserveBottom = 0 } = 
   const left = Math.round((bl + br) / 2 - winW / 2);
   const top = Math.round((bt + bb) / 2 - winH * usable * 0.5);
   const pad = Math.ceil(Math.max(0, -left, -top, left + winW - sw, top + winH - sh)) + 2;
-  const ext = await sharp(flat).extend({ top: pad, bottom: pad, left: pad, right: pad, background: C.b200 }).png().toBuffer();
+  const ext = await sharp(flat).extend({ top: pad, bottom: pad, left: pad, right: pad, background: C.photo }).png().toBuffer();
   const buffer = await sharp(ext)
     .extract({ left: left + pad, top: top + pad, width: Math.round(winW), height: Math.round(winH) })
     .resize(w, h, { kernel: "lanczos3" })
@@ -293,8 +330,8 @@ function brandPill({ right, top, h, icon }) {
   const w = Math.round(padX * 2 + tw + iconW + gap);
   const x = right - w;
   const svg =
-    `<rect x="${x}" y="${top}" width="${w}" height="${h}" rx="${h / 2}" fill="${C.b50}" stroke="${C.ink}" stroke-width="${Math.max(2, h * 0.045)}"/>` +
-    `<text x="${right - padX - iconW - gap}" y="${top + h * 0.66}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${fs}" fill="${C.ink}">میزطوری</text>`;
+    `<rect x="${x}" y="${top}" width="${w}" height="${h}" rx="${h / 2}" fill="${LIGHT.b50}" stroke="${C.dark ? LIGHT.b50 : LIGHT.ink}" stroke-width="${Math.max(2, h * 0.045)}"/>` +
+    `<text x="${right - padX - iconW - gap}" y="${top + h * 0.66}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${fs}" fill="${LIGHT.ink}">میزطوری</text>`;
   const layer = icon ? { input: icon.buffer, left: Math.round(right - padX - iconW), top: Math.round(top + (h - icon.h) / 2) } : null;
   return { svg, layer, w };
 }
@@ -369,7 +406,7 @@ function textCard({ headline, chips, maxW, s, sizes, anchorRight, anchorY, place
   const sh = Math.round(9 * s);
   const baseline0 = y + pad * 0.85 + size * 0.95;
   let svg =
-    `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${20 * s}" fill="${C.ink}"/>` +
+    `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${20 * s}" fill="${C.shadow}"/>` +
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${20 * s}" fill="${C.b50}" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
     textLines({ lines, size, x: x + w - pad, y: baseline0, lh: LH });
   let cx, cy;
@@ -392,10 +429,10 @@ function textCard({ headline, chips, maxW, s, sizes, anchorRight, anchorY, place
 function factChips(facts) {
   const chips = [];
   if (facts && facts.scope === "product") {
-    if (facts.priceText) chips.push({ text: facts.priceText, fill: C.red, color: C.b50 });
+    if (facts.priceText) chips.push({ text: facts.priceText, fill: C.red, color: C.onRed });
     if (facts.colors?.length > 1) chips.push({ text: `${faDigits(facts.colors.length)} رنگ`, fill: C.b50, color: C.ink, stroke: C.ink });
   }
-  if (!chips.length) chips.push({ text: "miztore.com", fill: C.red, color: C.b50, family: LATIN });
+  if (!chips.length) chips.push({ text: "miztore.com", fill: C.red, color: C.onRed, family: LATIN });
   return chips;
 }
 
@@ -650,7 +687,7 @@ async function renderInfo({ facts, categoryLabel, format = "post" }) {
   }
 
   const mascot = await asset(pickMascot(title), { height: 330 });
-  const url = pill({ x: W - inset, y: H - inset - 64, h: 64, text: "miztore.com", fill: C.red, color: C.b50, family: LATIN });
+  const url = pill({ x: W - inset, y: H - inset - 64, h: 64, text: "miztore.com", fill: C.red, color: C.onRed, family: LATIN });
   svg += url.svg;
   return compose(W, H, C.bone, [], svg, [brand.layer, { input: mascot.buffer, left: inset - 10, top: H - m - mascot.h - 6 }]);
 }
@@ -675,7 +712,7 @@ function servicePanelHeight(panel, w, s) {
 
 function servicePanel(panel, { x, y, w, h, s }) {
   const id = panel.type;
-  let svg = `<rect x="${x - 9 * s}" y="${y + 9 * s}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.ink}"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.bone}" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
+  let svg = `<rect x="${x - 9 * s}" y="${y + 9 * s}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.shadow}"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.bone}" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
   const pad = 28 * s;
   if (id === "colors") {
     const names = Object.keys(SWATCH).filter((n) => n !== "کرمی");
@@ -720,7 +757,7 @@ function servicePanel(panel, { x, y, w, h, s }) {
     let cx = x + w - pad;
     const cy = y + h - pad - chipH;
     steps.forEach((t, i) => {
-      const p = pill({ x: cx, y: cy, h: chipH, text: t, fill: i === last ? C.red : C.b50, color: i === last ? C.b50 : C.ink, stroke: i === last ? null : C.ink });
+      const p = pill({ x: cx, y: cy, h: chipH, text: t, fill: i === last ? C.red : C.b50, color: i === last ? C.onRed : C.ink, stroke: i === last ? null : C.ink });
       svg += p.svg;
       cx -= p.w;
       if (i < last) {
@@ -783,7 +820,7 @@ async function renderServicePost({ format, headline, body, cta, id, panel }) {
   y += hl.length * hs * LH + Math.round(20 * s);
   svg += textLines({ lines: b.lines, size: b.size, x: W - inset, y: y + b.size, color: C.g20, lh: LH_BODY });
   y += b.lines.length * b.size * LH_BODY + Math.round(30 * s);
-  const c = pill({ x: W - inset, y, h: Math.round(72 * s), text: cta, fill: C.red, color: C.b50 });
+  const c = pill({ x: W - inset, y, h: Math.round(72 * s), text: cta, fill: C.red, color: C.onRed });
   svg += c.svg;
   svg += `<text x="${W - inset - c.w - Math.round(24 * s)}" y="${y + Math.round(47 * s)}" text-anchor="end" font-family="${LATIN}" font-size="${Math.round(28 * s)}" fill="${C.ink}">miztore.com</text>`;
   y += Math.round(72 * s) + Math.round(50 * s);
@@ -819,7 +856,7 @@ async function productImage(url, w, h) {
   // عکس‌هایِ محصولِ سایت استودیویی‌ان؛ زوم رویِ طرح (سینه‌یِ لباس) تا طرح تو کارت دیده بشه
   const box = await studioDesignBox(bytes).catch(() => null);
   if (box) return (await studioCrop(bytes, box, w, h, { fill: 0.74 })).buffer;
-  return sharp(bytes).resize(w, h, { fit: "contain", background: C.b200 }).flatten({ background: C.b200 }).png().toBuffer();
+  return sharp(bytes).resize(w, h, { fit: "contain", background: C.photo }).flatten({ background: C.photo }).png().toBuffer();
 }
 
 // کارت دو تکه SVG داره: under (سایه + بدنه، زیرِ عکس) و over (خط/متن، رویِ عکس)
@@ -839,7 +876,7 @@ async function productCard({ item, x, y, w, h, s, badge }) {
   const photo = await sharp(img).composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
   const sh = Math.round(8 * s);
   const under =
-    `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${r}" fill="${C.ink}"/>` +
+    `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${r}" fill="${C.shadow}"/>` +
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C.b50}"/>`;
   let over =
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="none" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
@@ -915,7 +952,7 @@ async function renderGrid({ format, eyebrow, title, items, badges }) {
   // مربعی (تلگرام) و افقی: یک ردیفِ چهارتایی؛ ۲×۲ اون‌جا عکسِ لباس رو خیلی کوچیک می‌کرد
   const cols = horizontal || W === H ? Math.min(4, items.length) : 2;
   const grid = await gridLayout({ s, items, top: y, bottom: bottomSafe - footerH, left: inset + Math.round(8 * s), right: W - inset, cols, badges });
-  const url = pill({ x: W - inset, y: bottomSafe - Math.round(60 * s), h: Math.round(60 * s), text: "miztore.com", fill: C.red, color: C.b50, family: LATIN });
+  const url = pill({ x: W - inset, y: bottomSafe - Math.round(60 * s), h: Math.round(60 * s), text: "miztore.com", fill: C.red, color: C.onRed, family: LATIN });
   const note = `<text x="${W - inset - url.w - Math.round(20 * s)}" y="${bottomSafe - Math.round(20 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(26 * s)}" fill="${C.g40}">قسطی با دیجی‌پی · ۷ روز ضمانتِ بازگشت</text>`;
   const over = [brand.layer];
   if (mascot) over.push({ input: mascot.buffer, left: inset - Math.round(6 * s), top: Math.round(topY + 8 * s) });
@@ -943,7 +980,7 @@ async function renderVersus({ format, question, a, b }) {
   const r = Math.round(54 * s);
   const cx = Math.round(W / 2 + 4 * s);
   const cy = Math.round(y + (bottomSafe - y) * 0.36);
-  svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.red}" stroke="${C.ink}" stroke-width="${4 * s}"/><text x="${cx}" y="${cy + r * 0.32}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${Math.round(44 * s)}" fill="${C.b50}">یا</text>`;
+  svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.red}" stroke="${C.ink}" stroke-width="${4 * s}"/><text x="${cx}" y="${cy + r * 0.32}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${Math.round(44 * s)}" fill="${C.onRed}">یا</text>`;
   svg += `<text x="${W / 2}" y="${bottomSafe + Math.round(66 * s)}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${Math.round(32 * s)}" fill="${C.g40}">${format === "story" ? "تو نظرسنجیِ پایین جواب بده" : "جوابتو کامنت کن: الف یا ب؟"}</text>`;
   return compose(W, H, C.bone, [svgLayer(W, H, grid.under), ...grid.layers], brand.svg + grid.over + svg, [brand.layer]);
 }
@@ -954,4 +991,4 @@ function pickTemplateName() {
 }
 const TEMPLATES = { frame: {} };
 
-module.exports = { renderPost, renderDetail, renderInfo, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
+module.exports = { setTheme, renderPost, renderDetail, renderInfo, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };

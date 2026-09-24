@@ -14,6 +14,11 @@ on:
         type: choice
         default: ""
         options: ["", "product", "service", "bestsellers", "collection", "gift", "versus"]
+      theme:
+        description: "تم (خالی = خودکار، حدودِ یک‌سوم تیره)"
+        type: choice
+        default: ""
+        options: ["", "light", "dark"]
 
 permissions:
   contents: write
@@ -40,6 +45,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}
           CONTENT_TYPE: ${{ inputs.content_type }}
+          THEME: ${{ inputs.theme }}
         run: node automation/generate.js
 
       - name: Commit output + state
