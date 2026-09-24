@@ -552,8 +552,10 @@ async function renderInfo({ facts, categoryLabel, format = "post" }) {
   rows.push({ icon: "card", k: "پرداخت", v: "قسطی با دیجی‌پی" });
   rows.push({ icon: "shield", k: "خیالت راحت", v: "۷ روز ضمانتِ بازگشت" });
 
-  const rowH = 118;
-  for (const r of rows.slice(0, 6)) {
+  // ردیف‌ها فضایِ بینِ عنوان و پایین (بالایِ ماسکوت/دکمه) رو یکنواخت پر می‌کنن
+  const shown = rows.slice(0, 6);
+  const rowH = Math.round(Math.min(150, Math.max(112, (H - 300 - y) / shown.length)));
+  for (const r of shown) {
     const cx = W - inset - 34;
     const cy = y + 34;
     svg += `<line x1="${inset}" y1="${y - 14}" x2="${W - inset}" y2="${y - 14}" stroke="${C.b200}" stroke-width="2"/>`;
@@ -575,7 +577,7 @@ async function renderInfo({ facts, categoryLabel, format = "post" }) {
     y += rowH;
   }
 
-  const mascot = await asset("palas-full.png", { height: 260 });
+  const mascot = await asset(pickMascot(title), { height: 330 });
   const url = pill({ x: W - inset, y: H - inset - 64, h: 64, text: "miztore.com", fill: C.red, color: C.b50, family: LATIN });
   svg += url.svg;
   return compose(W, H, C.bone, [], svg, [brand.layer, { input: mascot.buffer, left: inset - 10, top: H - m - mascot.h - 6 }]);
