@@ -6847,5 +6847,3452 @@
     "matchedProductName": "به تو چه",
     "matchScore": 1.3333333333333333,
     "fallbackSlug": null
+  },
+  "hoodie/آنتی-ویروس-پادشاه.png": {
+    "visibleText": "AntiVirus",
+    "visualSubject": "طرح گرافیکی با تاج و ماسک",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/آیا-تو-چنان-که-می-نمایی.png": {
+    "visibleText": "دیوانه شو هر چه حماقت را چه کند؟",
+    "visualSubject": "لوگوی ناسا با خط نستعلیق فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/اسلیمی.png": {
+    "visibleText": "",
+    "visualSubject": "طرح پنجره اسلیمی و سنتی سبز و آبی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/بتمن-تاثیرگذار.png": {
+    "visibleText": "-تموم شد؟ خیلی تاثیرگذار بود!",
+    "visualSubject": "بتمن با نی نوشیدنی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/تابستان-در-راه-است-2.png": {
+    "visibleText": "SUMMER IS COMING",
+    "visualSubject": "تصویر فانتزی مرد با لباس هاوایی و تخته موج‌سواری",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/تابستان-در-راه-است.jpg": {
+    "visibleText": "SUMMER IS COMING",
+    "visualSubject": "تصویر سرباز با تخته موج‌سواری",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/تو-شب-یلدای-منی.png": {
+    "visibleText": "تو شبِ یلدایِ منی!",
+    "visualSubject": "تصویرِ تاریخیِ انارِ یلدا",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/حین-مصرف-تکان-دهید.png": {
+    "visibleText": "{حین مصرف تکان دهید.}",
+    "visualSubject": "چهره مرد ریش‌دار فانتزی با فلش",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/خدایی-که-کافیست.png": {
+    "visibleText": "و خدایی که به شدت کافیست Coffee",
+    "visualSubject": "دستان در حال دعا و دود",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/خوشنویسی-مرا-که-می-بینی.png": {
+    "visibleText": "",
+    "visualSubject": "طرح خطاطی سیاه روی پس‌زمینه خاکستری",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/خوشنویسی-نستعلیق.png": {
+    "visibleText": "منم جوان منم منم که کشته مرده ام منم که جانم از تو شد منم که بی تو می روم منم که از تو می روم منم که جان...",
+    "visualSubject": "شعر فارسی خوشنویسی روی طرح نقاشی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/خوشنویسی-گلدار.png": {
+    "visibleText": "",
+    "visualSubject": "خطاطی سفید با گل‌های قرمز",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/خوشگلا-باید-برقصن-2.png": {
+    "visibleText": "امروز تا منو داری دیگه این همه عاشق واسه چی؟ خوشگلا باید برقصن! نبینم که بازنشستی منتظر چی هستی؟ تو جشن شب نشینی باید پاشی برقصی پاشو باز با من برقص تا به آتش بکنی تا گل بریزم زیرپات، مخده رو بادالبریات",
+    "visualSubject": "لوگو، آیکون‌های کوچک و متن‌های فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7303,
+    "matchedProductName": "هودی خوشگلا باید برقصن",
+    "matchScore": 1
+  },
+  "hoodie/خوشگلا-باید-برقصن.png": {
+    "visibleText": "امروز تا منو داری دیگه این همه عاشق واسه چی؟ خوشگلا باید برقصن! نبینم که بازنشستی منتظر چی هستی؟ تو جشن شب نشینی باید باشی برقصی پاشو بیا من برقص تا به آبش بکنی تا گل بریم زیربات صحنه رو با دلبرات",
+    "visualSubject": "لوگو و متن و آیکون",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7303,
+    "matchedProductName": "هودی خوشگلا باید برقصن",
+    "matchScore": 1
+  },
+  "hoodie/دریم-کچر-2.png": {
+    "visibleText": "یاد تو می‌کشم امشب از آسمان یاد تو رج جنم",
+    "visualSubject": "طرح رویاگیر با متن فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/دریم-کچر.png": {
+    "visibleText": "تسا",
+    "visualSubject": "طرح دریم کچر روی سینه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/دست-های-در-حال-لمس.png": {
+    "visibleText": "تو چشمام نگاه کن و دستتو بذار تو دستم",
+    "visualSubject": "تصویر دو دست در حال لمس کردن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7327,
+    "matchedProductName": "هودی دستتو بذار تو دستم",
+    "matchScore": 1
+  },
+  "hoodie/دست-های-میکل-آنژ.png": {
+    "visibleText": "",
+    "visualSubject": "طرح خطی دست آفرینش آدم",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/دنیا-همه-هیچ.png": {
+    "visibleText": "دنیا همه هیچ و اهل دنیا همه هیچ",
+    "visualSubject": "فضانورد با کتاب و زمین",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/رولینگ-استونز.png": {
+    "visibleText": "",
+    "visualSubject": "لوگوی زبان راک اند رول",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/ریک-و-مورتی.png": {
+    "visibleText": "Rick and Morty",
+    "visualSubject": "تصویر ریک و مورتی با تفنگ پلاسما",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/زمستان-اینجاست.png": {
+    "visibleText": "WINTER IS HERE",
+    "visualSubject": "مرد سنتی با قوری و چای",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/سقراط-در-پیچ.png": {
+    "visibleText": "محال است فهمید در تو چه پیچ...",
+    "visualSubject": "تصویر چهره‌ی فیلسوف ریش‌دار پیر",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/شاید-بشه-یه-جوری-دیگه-هم.png": {
+    "visibleText": "صدای تو را دوست دارم",
+    "visualSubject": "تصویر گرافیکی مشکی با متن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/شب-یلدا.png": {
+    "visibleText": "این شب که می‌گذرد هیچ شبی مثل دیشب نیست",
+    "visualSubject": "کالیگرافی شعر فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/شبپره-گیتاریست.png": {
+    "visibleText": "SHABPARE",
+    "visualSubject": "تصویر گیتاریست با متن شب پره",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/شرایط-پذیرش.png": {
+    "visibleText": "شرایط پذیرش\n۱. آفتاب نشی بری زیر ابرا\n۲. مروارید نشی بری ته دریا\n۳. رودخونه نشی بری قاطی سیلا\n۴. پریزاده نشی گم شی\n۵. نری عزیز مردم شی\n۶. نری سفر ازم دور شی\n۷. نری با دشمنام جور شی",
+    "visualSubject": "لیست شرایط پذیرش متن دار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/شعر-این-چه-شوریست.png": {
+    "visibleText": "بی من به روزگاری گر سر کنی چه باشد...",
+    "visualSubject": "خطاطیِ نستعلیقِ شعرِ فارسی سفید",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/شعر-فارسی.png": {
+    "visibleText": "نیستم کس را کویی\nقصه نیستم که خوانی\nنغمه نیستم که توانی\nصدایم، تو را شنو‌ی؟\nمن دردم، مشترک\nمرا فریاد کن",
+    "visualSubject": "خطاطی نستعلیق فارسی روی پس‌زمینه طرح‌دار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/شیر-تعزیه.png": {
+    "visibleText": "LION OF TAAZIEH",
+    "visualSubject": "تصویر شیر کارتونی با یال",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/عاقبت-از-آنیم-که-دیوانه-نباشیم.png": {
+    "visibleText": "عاقلان را انیشتن که دیوانه نباشیم",
+    "visualSubject": "متن نستعلیق سفید روی پس‌زمینه گیاهی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/فرندز-دانکی-هودی.png": {
+    "visibleText": "R I E N D S",
+    "visualSubject": "شخصیت‌های عروسکی به شکل دوستان",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/فضانورد-مولانا.png": {
+    "visibleText": "مثنوی مولوی",
+    "visualSubject": "مولانا به شکل فضانورد با کره زمین",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/قابل-دسترسی-نیست.png": {
+    "visibleText": "این هودی در کشور شما قابل دسترسی نیست.",
+    "visualSubject": "خطای اینترنت به سبک ارور ۴۰۴",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7875,
+    "matchedProductName": "هودی این هودی در کشور شما قابل دسترسی نیست",
+    "matchScore": 1
+  },
+  "hoodie/قفسه-سینه.png": {
+    "visibleText": "",
+    "visualSubject": "تصویر قفسه سینه انسان",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/قلب-با-نوار-خطر.png": {
+    "visibleText": "خطر خطر خطر خطر",
+    "visualSubject": "قلب انسان پیچیده با نوار خطر زرد",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/قلب-نوار-خطر-2.png": {
+    "visibleText": "خطر",
+    "visualSubject": "قلب انسان با نوار خطر زرد",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/قلب-نوار-خطر.png": {
+    "visibleText": "",
+    "visualSubject": "تصویر آناتومی قلب پیچیده با نوار خطر",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/قلب-و-شعر.png": {
+    "visibleText": "بی تو نیستی زمانی میان سکوت نورانی",
+    "visualSubject": "تصویر قلب قرمز با نوشته های سفید",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/ما-را-چه-شده.png": {
+    "visibleText": "ما را برو کافه؟",
+    "visualSubject": "دستِ نگهدارنده پرتافلتر قهوه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مرا-که-مست-توام.png": {
+    "visibleText": "مرا عهدیست با جانان که تا جان در بدن دارم هوادار کوی اویم چو جان خویشتن دارم",
+    "visualSubject": "خطاطی نستعلیق سیاه مشق در کادر مربع",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مرا-که-میبینی.png": {
+    "visibleText": "مرا کنم تویی که این همه شراب خوشیم",
+    "visualSubject": "خطاطی نستعلیق مشکی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مرد-عنکبوتی-عینک-دودی.png": {
+    "visibleText": "UN KE DAD ENGHAD HERS MA'NO GA**DAM!",
+    "visualSubject": "طرح کارتونی مرد عنکبوتی با متن انگلیسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مرد-قاجاری-و-گربه.png": {
+    "visibleText": "ذوق جان دارد بدین گربه زگانی",
+    "visualSubject": "مرد قاجاری با گربه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مرد-میهن-آبادی.png": {
+    "visibleText": "محیط زیست منبر بسوزان مردم آزاری نکن",
+    "visualSubject": "سه خط متن خطاطی شده با سه باکس چک‌مارک",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مرغ-سحر-2.png": {
+    "visibleText": "مرغ سحر ناله سر کن داغ مرا تازه تر کن",
+    "visualSubject": "تصویر چهره مرد با خطاطی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مرغ-سحر.png": {
+    "visibleText": "مرغ سحر ناله سر کن داغ مرا تازه تر کن",
+    "visualSubject": "چهره مرد با طرح اسلیمی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مشداک-رامشمارا.png": {
+    "visibleText": "مشارک، ارمشمارا، نخراشی",
+    "visualSubject": "خطاطی نستعلیق سفید داخل کادر فرسوده",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/مضرات-اینجانب-2.png": {
+    "visibleText": "مضرات اینجانب *\nهم نامهربونه\nهم آفت جونه\nهم با دیگرونه\nهم قدرم ندونه، ندونه، ندونه\nهم دو رو و دو رنگه\nهم خیلی زرنگه\nهم دلش چه سنگه\nهم با من بجنگه، بجنگه، بجنگه",
+    "visualSubject": "متنِ طنزِ هشدارهای من با آیکون‌های خطر",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8412,
+    "matchedProductName": "هودی مضرات من",
+    "matchScore": 1
+  },
+  "hoodie/مضرات-اینجانب.png": {
+    "visibleText": "مضرات اینجانب\nهم نامهـربونه\nهم آفت جـونه\nهم با دیگـرونه\nهم قدرم ندونه، ندونه، ندونه\nهم دو رو و دو رنگه\nهم خیلی زرنگـه\nهم دلش چه سنگه\nهم با من بجنگه، بجنگه، بجنگه",
+    "visualSubject": "طرح هشدار مضرات با خطوط و نمادها",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8412,
+    "matchedProductName": "هودی مضرات من",
+    "matchScore": 1
+  },
+  "hoodie/مولانا-قمارباز.png": {
+    "visibleText": "خاک آن قمار باز که باخت هر چه بودش",
+    "visualSubject": "تصویر مینیاتوری پیرمرد و رولت قمار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7435,
+    "matchedProductName": "هودی قمارباز",
+    "matchScore": 1
+  },
+  "hoodie/مونا-لیزا-ولش-کن.png": {
+    "visibleText": "شد شد شد نشد، ولش کن",
+    "visualSubject": "مونالیزا با چشم‌بندِ آبی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/ناسا-نستعلیق.png": {
+    "visibleText": "",
+    "visualSubject": "طرح دایره ای شبیه ناسا با خط نستعلیق سفید",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/نقاب.png": {
+    "visibleText": "مرا به کارهایی تو بردی خود",
+    "visualSubject": "تصویر صورت زن با نقاب",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/نیروانا.png": {
+    "visibleText": "",
+    "visualSubject": "تصویر زن با گیتار الکتریک",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هر-که-در-این-حلقه-نیست.png": {
+    "visibleText": "هر که در این حلقه نیست فارغ از این ماجراست",
+    "visualSubject": "خطاطی نستعلیق درون دایره",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هشدار.png": {
+    "visibleText": "هم نامهربونه هم آفت جونه هم با دیگرونه هم قدرم ندونه ندونه ندونه هم دورو دو زرنگه هم خیلی زرنگه هم دلش چه سنگه هم با من بجنگه بجنگه بجنگه",
+    "visualSubject": "علامت هشدار با متن فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هشداری-که-از-مشمارا-نخراشی.png": {
+    "visibleText": "هشداری که از امشب ما را نگرانی",
+    "visualSubject": "متن روی ورق فلزی زنگ زده",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-069.webp": {
+    "visibleText": "تو چشام نگاه کن و دستتو بذار تو دستم",
+    "visualSubject": "طرح دست‌های آفرینش میکل‌آنژ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7327,
+    "matchedProductName": "هودی دستتو بذار تو دستم",
+    "matchScore": 1
+  },
+  "hoodie/هودی-070.webp": {
+    "visibleText": "خودتان قضاوت کنید زندگی",
+    "visualSubject": "ریه با گل‌های رنگارنگ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-071.png": {
+    "visibleText": "خاک آن قماربازی که باخت هر چه بود",
+    "visualSubject": "تصویر مولانا در قاب",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-072.png": {
+    "visibleText": "TOO HOT FOR HEAVEN",
+    "visualSubject": "illustration of a woman",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-073.png": {
+    "visibleText": "مرغ سحر ناله سر کن داغ مرا تازه تر کن",
+    "visualSubject": "پرتره مرد با طرح اسلیمی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-074.png": {
+    "visibleText": "ما را نه غم دوزخ و نه حرص بهشت است",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه گل و برگ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7829,
+    "matchedProductName": "هودی دوزخ و بهشت",
+    "matchScore": 1
+  },
+  "hoodie/هودی-075.png": {
+    "visibleText": "مثنوی مولوی دنیا هیچ و اهل دنیا هیچ",
+    "visualSubject": "فضانورد در حال مطالعه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-076.png": {
+    "visibleText": "خانه گرا، مستقل، ضداجتماع، بغل گریز، درونگرا، هشدار، محتویات، اگر داری این را می خوانی زیاد نزدیک شدی",
+    "visualSubject": "آیکون‌های مینیمال و متن فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7687,
+    "matchedProductName": "هودی درونگرا",
+    "matchScore": 1
+  },
+  "hoodie/هودی-077.png": {
+    "visibleText": "ایرانی شاد SONY AHF90",
+    "visualSubject": "کاست صورتی در حال ذوب شدن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7421,
+    "matchedProductName": "هودی ایرانی شاد",
+    "matchScore": 1
+  },
+  "hoodie/هودی-078.png": {
+    "visibleText": "",
+    "visualSubject": "دو شخصیت تاریخی با تاج",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-079.png": {
+    "visibleText": "همیشه که نباید خوب بود همیشه که نباید خوش بود",
+    "visualSubject": "گل‌های رز و شکوفه‌ها",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-081.png": {
+    "visibleText": "ما بی تو خسته ایم و تو بی ما خوشی",
+    "visualSubject": "رقص سماع در دایره داوینچی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-082.png": {
+    "visibleText": "",
+    "visualSubject": "طرح سنتی انار و اسلیمی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-083.png": {
+    "visibleText": "ALONE DUCK IN TAK TAKE ORDAK",
+    "visualSubject": "man with chainsaw and duck",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-084.png": {
+    "visibleText": "مثنوی مولوی، دنیا هیچ و اهل دنیا هیچ",
+    "visualSubject": "فضانورد با عمامه در فضا",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-085.png": {
+    "visibleText": "مثنوی مولوی",
+    "visualSubject": "فضانورد پیر در فضا",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-086.png": {
+    "visibleText": "نیستم که بگویی قصه دستم که خوانی نغمه‌ام نیستم که بشنوی من در مشتم مرا فریاد کن",
+    "visualSubject": "خوشنویسی نستعلیق روی بافت رنگی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-087.png": {
+    "visibleText": "استمرار continuity [käntən(y)o͞oədē] noun گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته",
+    "visualSubject": "طرح تایپوگرافی فارسی و انگلیسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7289,
+    "matchedProductName": "هودی استمرار، گذشتن و رفتن پیوسته",
+    "matchScore": 1
+  },
+  "hoodie/هودی-088.png": {
+    "visibleText": "",
+    "visualSubject": "تصویر گرافیکی چهره زن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-089.png": {
+    "visibleText": "استمرار continuity [käntən(y)o͞odē] noun گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته",
+    "visualSubject": "طرح تایپوگرافی فارسی و انگلیسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7289,
+    "matchedProductName": "هودی استمرار، گذشتن و رفتن پیوسته",
+    "matchScore": 1
+  },
+  "hoodie/هودی-090.png": {
+    "visibleText": "عاقل تر از آنیم که دیوانه نباشیم",
+    "visualSubject": "خوشنویسی فارسی روی زمینه گل‌دار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 9099,
+    "matchedProductName": "هودی عاقلتر از آنیم که دیوانه نباشیم",
+    "matchScore": 0.8333333333333334
+  },
+  "hoodie/هودی-091.png": {
+    "visibleText": "AZADI",
+    "visualSubject": "Azadi Tower architectural sketch",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8936,
+    "matchedProductName": "هودی آزادی",
+    "matchScore": 1
+  },
+  "hoodie/هودی-092.png": {
+    "visibleText": "مرا به سخت جانی خود این گمان بود",
+    "visualSubject": "خوشنویسی نستعلیق سفید و قرمز",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-093.png": {
+    "visibleText": "F R I E N D S",
+    "visualSubject": "عروسک‌های کارتونی در حال نوشیدن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-094.png": {
+    "visibleText": "",
+    "visualSubject": "person wearing a bandana mask",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-095.png": {
+    "visibleText": "خاک آن قماربازی که باخت هر چه بودش",
+    "visualSubject": "تصویر مولانا در چرخ رولت",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-096.png": {
+    "visibleText": "خوش جنان ندارد دیگر زندگانی",
+    "visualSubject": "مرد قاجاری با گربه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-097.png": {
+    "visibleText": "فوایدِ مَن: -من برات یار میشم. -یار وفادار میشم. -دل و دلدار میشم. -غم داری غمخوار میشم. -با تو تبدار میشم. -با تو بیمار میشم. -با تو چشمامو می بندم. -با تو بیدار میشم.",
+    "visualSubject": "لیست فواید من داخل کادر",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8396,
+    "matchedProductName": "هودی فواید من",
+    "matchScore": 1
+  },
+  "hoodie/هودی-098.png": {
+    "visibleText": "ملائكة دون حصن بهشت",
+    "visualSubject": "خوشنویسی فارسی با پس‌زمینه گل‌دار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-099.png": {
+    "visibleText": "فوايد من: با تو مرات میشم. با تو وفادار میشم. با تو دانا میشم. با تو غمخوار میشم. با تو بیمار میشم. با تو تیمار میشم. با تو چشمامو میبندم. با تو بیدار میشم.",
+    "visualSubject": "طرحِ جعبه با آیکون‌های بسته‌بندی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8396,
+    "matchedProductName": "هودی فواید من",
+    "matchScore": 1
+  },
+  "hoodie/هودی-100.png": {
+    "visibleText": "استمرار continuity noun گذشتن و رفتن پیوسته",
+    "visualSubject": "طرح تایپوگرافی فارسی و انگلیسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7289,
+    "matchedProductName": "هودی استمرار، گذشتن و رفتن پیوسته",
+    "matchScore": 1
+  },
+  "hoodie/هودی-101.png": {
+    "visibleText": "خوشم میاد ازت",
+    "visualSubject": "خوشنویسی نستعلیق سیاه روی زمینه خاکستری",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-102.png": {
+    "visibleText": "بمان که عشق به جانم نشسته است و جانم فدای تو",
+    "visualSubject": "طرح دهان کوسه با چشم",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-103.png": {
+    "visibleText": "استمرار [kän(t)əˈnooədē] Noun گذشتن و رفتن پیوسته",
+    "visualSubject": "تایپوگرافی فارسی و متن انگلیسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7289,
+    "matchedProductName": "هودی استمرار، گذشتن و رفتن پیوسته",
+    "matchScore": 1
+  },
+  "hoodie/هودی-104.png": {
+    "visibleText": "تموم شد؟ خیلی تاثیرگذار بود!",
+    "visualSubject": "بتمن در حال نوشیدن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-105.png": {
+    "visibleText": "أنا لا أرى سواك",
+    "visualSubject": "خوشنویسی عربی روی پس‌زمینه موج‌دار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-106.png": {
+    "visibleText": "",
+    "visualSubject": "Rolling Stones tongue logo",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-107.png": {
+    "visibleText": "آیا تو چنان که می‌نمایی هستی؟",
+    "visualSubject": "خوشنویسی فارسی روی برگ‌های رنگی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-108.png": {
+    "visibleText": "FRIENDS",
+    "visualSubject": "characters from Friends TV show",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-110.png": {
+    "visibleText": "آیا تو چنان که می‌نمایی هستی؟",
+    "visualSubject": "خوشنویسی فارسی روی پس‌زمینه گیاهی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-111.png": {
+    "visibleText": "این پیچ و تاب هم هیچ",
+    "visualSubject": "رقص سماع در دایره",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-112.png": {
+    "visibleText": "همه کس پیش تو قربان شده اند",
+    "visualSubject": "گل‌های رز رنگارنگ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-113.png": {
+    "visibleText": "نازنین ای نازنین",
+    "visualSubject": "پرتره مرد با خطاطی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-114.png": {
+    "visibleText": "MA ZAHMAT MIKESHIM",
+    "visualSubject": "مرد متعجب با تیشرت نارنجی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-115.png": {
+    "visibleText": "AZADI",
+    "visualSubject": "Azadi Tower architectural sketch",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8936,
+    "matchedProductName": "هودی آزادی",
+    "matchScore": 1
+  },
+  "hoodie/هودی-116.png": {
+    "visibleText": "شعر",
+    "visualSubject": "خوشنویسی دایره‌ای شکل",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-117.png": {
+    "visibleText": "ما أجمل أن نكون بخير ويكون وجودنا ياسمين",
+    "visualSubject": "خوشنویسی عربی با گل‌های قرمز",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-118.png": {
+    "visibleText": "چرخ بر هم زنم ار غیر مرادم گردد",
+    "visualSubject": "خوشنویسی نستعلیق سفید روی زمینه رنگی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7448,
+    "matchedProductName": "هودی چرخ بر هم زنم ار غیر مرادم گردد",
+    "matchScore": 1
+  },
+  "hoodie/هودی-119.png": {
+    "visibleText": "تو شب یلدای منی!",
+    "visualSubject": "زن قاجاری با انار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-120.png": {
+    "visibleText": "خودتان قضاوت کنید زندگی",
+    "visualSubject": "ریه با گل‌های رنگارنگ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-121.png": {
+    "visibleText": "سونی",
+    "visualSubject": "نوار کاست صورتی در حال ذوب شدن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-122.png": {
+    "visibleText": "",
+    "visualSubject": "طرح خوشنویسی انتزاعی سیاه و سفید",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-123.png": {
+    "visibleText": "یا شب که ماه تو خواب",
+    "visualSubject": "خوشنویسی فارسی روی ماه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-124.png": {
+    "visibleText": "می‌بخشود، منبر بسوزان، مردم‌آزار مکن",
+    "visualSubject": "سه خط متن با چک‌باکس",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-125.png": {
+    "visibleText": "MA ZAHMAT MIKESHIM",
+    "visualSubject": "مرد با لباس نارنجی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-126.png": {
+    "visibleText": "",
+    "visualSubject": "دو شخصیت تاریخی با لباس مدرن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-127.png": {
+    "visibleText": "یا تو چنان محبتی که هستی",
+    "visualSubject": "طرح کهکشانی با متن فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-128.png": {
+    "visibleText": "شرایط پذیرش ۱. آفتاب نشی باز بری زیر ابرا ۲. مروارید نشی بری ته دریا ۳. رودخونه نشی بری قاطی سیلا (اگه اینجوری بشه وایلا وایلا، وایلا وایلا) ۴. پریزاده نشی گم شی ۵. نری عزیز مردم شی ۶. نری سفر ازم دور شی ۷. نری با دشمنام جور شی (یه وقت وصله ناجوری)",
+    "visualSubject": "کادر مستطیلی با متن فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-129.png": {
+    "visibleText": "",
+    "visualSubject": "مرد ریش‌دار داخل فنجان قهوه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-130.png": {
+    "visibleText": "",
+    "visualSubject": "پادشاه و ملکه قاجار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-131.png": {
+    "visibleText": "تعصب بجامانده درک است",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه رنگی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-132.png": {
+    "visibleText": "UN KE DAD ENGHA HERS MAN GAODAN",
+    "visualSubject": "man in superhero costume",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-133.png": {
+    "visibleText": "LION OF TA'AZIEH",
+    "visualSubject": "cartoon lion illustration",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-134.png": {
+    "visibleText": "استمرار [kän(t)əˈnooədē] Noun گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته",
+    "visualSubject": "تایپوگرافی فارسی و متن انگلیسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7289,
+    "matchedProductName": "هودی استمرار، گذشتن و رفتن پیوسته",
+    "matchScore": 1
+  },
+  "hoodie/هودی-135.png": {
+    "visibleText": "هیچ‌کس به هیچ‌کس هیچ‌چیز نمی‌گوید",
+    "visualSubject": "خوشنویسی نستعلیق روی نقاشی کلاسیک",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-136.png": {
+    "visibleText": "ما هیچ ما نگاه",
+    "visualSubject": "خوشنویسی نستعلیق سفید",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-137.png": {
+    "visibleText": "همه را بیازمودم ز تو خوش‌تر نیامد",
+    "visualSubject": "گل‌های رنگارنگ و خوشنویسی فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-138.png": {
+    "visibleText": "TOO COOL FOR HELL",
+    "visualSubject": "man with mustache and hat",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-139.png": {
+    "visibleText": "",
+    "visualSubject": "پادشاه و ملکه قاجار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-141.png": {
+    "visibleText": "تموم شد؟ خیلی تاثیرگذار بود!",
+    "visualSubject": "بتمن در حال نوشیدن",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-142.png": {
+    "visibleText": "بوف کور در زندگی زخم‌هایی هست که مثل خوره در انزوا روح را آهسته در انزوا می‌خورد و می‌تراشد. این دردها را نمی‌شود به کسی اظهار کرد، چون عموما عادت دارند که این دردهای باورنکردنی را جزو اتفاقات و پیش‌آمدهای نادر و عجیب بشمارند و اگر کسی بگوید یا بنویسد، مردم بر سبیل عقاید جاری و عقاید خودشان سعی می‌کنند آن را با لبخند شکاک و تمسخرآمیز تلقی بکنند.",
+    "visualSubject": "پرتره صادق هدایت",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-143.png": {
+    "visibleText": "هر که در این حلقه نیست فارغ از این ماجراست",
+    "visualSubject": "خوشنویسی فارسی داخل دایره قرمز",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-144.png": {
+    "visibleText": "ما نیستیم که در هیچ سرانجامی خوشیم",
+    "visualSubject": "رقص سماع در دایره داوینچی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-145.png": {
+    "visibleText": "دونه دونه مروارید",
+    "visualSubject": "طرح پیکسلی انار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-146.png": {
+    "visibleText": "هشتاد و نه آرامش ما را خراشید",
+    "visualSubject": "متن فارسی روی زمینه زنگ‌زده",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-147.png": {
+    "visibleText": "مرا آن عهد و پیمان و حصن و بهشت",
+    "visualSubject": "خوشنویسی نستعلیق با گل و برگ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-148.png": {
+    "visibleText": "چرخ بر هم زنم ار غیر مرادم گردد",
+    "visualSubject": "خوشنویسی نستعلیق سفید روی لکه رنگی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7448,
+    "matchedProductName": "هودی چرخ بر هم زنم ار غیر مرادم گردد",
+    "matchScore": 1
+  },
+  "hoodie/هودی-149.png": {
+    "visibleText": "",
+    "visualSubject": "طرح گرافیکی انتزاعی سفید",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-150.png": {
+    "visibleText": "",
+    "visualSubject": "طرح گرافیکی انتزاعی سفید",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-151.png": {
+    "visibleText": "",
+    "visualSubject": "دو مرد با تاج و پارچ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-152.png": {
+    "visibleText": "TOO COOL FOR HELL",
+    "visualSubject": "man with mustache and hat",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-153.png": {
+    "visibleText": "SONY 60 HiFi DIN 45 500 Low Noise High Bias IN OUT A SIDE ایرانی شار",
+    "visualSubject": "نوار کاست سونی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-154.png": {
+    "visibleText": "مرا به سخت جانی خود این گمان بود",
+    "visualSubject": "خوشنویسی نستعلیق سفید و قرمز",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-155.png": {
+    "visibleText": "مراقب باش که چه میگویی",
+    "visualSubject": "خوشنویسی دایره‌ای فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-156.png": {
+    "visibleText": "تو چشام نگاه کن و دستتو بذار تو دستم",
+    "visualSubject": "طرح خطی آفرینش آدم",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7327,
+    "matchedProductName": "هودی دستتو بذار تو دستم",
+    "matchScore": 1
+  },
+  "hoodie/هودی-157.png": {
+    "visibleText": "یاور همیشه مومن",
+    "visualSubject": "پرتره سیاه و سفید مرد",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-158.png": {
+    "visibleText": "",
+    "visualSubject": "طرح دریم‌کچر و کادر متنی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-159.png": {
+    "visibleText": "تو شب یلدای منی!",
+    "visualSubject": "زن قاجاری با انار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-160.png": {
+    "visibleText": "شجاعتِ آزادی‌خواهیِ زنانِ ایرانی",
+    "visualSubject": "زن با حجاب و گربه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8936,
+    "matchedProductName": "هودی آزادی",
+    "matchScore": 1
+  },
+  "hoodie/هودی-161.png": {
+    "visibleText": "",
+    "visualSubject": "دو شخصیت با تاج و شمشیر",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-162.png": {
+    "visibleText": "MOTHER OF PALANGS",
+    "visualSubject": "woman with cat illustration",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-163.png": {
+    "visibleText": "استمرار [kän(t)ə'nooədē] Noun گذشتن و رفتن پیوسته",
+    "visualSubject": "متن فارسی و فونتیک انگلیسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7289,
+    "matchedProductName": "هودی استمرار، گذشتن و رفتن پیوسته",
+    "matchScore": 1
+  },
+  "hoodie/هودی-165.png": {
+    "visibleText": "شد شد شد شد شد، وش کن",
+    "visualSubject": "مونالیزا با چشم‌بند",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-166.png": {
+    "visibleText": "چرخ بر هم زنم ار غیر مرادم گردد",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه رنگی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 7448,
+    "matchedProductName": "هودی چرخ بر هم زنم ار غیر مرادم گردد",
+    "matchScore": 1
+  },
+  "hoodie/هودی-167.png": {
+    "visibleText": "تغضب بجامع ذرك انت",
+    "visualSubject": "خوشنویسی نستعلیق با پس‌زمینه قرمز و سبز",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-168.png": {
+    "visibleText": "",
+    "visualSubject": "فضانورد در حال لمس زمین",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-169.png": {
+    "visibleText": "همین مصرف‌کنندگانید",
+    "visualSubject": "پرتره کارتونی مرد ریش‌دار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-170.png": {
+    "visibleText": "",
+    "visualSubject": "طرح تکرار انگشتان دست",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-171.png": {
+    "visibleText": "F.R.I.E.N.D.S",
+    "visualSubject": "شخصیت‌های کلاه‌قرمزی و الاغ",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": 8517,
+    "matchedProductName": "هودی دوستان کلاه قرمزی (فرندز)",
+    "matchScore": 0.75
+  },
+  "hoodie/هودی-172.png": {
+    "visibleText": "دیوانگی هر دو جهان را چه کند",
+    "visualSubject": "لوگوی ناسا با خوشنویسی فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هودی-174.png": {
+    "visibleText": "",
+    "visualSubject": "پادشاه و ملکه باستانی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هیزنبرگ-بریکینگ-بد.png": {
+    "visibleText": "Bar Bari",
+    "visualSubject": "طرح گرافیکی با کلاه و عینک",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/هیزنبرگ-سیب-زمینی.png": {
+    "visibleText": "Bar Bari",
+    "visualSubject": "سیب‌زمینی کلاه‌دار با عینک آفتابی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/پرتره.png": {
+    "visibleText": "پوستت مرا پوست شبیه‌ست",
+    "visualSubject": "چهره یک مرد با ریش",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/پسر-گیتاریست-کارتونی.png": {
+    "visibleText": "",
+    "visualSubject": "کاریکاتور پسر گیتاریست",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/پوست-شیر.png": {
+    "visibleText": "پویا بختیاری",
+    "visualSubject": "چهره مرد با سبیل",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/چک-لیست-مینی-خور.png": {
+    "visibleText": "من میزخور من میزپو سوزان من میز آرایشی نکن",
+    "visualSubject": "سه خط چک‌باکس با متن فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/کد-برنامه-نویسی-2.png": {
+    "visibleText": "using System;\nusing System.Collections.Generic;\n\nclass Program\n{\n    static void Main()\n    {\n        List<string> lines = new List<string>\n        {\n            \"این شب، دلهره‌ی غلیظِ شب نیست\",\n            \"این شب، شبِ غلیظِ این شب نیست\",\n            \"امشب مدهِ دیشب نیست\",\n            \"صبحِ شبِ مده، امشب نیست\"\n        };\n\n        PrintPoem(lines);\n    }\n\n    static void PrintPoem(List<string> lines)\n    {\n        foreach (string line in lines)\n        {\n            Console.WriteLine(line);\n            if (line.Contains(\"شب\"))\n            {\n                Console.WriteLine(\"...\");\n            }\n        }\n    }\n}",
+    "visualSubject": "کد برنامه‌نویسی و شعر فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/کد-برنامه-نویسی.png": {
+    "visibleText": "using System;\nclass Program\n{\n    static void Main()\n    {\n        string[] lines = {\n            \"آفتاب نشینِ بالِ پَرِ این!\":\n            \"میریزیت نشینیری تِ دِریا\",\n            \"روِ تُونه نشینی بری فاحلی سینا\"\n        };\n        foreach (string line in lines)\n            Console.WriteLine(line);\n        Console.WriteLine(string.Con-\ncat(Enumerable.Repeat(\"واوینا\",\n4)).Trim());\n        Console.WriteLine();\n        foreach (string line in lines)\n            Console.WriteLine(line);\n        Console.WriteLine(string.Con-\ncat(Enumerable.Repeat(\"واوینا\",\n4)).Trim());\n    }\n}",
+    "visualSubject": "کد سی شارپ چاپ شده روی سینه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/کمک-های-اولیه-چای.png": {
+    "visibleText": "کمک های اولیه",
+    "visualSubject": "تصویر چای ایرانی با قند و جعبه کمک‌های اولیه",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/کوسه.png": {
+    "visibleText": "هنگام شنای من در این چاه سبو پی برده به درین کوه",
+    "visualSubject": "دهان کوسه با دندان و خط خطی فارسی",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "hoodie/یاور-همیشه-مومن.png": {
+    "visibleText": "ياور همیشه مؤمن",
+    "visualSubject": "پرتره سیاه‌وسفید مرد ریش‌دار",
+    "illegible": false,
+    "garment": "hoodie",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/سایر-002.png": {
+    "visibleText": "می‌خورم، من از سوزان، من از آزادی",
+    "visualSubject": "چک‌لیست با متن فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8937,
+    "matchedProductName": "پلیور آزادی",
+    "matchScore": 1
+  },
+  "pullover/سایر-007.png": {
+    "visibleText": "عاقل آن است که دیوانه نباشد",
+    "visualSubject": "خوشنویسی فارسی روی زمینه گلدار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/سایر-010.png": {
+    "visibleText": "عاقل تر از آنیم که دیوانه نباشیم",
+    "visualSubject": "خوشنویسی فارسی روی زمینه گلدار",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": 9117,
+    "matchedProductName": "تیشرت عاقلتر از آنیم که دیوانه نباشیم",
+    "matchScore": 0.8333333333333334
+  },
+  "pullover/سایر-011.png": {
+    "visibleText": "عاقبت اندیشی را دیوانگی دانستیم",
+    "visualSubject": "خوشنویسی فارسی با پس‌زمینه گیاهی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/سایر-013.png": {
+    "visibleText": "دنیا همه هیچ و اهل دنیا همه هیچ",
+    "visualSubject": "فضانورد در حال لمس کره زمین",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-001.png": {
+    "visibleText": "AZADI",
+    "visualSubject": "طرح گرافیکی برج آزادی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8937,
+    "matchedProductName": "پلیور آزادی",
+    "matchScore": 1
+  },
+  "pullover/پلیور-002.png": {
+    "visibleText": "TOO HOT FOR HEAVEN TOO COOL FOR HELL",
+    "visualSubject": "Iranian Qajar style portraits",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-003.png": {
+    "visibleText": "و خدایی که به شدت Coffee است",
+    "visualSubject": "دست‌های در حال دعا و قهوه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-004.png": {
+    "visibleText": "",
+    "visualSubject": "خانواده سیمپسون کنار ماشین",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-005.png": {
+    "visibleText": "همیشه که نباید نوشت، گاهی باید نوشت",
+    "visualSubject": "گل‌های رنگارنگ با خوشنویسی فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-006.png": {
+    "visibleText": "",
+    "visualSubject": "تصویر گرافیکی زن با شال",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-007.png": {
+    "visibleText": "",
+    "visualSubject": "نقاشی سنتی ایرانی پادشاه و ملکه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-008.png": {
+    "visibleText": "زنی چنان که در آینه دیدم",
+    "visualSubject": "زن و گربه در قاب",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-011.png": {
+    "visibleText": "",
+    "visualSubject": "گل‌های آبی و صورتی انتزاعی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-012.png": {
+    "visibleText": "",
+    "visualSubject": "man with red petals",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-013.png": {
+    "visibleText": "TOO COOL FOR HELL",
+    "visualSubject": "مرد با سبیل و کلاه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-014.png": {
+    "visibleText": "",
+    "visualSubject": "قلب قرمز با خطاطی فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-015.png": {
+    "visibleText": "ذوق چنان ندارد بی گربه زندگانی",
+    "visualSubject": "زن قاجاری و گربه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-016.png": {
+    "visibleText": "می‌خورم، می‌سوزانم، مرا آزاد مکن",
+    "visualSubject": "سه چک‌باکس با متن فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-017.png": {
+    "visibleText": "عمر صبح شد، شب شد، عمر صبح شد، شب شد، عمر صبح شد، شب شد، عمر صبح شد، شب شد، عمر صبح شد، شب شد، عمر صبح شد، شب شد، مردی، نارو خوردی...",
+    "visualSubject": "تکرار متن فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-018.png": {
+    "visibleText": "تموم شد؟ خیلی تاثیرگذار بود!",
+    "visualSubject": "بتمن در حال نوشیدن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-019.png": {
+    "visibleText": "خنک آن قماربازی که بباخت هرچه بودش",
+    "visualSubject": "تصویر مولانا داخل چرخ رولت",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-020.png": {
+    "visibleText": "کمک‌های اولیه",
+    "visualSubject": "لیوان چای کمر باریک",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-021.png": {
+    "visibleText": "چشم‌ها را باید شست جور دیگر باید دید",
+    "visualSubject": "دو چشم آبی انتزاعی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-022.png": {
+    "visibleText": "AntiVirus",
+    "visualSubject": "king wearing a mask",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-023.png": {
+    "visibleText": "مرا که می‌بینی نه آنم که تو می‌اندیشی",
+    "visualSubject": "خوشنویسی نستعلیق سفید",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-024.png": {
+    "visibleText": "ما کيم هيچ نيستيم جز همين خوشيم",
+    "visualSubject": "خوشنویسی نستعلیق سفید",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-025.png": {
+    "visibleText": "هیچ برای هیچ برای هیچ",
+    "visualSubject": "رقص سماع در دایره",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-026.png": {
+    "visibleText": "",
+    "visualSubject": "قلب آناتومیک با نوار زرد",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-028.png": {
+    "visibleText": "ما ز نیک و بد عالم یکسره آرام گرفتیم",
+    "visualSubject": "صفحه گرامافون و سوزن پخش",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-029.png": {
+    "visibleText": "الا ان رفقنا سوى",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه قرمز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-030.png": {
+    "visibleText": "",
+    "visualSubject": "طرح اسلیمی و سنتی ایرانی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-031.png": {
+    "visibleText": "ما را به قهوه؟",
+    "visualSubject": "دست در حال نگه داشتن پرتافیلتر",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-032.png": {
+    "visibleText": "شد شد شد شد، ول کن",
+    "visualSubject": "مونالیزا با چشم‌بند",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-040.png": {
+    "visibleText": "يا مهتاب قاه صاب ثو حو ب",
+    "visualSubject": "خوشنویسی عربی روی ماه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-041.png": {
+    "visibleText": "مثنوی مولوی دنیا هیچ و اهل دنیا هیچ",
+    "visualSubject": "فضانورد با چهره مولانا",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-042.png": {
+    "visibleText": "استمرار [kän(t)ə'nooədē] Noun - گذشتن و رفتن پیوسته - گذشتن و رفتن پیوسته - گذشتن و رفتن پیوسته - گذشتن و رفتن پیوسته",
+    "visualSubject": "تایپوگرافی فارسی و متن انگلیسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8700,
+    "matchedProductName": "پلیور دورس استمرار گذشتن و رفتن پیوسته",
+    "matchScore": 0.8
+  },
+  "pullover/پلیور-043.png": {
+    "visibleText": "بیا در غم عشقت مشو مبهوت",
+    "visualSubject": "مردی با عمامه در حال گیتار زدن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-044.png": {
+    "visibleText": "Q QUEEN",
+    "visualSubject": "Aretha Franklin playing card illustration",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-045.png": {
+    "visibleText": "همیشه که نباید ترسید، راه که بیفتیم ترسمان می ریزد. ماهی سیاه کوچولو",
+    "visualSubject": "تعدادی ماهی در ردیف‌های منظم",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8504,
+    "matchedProductName": "پلیور ماهی سیاه کوچولو",
+    "matchScore": 1
+  },
+  "pullover/پلیور-046.png": {
+    "visibleText": "UN KE DAD ENGHAD HERS MANO GA**DAM!",
+    "visualSubject": "Spider-Man character with sunglasses",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-048.png": {
+    "visibleText": "همیشه که نباید ترسید، راه که بیفتیم ترسمان می ریزد. ماهی سیاه کوچولو",
+    "visualSubject": "الگوی تکرار شونده ماهی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8504,
+    "matchedProductName": "پلیور ماهی سیاه کوچولو",
+    "matchScore": 1
+  },
+  "pullover/پلیور-049.png": {
+    "visibleText": "",
+    "visualSubject": "زن با چادر و گربه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-050.png": {
+    "visibleText": "FRIENDS",
+    "visualSubject": "characters from Bremen Town Musicians",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-052.png": {
+    "visibleText": "ما که همینه که هست خوشیم",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه استتار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-053.png": {
+    "visibleText": "من رائع أن نكون ونبقى",
+    "visualSubject": "خوشنویسی عربی روی زمینه گل‌دار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-054.png": {
+    "visibleText": "ما را چه شده کافه؟",
+    "visualSubject": "دست در حال نگه داشتن پرتافیلتر",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-055.png": {
+    "visibleText": "ز تو آن جهانی که در آن جهانی، من آنم که در آن جهانی، تو آنی که در آن جهانی، من آنم که در آن جهانی",
+    "visualSubject": "قلب قرمز با خوشنویسی فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-056.png": {
+    "visibleText": "هر که در این حلقه نیست فارغ از این ماجراست",
+    "visualSubject": "خوشنویسی نستعلیق داخل دایره قرمز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-057.png": {
+    "visibleText": "",
+    "visualSubject": "طرح سنتی انار و هندسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-058.png": {
+    "visibleText": "فواید من: من برات یار میشم. یار وفادار میشم. دل و دلدار میشم. غم داری غمخوار میشم. با تو تبدار میشم. با تو بیمار میشم. با تو چشمامو می بندم. با تو بیدار میشم.",
+    "visualSubject": "لیست فواید با آیکون",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8387,
+    "matchedProductName": "پلیور فواید من",
+    "matchScore": 1
+  },
+  "pullover/پلیور-059.png": {
+    "visibleText": "Q QUEEN",
+    "visualSubject": "تصویر کارت بازی ملکه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-060.png": {
+    "visibleText": "ما بی تو خسته ایم تو بی ما خوشی",
+    "visualSubject": "رقص سماع در دایره ویترووین",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-061.png": {
+    "visibleText": "همیشه که نباید ترسید، راه که بیفتیم ترسمان می ریزد. ماهی سیاه کوچولو",
+    "visualSubject": "ماهی‌های کوچک در حال شنا",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8504,
+    "matchedProductName": "پلیور ماهی سیاه کوچولو",
+    "matchScore": 1
+  },
+  "pullover/پلیور-062.png": {
+    "visibleText": "فوایدِ مَن: -من برات یار میشم. -یار وفادار میشم. -دل و دلدار میشم. -غم داری غمخوار میشم. -با تو تبدار میشم. -با تو بیمار میشم. -با تو چشمامو می بندم. -با تو بیدار میشم.",
+    "visualSubject": "لیست فواید من داخل کادر",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8387,
+    "matchedProductName": "پلیور فواید من",
+    "matchScore": 1
+  },
+  "pullover/پلیور-063.png": {
+    "visibleText": "مرا به سخت جانی خود این گمان نبود",
+    "visualSubject": "خوشنویسی نستعلیق فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 9303,
+    "matchedProductName": "پلیور ما را به سخت جانی خود این گمان نبود",
+    "matchScore": 0.7777777777777778
+  },
+  "pullover/پلیور-064.png": {
+    "visibleText": "کینه هام را فراموش کرده ام عشق هایم را دشمنم را بخشیده ام دولت تازه ای برمی گزینیم",
+    "visualSubject": "چشم‌های پشت عینک",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-068.png": {
+    "visibleText": "ما هیچ ما نگاه",
+    "visualSubject": "خوشنویسی نستعلیق روی طرح رقص سماع",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-070.png": {
+    "visibleText": "مثنوی مولوی",
+    "visualSubject": "فضانورد با عمامه و زمین",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-071.png": {
+    "visibleText": "ديوانگي هم جزئي از راحتي كنه",
+    "visualSubject": "لوگوی ناسا با خط نستعلیق",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-072.png": {
+    "visibleText": "هر که در این پرده نیست خارج از این ماجراست",
+    "visualSubject": "نقاشی سنتی ایرانی جنگ",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-073.png": {
+    "visibleText": "مرا به سخت جانی خود این گمان بود",
+    "visualSubject": "خوشنویسی نستعلیق فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-074.png": {
+    "visibleText": "",
+    "visualSubject": "مرد ریش‌دار داخل فنجان قهوه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-077.png": {
+    "visibleText": "ما آنیم که دوری و حصن بهشت",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه گل‌دار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-080.png": {
+    "visibleText": "این پیچ برای هیچ پیچ پیچ",
+    "visualSubject": "رقص سماع در دایره",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-082.png": {
+    "visibleText": "ما به مجنون ها مشهودیم دنیا به رنج ها",
+    "visualSubject": "آینه ماشین و دریم کچر",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-083.png": {
+    "visibleText": "خطر DANGER",
+    "visualSubject": "قلب قرمز با نوار خطر",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-085.png": {
+    "visibleText": "F.R.I.E.N.D.S",
+    "visualSubject": "عروسک‌های کارتونی در حال نوشیدنی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-086.png": {
+    "visibleText": "استمرار [kän(t)ə'noʊədē] Noun گذشتن و رفتن پیوسته",
+    "visualSubject": "خوشنویسی نستعلیق کلمه استمرار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8700,
+    "matchedProductName": "پلیور دورس استمرار گذشتن و رفتن پیوسته",
+    "matchScore": 0.8
+  },
+  "pullover/پلیور-088.png": {
+    "visibleText": "ما را بس است کافی؟",
+    "visualSubject": "دست در حال نگه داشتن پرتافیلتر",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-089.png": {
+    "visibleText": "دنیا همه هیچ و اهل دنیا همه هیچ",
+    "visualSubject": "فضانورد با ریش و کتاب",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-090.png": {
+    "visibleText": "دنیا همه هیچ و اهل دنیا همه هیچ",
+    "visualSubject": "فضانورد و کره زمین",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-091.png": {
+    "visibleText": "خنک آن قماربازی که بباخت آن چه بودش",
+    "visualSubject": "تصویر مولانا در قاب رولت",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-092.png": {
+    "visibleText": "این شبِ می کِشَدَم، مثلِ شبِ نیست، کِشِشِ شبِ نیست، هیچ شبِ مثلِ شبِ نیست",
+    "visualSubject": "خوشنویسی نستعلیق فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-093.png": {
+    "visibleText": "کمک‌های اولیه",
+    "visualSubject": "لیوان چای و نبات",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-094.png": {
+    "visibleText": "تو چشام نگاه کن و دستتو بذار تو دستم",
+    "visualSubject": "طرح دست‌های میکل‌آنژ",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-095.png": {
+    "visibleText": "ما را به سخت جانی خود این گمان نبود",
+    "visualSubject": "خوشنویسی نستعلیق با نقوش گل",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 9303,
+    "matchedProductName": "پلیور ما را به سخت جانی خود این گمان نبود",
+    "matchScore": 1
+  },
+  "pullover/پلیور-099.png": {
+    "visibleText": "خوش چنان دارد به گربه زندگانی",
+    "visualSubject": "زن با گربه در آغوش",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-101.png": {
+    "visibleText": "وجترین",
+    "visualSubject": "اسکلت دایناسور در لوگوی دایره‌ای",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-102.png": {
+    "visibleText": "ما را نه غم دوزخ و نه حرص بهشت است",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه گل‌های قرمز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 7841,
+    "matchedProductName": "پلیور دوزخ و بهشت",
+    "matchScore": 1
+  },
+  "pullover/پلیور-104.png": {
+    "visibleText": "وجترین",
+    "visualSubject": "اسکلت دایناسور در لوگو",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-105.png": {
+    "visibleText": "بمان که عشق تو تنها امید من است",
+    "visualSubject": "خوشنویسی فارسی روی گل‌های قرمز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-106.png": {
+    "visibleText": "",
+    "visualSubject": "four colorful rolling stones logos",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-108.png": {
+    "visibleText": "",
+    "visualSubject": "طرح پاپ آرت لب و زبان",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-109.png": {
+    "visibleText": "ما را همه غم خوش است و نه حرص بهشت است",
+    "visualSubject": "خوشنویسی فارسی روی زمینه گل‌دار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-110.png": {
+    "visibleText": "می‌خور، منبر بسوزان، مردم آزاری مکن",
+    "visualSubject": "سه خط خوشنویسی فارسی با چک‌باکس",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 9474,
+    "matchedProductName": "پلیور مردم آزاری مکن",
+    "matchScore": 1
+  },
+  "pullover/پلیور-111.png": {
+    "visibleText": "",
+    "visualSubject": "گل‌های آبی و صورتی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-113.png": {
+    "visibleText": "دونه دونه مروارید",
+    "visualSubject": "طرح پیکسلی انار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-114.png": {
+    "visibleText": "",
+    "visualSubject": "پرتره مرد میان گل‌های رز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-115.png": {
+    "visibleText": "هشداری که از امشمارا نخراشی",
+    "visualSubject": "متن سفید روی بافت زنگ‌زده",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-116.png": {
+    "visibleText": "مرغ سحر ناله سر کن داغ مرا تازه تر کن",
+    "visualSubject": "پرتره مرد با طرح اسلیمی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-117.png": {
+    "visibleText": "",
+    "visualSubject": "طرح سنتی انار و هندسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-118.png": {
+    "visibleText": "",
+    "visualSubject": "دو مرد با لباس رسمی و تاج",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-119.png": {
+    "visibleText": "آیا تو چنان محو تماشای منی",
+    "visualSubject": "خوشنویسی فارسی روی برگ‌های رنگی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-120.png": {
+    "visibleText": "اگه به چیزی که میخوای نرسی، حتما چیزی که میخوای نبوده",
+    "visualSubject": "آینه ماشین و دریم‌کچر",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-122.png": {
+    "visibleText": "جوان منم که منم که منم که منم که منم که منم که منم که منم که منم که منم",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه نقاشی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-124.png": {
+    "visibleText": "خنک آن قماربازی که بباخت هرچه بودش",
+    "visualSubject": "تصویر مولانا در چرخ رولت",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-127.png": {
+    "visibleText": "این هیچ برای هیچ بر هیچ پیچ",
+    "visualSubject": "رقص سماع در دایره",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-128.png": {
+    "visibleText": "می‌خور منبر بسوزان مردم آزاری مکن",
+    "visualSubject": "سه خط متن فارسی با چک‌باکس",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 9474,
+    "matchedProductName": "پلیور مردم آزاری مکن",
+    "matchScore": 1
+  },
+  "pullover/پلیور-129.png": {
+    "visibleText": "SONY 60 A ایرانی شاد",
+    "visualSubject": "نوار کاست سونی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-130.png": {
+    "visibleText": "دونه دونه مروارید",
+    "visualSubject": "طرح پیکسلی انار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-131.png": {
+    "visibleText": "می‌خور، منبر بسوزان، مردم آزاری مکن",
+    "visualSubject": "سه چک‌باکس با متن فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 9474,
+    "matchedProductName": "پلیور مردم آزاری مکن",
+    "matchScore": 1
+  },
+  "pullover/پلیور-132.png": {
+    "visibleText": "ما که هیچ، این شهر خوشیم",
+    "visualSubject": "خوشنویسی نستعلیق سفید",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-133.png": {
+    "visibleText": "نوش باده",
+    "visualSubject": "زن قاجاری با انار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-134.png": {
+    "visibleText": "من از تو و از حصن بهشت",
+    "visualSubject": "خوشنویسی نستعلیق روی زمینه گل‌دار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-135.png": {
+    "visibleText": "عشق",
+    "visualSubject": "اسکلت با خوشنویسی قرمز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-136.png": {
+    "visibleText": "",
+    "visualSubject": "خطاطی نستعلیق سفید روی پس‌زمینه نقاشی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-137.png": {
+    "visibleText": "ما را از سر بریدہ می‌ترسانی؟",
+    "visualSubject": "شکسپیر با عینک آفتابی و جمجمه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-138.png": {
+    "visibleText": "داغ مرا تازه تر کن ناله سر کن",
+    "visualSubject": "پرتره مرد با طرح اسلیمی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-139.png": {
+    "visibleText": "SHAH ABBAS II THE PROFESSIONAL",
+    "visualSubject": "historical figure holding a gun",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 7981,
+    "matchedProductName": "پلیور شاه عباس حرفه ای",
+    "matchScore": 1
+  },
+  "pullover/پلیور-140.png": {
+    "visibleText": "-تموم شد؟ خیلی تاثیرگذار بود!",
+    "visualSubject": "بتمن با نی در حال نوشیدن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-141.png": {
+    "visibleText": "مرا ببخش که اید تو بودی",
+    "visualSubject": "تصویر صورت با دستمال گردن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-142.png": {
+    "visibleText": "کمک های اولیه",
+    "visualSubject": "لیوان چای داخل جعبه کمک‌های اولیه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-143.png": {
+    "visibleText": "",
+    "visualSubject": "خطاطی نستعلیق سیاه روی پس‌زمینه خاکستری",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-144.png": {
+    "visibleText": "-تموم شد؟ خیلی تاثیرگذار بود!",
+    "visualSubject": "بتمن در حال نوشیدن اسموتی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-145.png": {
+    "visibleText": "مرا از من دزدید چه صیدیست",
+    "visualSubject": "خطاطی نستعلیق روی پس‌زمینه گل‌دار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-146.png": {
+    "visibleText": "using System;\nusing System.Collections.Generic;\nclass Program\n{\n    static void Main()\n    {\n        List<string> lines = new List<string>()\n        {\n            \"این شبی که می گم شب نیست\",\n            \"بلکه شبِ منده اون شب نیست\",\n            \"تا شبِ منده دیشب نیست\",\n            \"تَبِ‌یه شبی مُدِ، امشب نیست\"\n        };\n        PrintPoem(lines);\n    }\n    static void PrintPoem(List<string> lines)\n    {\n        foreach (string line in lines)\n        {\n            Console.WriteLine(line);\n            if (line.Contains(\"شبِ\"))\n            {\n                Console.WriteLine(\"شب نیست\");\n            }\n        }\n    }\n}",
+    "visualSubject": "کد نویسی سی شارپ",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-147.png": {
+    "visibleText": "چونیک پنکری هه‌توریر می کنند",
+    "visualSubject": "نوشته خطی سیاه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-148.png": {
+    "visibleText": "الابارافی ساوک",
+    "visualSubject": "خطاطی سفید روی پس‌زمینه راه راه قرمز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-149.png": {
+    "visibleText": "وجدانی که به سرعت است... Coffee",
+    "visualSubject": "دستانِ دعاگو با فنجانِ قهوه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-150.png": {
+    "visibleText": "وجدانی که به سرعت است... Coffee",
+    "visualSubject": "دستانِ دعاگو با فنجانِ قهوه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-151.png": {
+    "visibleText": "الابارافیقنا سوى",
+    "visualSubject": "خطاطی سفید روی پس زمینه راه راه قرمز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-152.png": {
+    "visibleText": "",
+    "visualSubject": "طرح سنتی قاب و اسلیمی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-153.png": {
+    "visibleText": "هشدار که آرامش ما را نخراشی",
+    "visualSubject": "خطاطی نستعلیق روی سطح زنگ زده",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-154.png": {
+    "visibleText": "تووم شد؟ ولی شیربرنج کنار بود!",
+    "visualSubject": "بتمن در حال نوشیدن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-155.png": {
+    "visibleText": "قصه‌ای نیستم که بگویی نغمه‌ای نیستم که بخوانی صدایی نیستم که بشنوی",
+    "visualSubject": "کالیگرافی شعر احمد شاملو روی پس‌زمینه راه‌راه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-156.png": {
+    "visibleText": "",
+    "visualSubject": "چهار لوگوی زبان رولینگ استونز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-157.png": {
+    "visibleText": "ما زنده به آنیم که آرام نگیریم",
+    "visualSubject": "صفحه گرامافون و دستگاه پخش",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-158.png": {
+    "visibleText": "تو چشام نگاه کن و دستتو بذار تو دستم",
+    "visualSubject": "خط خطی دست های آفرینش",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-159.png": {
+    "visibleText": "HITMAN BLOOD",
+    "visualSubject": "مردِ طاسِ سبیل‌دار با چای و قوری",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-160.png": {
+    "visibleText": "قورباغه",
+    "visualSubject": "عروسک‌های ایرانی در حال نوشیدن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-161.png": {
+    "visibleText": "ایرانی شاد SONY AHF90",
+    "visualSubject": "کاست صوتی صورتی در حال ذوب شدن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-162.png": {
+    "visibleText": "دنیا همه هیچ و اهل دنیا همه هیچ",
+    "visualSubject": "فضانورد با لباس سنتی در کنار زمین",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-163.png": {
+    "visibleText": "از حاصل عمر چیست در دم بیچ...",
+    "visualSubject": "تصویر مجسمه پیرمرد با خطاطی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-164.png": {
+    "visibleText": "LION OF TA'AZIEH",
+    "visualSubject": "تصویر کارتونی شیر بامزه با موهای پریشان",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-166.png": {
+    "visibleText": "",
+    "visualSubject": "تصویر چهار بخشی از زبان و لب رنگی مشابه لوگوی رولینگ استونز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-167.png": {
+    "visibleText": "ایرانی شاد SONY AHF90",
+    "visualSubject": "کاست صوتی صورتی با طرح چکه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-168.png": {
+    "visibleText": "ای این شبِ می کشیت شیت ای این شبِ می کشیت شیت شیت ای",
+    "visualSubject": "تایپوگرافیِ شعرِ فارسی به شکلِ درخت",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-169.png": {
+    "visibleText": "TOO HOT FOR HEAVEN",
+    "visualSubject": "نقاشی شاهزاده قاجار با تاج",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-170.png": {
+    "visibleText": "مروغ عجایب نا اسیر کن داغ مرا تازه کن",
+    "visualSubject": "پرتره مرد میانسال با طرح سنتی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-171.png": {
+    "visibleText": "عاقل تر از انیم که دیوانه نباشیم",
+    "visualSubject": "تایپوگرافی شعر روی پس‌زمینه گیاهی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-172.png": {
+    "visibleText": "",
+    "visualSubject": "بشقاب پرنده و آدم فضایی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-173.png": {
+    "visibleText": "",
+    "visualSubject": "طرح خطاطی و گل‌های آبی و صورتی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-175.png": {
+    "visibleText": "استمرار continuity [käntan(y)ooadë] noun گذشتن و رفتن پیوسته",
+    "visualSubject": "طرحِ تایپوگرافیِ استمرار و کانتینیوی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8700,
+    "matchedProductName": "پلیور دورس استمرار گذشتن و رفتن پیوسته",
+    "matchScore": 0.8
+  },
+  "pullover/پلیور-176.png": {
+    "visibleText": "خوشم تشویشم اندیشم خوشم کردم بی خویشم",
+    "visualSubject": "خوشنویسی شعر مولانا",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-177.png": {
+    "visibleText": "ما را به سخت جانی خود این گمان نبود",
+    "visualSubject": "خوشنویسی شعر روی گل‌های رز",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 9303,
+    "matchedProductName": "پلیور ما را به سخت جانی خود این گمان نبود",
+    "matchScore": 1
+  },
+  "pullover/پلیور-178.png": {
+    "visibleText": "خودتان قضاوت کنید مرگ زندگی",
+    "visualSubject": "تصویر دو ریه یکی پر از گل و دیگری شاخه خشک",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-179.png": {
+    "visibleText": "AZAD",
+    "visualSubject": "طرح برج آزادی تهران",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8937,
+    "matchedProductName": "پلیور آزادی",
+    "matchScore": 1
+  },
+  "pullover/پلیور-180.png": {
+    "visibleText": "ومخدایی که به شدت مست Coffee است",
+    "visualSubject": "دست های دعا و فنجان قهوه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-181.png": {
+    "visibleText": "هشدار که آرامش ما را نخراشی",
+    "visualSubject": "خطاطی نستعلیق سفید روی سطح زنگ زده",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-182.png": {
+    "visibleText": "مرا به نیک‌بختان یاد کن",
+    "visualSubject": "تصویر چهره با باندانا و متن",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-183.png": {
+    "visibleText": "Bar Bari",
+    "visualSubject": "شخصیت برکینگ بد به شکل نان باگت با کلاه و عینک",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-184.png": {
+    "visibleText": "فوایدِ من:\n-من برات یار میشم.\n-یار وفادار میشم.\n-دل و دلدار میشم.\n-غم داری غمخوار میشم.\n-با تو تبدار میشم.\n-با تو بیمار میشم.\n-با تو چشمامو می بندم.\n-با تو بیدار میشم.",
+    "visualSubject": "کادرِ خط‌کشی‌شده با متنِ فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8387,
+    "matchedProductName": "پلیور فواید من",
+    "matchScore": 1
+  },
+  "pullover/پلیور-185.png": {
+    "visibleText": "عاقل تر از آنیم که دیوانه نباشیم",
+    "visualSubject": "خطاطی نستعلیق فارسی روی پس‌زمینه گیاهی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 9105,
+    "matchedProductName": "پلیور عاقلتر از آنیم که دیوانه نباشیم",
+    "matchScore": 0.8333333333333334
+  },
+  "pullover/پلیور-186.png": {
+    "visibleText": "امروز جوانان تا منو داری دیگه این همه عاشق واسه چی؟ خوشگلا باید برقصن! نبینم که بازنشستی منتظر چی هستی؟ تو جشنِ شب نشینی باید باشی برقص پاشو باز با من برقص تا به آتیش بکشی تا گل بریزم زیر پات صحنه رو با دلبرات",
+    "visualSubject": "لوگو، آیکون‌ها و متن‌های فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8303,
+    "matchedProductName": "پلیور خوشگلا باید برقصن",
+    "matchScore": 1
+  },
+  "pullover/پلیور-187.png": {
+    "visibleText": "ما زینکه به آنیم که آرام نگیریم",
+    "visualSubject": "صفحه گرامافون با خطاطی فارسی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-188.png": {
+    "visibleText": "دنیا همه هیچ و اهل دنیا همه هیچ",
+    "visualSubject": "فضایی و کره زمین",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-189.png": {
+    "visibleText": "ذهن چنان ندارد بی گربه زندگانی",
+    "visualSubject": "تصویر زن با گربه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "pullover/پلیور-190.png": {
+    "visibleText": "ذوقِ چنان ندارد بی گربه زندگانی",
+    "visualSubject": "تصویر زن و گربه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-001.png": {
+    "visibleText": "به کسی کین ورزیدیم و کین از ما ندید",
+    "visualSubject": "تایپوگرافی شعر فارسی سفید روی پس‌زمینه قرمز",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-002.png": {
+    "visibleText": "MA ZAHMAT MIKESHIM",
+    "visualSubject": "کاراکترِ متعجبِ قرمزپوش",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": 3168,
+    "matchedProductName": "تیشرت ما داریم زحمت میکشیم",
+    "matchScore": 0.75
+  },
+  "longsleeve/آستین‌بلند-003.png": {
+    "visibleText": "استمرار continuity [käntən(y)o͞oədē] noun گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته گذشتن و رفتن پیوسته",
+    "visualSubject": "طرحِ واژه‌نامه با متنِ استمرار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 8700,
+    "matchedProductName": "پلیور دورس استمرار گذشتن و رفتن پیوسته",
+    "matchScore": 0.8
+  },
+  "longsleeve/آستین‌بلند-004.png": {
+    "visibleText": "درونگرا خانه‌گرا مستقل ضداجتماع بغل‌گریز هشدار اگر داری این را می‌خوانی زیاد نزدیک شدی محتویات",
+    "visualSubject": "طرح گرافیکی درونگرا با آیکون‌ها و جدول مشخصات",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": 7671,
+    "matchedProductName": "پلیور درونگرا",
+    "matchScore": 1
+  },
+  "longsleeve/آستین‌بلند-005.png": {
+    "visibleText": "UN KE BAAD ENGHAD BEHERS MANO GAAM!",
+    "visualSubject": "پیتر پارکر با عینک آفتابی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-006.png": {
+    "visibleText": "UN KE OAD ENGHAD HERS MANO GA**DAM!",
+    "visualSubject": "شخصیتی با عینک آفتابی و اشاره دست",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-009.png": {
+    "visibleText": "ALONE DUCK IN TAK TAKE ORDAK",
+    "visualSubject": "مرد با اره برقی و اردک پلاستیکی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-010.png": {
+    "visibleText": "همیشه که نباید ترسید،\nراه که بیفتیم ترسمان می ریزد.\nماهی سیاه کوچولو",
+    "visualSubject": "صففی از ماهی‌ها با یک ماهی سیاه متفاوت",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": 3103,
+    "matchedProductName": "تیشرت ماهی سیاه کوچولو",
+    "matchScore": 1
+  },
+  "longsleeve/آستین‌بلند-011.png": {
+    "visibleText": "هشت اردیبهشت ازامشماران بخش رانش",
+    "visualSubject": "متنِ دست‌خط رویِ پلاکِ فلزیِ زنگ‌زده",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-012.png": {
+    "visibleText": "هرکه در این پرده نیست *خارج از این ماجراست.",
+    "visualSubject": "نقاشی مینیاتور جنگ با خط نستعلیق",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-013.png": {
+    "visibleText": "الامیرقرمزناسکوی",
+    "visualSubject": "خطاطی سفید روی پس زمینه قرمز و آبی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-014.png": {
+    "visibleText": "",
+    "visualSubject": "ترکیب نقاشی سنتی و کت و شلوار",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-015.png": {
+    "visibleText": "",
+    "visualSubject": "چهره انسان با خطوط موازی سیاه و سفید",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-016.png": {
+    "visibleText": "",
+    "visualSubject": "خورشید و طرحِ قومِی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-017.png": {
+    "visibleText": "مرا آن سر که با خود در کشاکش نیست",
+    "visualSubject": "خطاطی نستعلیق متن فارسی روی پس‌زمینه گل‌دار",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-018.png": {
+    "visibleText": "UN KE\nDAD ENGHAD\nHERS MANO\nGA##DAM!",
+    "visualSubject": "طرح گرافیکی با متن انگلیسی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-019.png": {
+    "visibleText": "از اصل عمر چیست در ره بی‌پروای",
+    "visualSubject": "طرح گرافیکی مجسمه با خطاطی",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-020.png": {
+    "visibleText": "نه به انتظار نه زیاده انتظار",
+    "visualSubject": "طرح خورشید با صورت قبیله‌ای و متن فارسی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-021.png": {
+    "visibleText": "بهمن",
+    "visualSubject": "طرح اسکلت و پاکت سیگار",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-022.png": {
+    "visibleText": "",
+    "visualSubject": "خطاطی سفید روی ماه",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-023.png": {
+    "visibleText": "",
+    "visualSubject": "ترکیبی از گل‌های رنگارنگ به همراه نوشته نستعلیق",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-024.png": {
+    "visibleText": "بیخود نشینم پیش خود بیخود کنم بی خویشتن",
+    "visualSubject": "کالیگرافی شعر فارسی در کادر آبی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-025.png": {
+    "visibleText": "مضرات اینجانب هم نامهربونه هم آفت جونه هم با دیگرونه هم قدرم ندونه، ندونه، ندونه هم دو رو و دو رنگه هم خیلی زرنگه هم دلش چه سنگه هم با من بجنگه، بجنگه، بجنگه فواید من",
+    "visualSubject": "طرح بسته بندی متن مضرات و فواید",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": 3204,
+    "matchedProductName": "تیشرت فواید من",
+    "matchScore": 1
+  },
+  "longsleeve/آستین‌بلند-026.png": {
+    "visibleText": "",
+    "visualSubject": "خطاطی نستعلیق سفید روی گل‌های بنفش",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-027.png": {
+    "visibleText": "تنهایی",
+    "visualSubject": "ترکیب خوشنویسی و گل‌های آبی و صورتی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-028.png": {
+    "visibleText": "فواید من:\n-من برات یار میشم.\n-یار وفادار میشم.\n-دل و دلدار میشم.\n-غم داری غمخوار میشم.\n-با تو تبدار میشم.\n-با تو بیمار میشم.\n-با تو چشمامو می بندم.\n-با تو بیدار میشم.",
+    "visualSubject": "طرح جعبه با متن و علائم",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": 3204,
+    "matchedProductName": "تیشرت فواید من",
+    "matchScore": 1
+  },
+  "longsleeve/آستین‌بلند-029.png": {
+    "visibleText": "جهان و کار جهان جمله هیچ بر هیچ است.",
+    "visualSubject": "فضنورد با کره زمین",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-030.png": {
+    "visibleText": "همیشه که نباید ترسید، راه که بیفتیم ترسمان می‌ریزد.",
+    "visualSubject": "تکرار ماهی‌های تیره روی زمینه راه راه",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-031.png": {
+    "visibleText": "",
+    "visualSubject": "طرح دو پادشاه سنتی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-032.png": {
+    "visibleText": "ما را نعمت دوست و حرص بهشت",
+    "visualSubject": "خطاطی نستعلیق فارسی با پس‌زمینه گل‌دار",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-033.png": {
+    "visibleText": "مرا نامی در دو زلف و چشمانت بهشت است",
+    "visualSubject": "خطاطی نستعلیق فارسی با پس‌زمینه گل و گیاه",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-034.png": {
+    "visibleText": "UN KE DAD ENGHAD KERS MANO GANDAM!",
+    "visualSubject": "شخصیت کارتونی در حال تیراندازی صاعقه",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-035.png": {
+    "visibleText": "ما را به رندی افسانه کردند: ۱- پیران جاهل ۲- شیخان گمراه",
+    "visualSubject": "خطاطی نستعلیق شعر فارسی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-036.png": {
+    "visibleText": "UN KE\nDAD ENGHAD\nHERS MANO\nGA...DAM!",
+    "visualSubject": "تصویر فانتزی مرد عنکبوتی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-037.png": {
+    "visibleText": "ماه من مهتاب من",
+    "visualSubject": "خوشنویسی ماه من مهتاب من روی ماه",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-038.png": {
+    "visibleText": "به چشمم نگاه کن و دستتو بذار تو دستم",
+    "visualSubject": "خطوطِ طرحِ دستِ آفرینشِ آدم",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-039.png": {
+    "visibleText": "خودتان قضاوت کنید\nمرگ\nزندگی",
+    "visualSubject": "دو ریه به شکل گل و درخت",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-040.png": {
+    "visibleText": "یا ماه شب چهارده تو ماهی و من حوتاب",
+    "visualSubject": "ماه سفید و متن خطاطی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-041.png": {
+    "visibleText": "کمک های اولیه",
+    "visualSubject": "استکان چای در جعبه کمک‌های اولیه",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": 3067,
+    "matchedProductName": "تیشرت چای نبات، کمک های اولیه",
+    "matchScore": 0.8
+  },
+  "longsleeve/آستین‌بلند-042.png": {
+    "visibleText": "",
+    "visualSubject": "بشقاب پرنده و آدم فضایی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-043.png": {
+    "visibleText": "اگه تو از بری زبون زرگری\nدزسزتنز دازارزمنز",
+    "visualSubject": "پرتره مرد سبیل‌دار با موی فر",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-044.png": {
+    "visibleText": "اگه تو از بری زبون زرگری دزسزتز دازارزهنز",
+    "visualSubject": "پرتره مرد سبیل‌دار با موی فرفری",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-045.png": {
+    "visibleText": "اگه تو از بری زبون زرگری درسنتر دازارزمز",
+    "visualSubject": "تصویر چهره مرد با سبیل و موی فر",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-046.png": {
+    "visibleText": "این نیز بگذرد",
+    "visualSubject": "نوشته‌ی خطاطی فارسی روی سینه",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-047.png": {
+    "visibleText": "واسه این\nشرقی تن داده به باد\nتو گوارایی\nحس وطنی",
+    "visualSubject": "نوشته‌ی فارسی قرمز و سفید روی سینه لباس",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-049.png": {
+    "visibleText": "مرا ان غم دوزخ و حصر بهشتست",
+    "visualSubject": "خطاطی نستعلیق روی زمینه گل و برگ",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-050.png": {
+    "visibleText": "",
+    "visualSubject": "تصویر دو شخصیت تاریخی داخل قاب",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-051.png": {
+    "visibleText": "هر چه در این حلقه نیست، خارج از این ماجراست.",
+    "visualSubject": "خطاطی نستعلیق درون دایره با پس‌زمینه زرشکی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-052.png": {
+    "visibleText": "ALONE DUCK IN TAK TAKE",
+    "visualSubject": "مردی با اره برقی روی اردک بادی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-053.png": {
+    "visibleText": "خانه گرا مستقل ضداجتماع بغل گریز درونگرا INTROVERT هشدار با احتیاط کامل نزدیک شوید محتویات مصرف روزانه ۲۴ ساعت کامل میزان در هر وعده رفتار عجیب ایده پردازی تنفر از کار گروهی سکوت عمیق تخیل فوق العاده روابط مختصر ناخوشی اگر داری این را می خوانی زیاد نزدیک شدی",
+    "visualSubject": "طرح گرافیکی با آیکون‌ها و متن‌های فارسی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": 7697,
+    "matchedProductName": "تیشرت درونگرا",
+    "matchScore": 1
+  },
+  "longsleeve/آستین‌بلند-054.png": {
+    "visibleText": "مرغ سحر ناله سر کن داغ مرا تازه تر کن",
+    "visualSubject": "چهره مرد با موی بلند پشت سرهم و طرح اسلیمی قرمز",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-055.png": {
+    "visibleText": "",
+    "visualSubject": "طرح لب و زبان رنگی",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-056.png": {
+    "visibleText": "QUEEN",
+    "visualSubject": "طرح گرافیکی ملکه کارت بازی با چهره آرتا فرانکلین",
+    "illegible": false,
+    "garment": "longsleeve",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
+  },
+  "longsleeve/آستین‌بلند-057.png": {
+    "visibleText": "GIGILI IS MY SPIRIT ANIMAL",
+    "visualSubject": "تصویر کاریکاتور مرد با کت و شلوار",
+    "illegible": false,
+    "garment": "sweatshirt",
+    "matchedProductId": null,
+    "matchedProductName": null,
+    "matchScore": null
   }
 }
