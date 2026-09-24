@@ -128,7 +128,12 @@ function fit(text, { maxW, maxLines, sizes, family = FA }) {
   return { lines, size };
 }
 
-function textLines({ lines, size, x, y, color = C.ink, anchor = "end", lh = 1.32, family = FA }) {
+// فاصله‌ی خط‌ها: تبلیغ نقطه‌ها و دنباله‌هایِ بلند داره؛ کمتر از این، نقطه‌هایِ یه خط
+// به حروفِ خطِ بعد می‌خوره (فیدبکِ کاربر). LH برایِ تیترها، LH_BODY برایِ متنِ توضیحی.
+const LH = 1.5;
+const LH_BODY = 1.75;
+
+function textLines({ lines, size, x, y, color = C.ink, anchor = "end", lh = LH, family = FA }) {
   return lines
     .map(
       (l, i) =>
@@ -297,7 +302,7 @@ function textCard({ headline, chips, maxW, s, sizes, anchorRight, anchorY, place
   if (!lines) lines = fit(headline, { maxW: maxW - pad * 2, maxLines: 3, sizes: [size] }).lines;
   const lineWs = lines.map((l) => textWidth(l, size));
   const lineW = Math.max(...lineWs);
-  const lh = Math.round(size * 1.28);
+  const lh = Math.round(size * LH);
   const chipH = Math.round(Math.max(40 * s, size * 0.7));
   const gapC = Math.round(8 * s);
   const chipObjs = [];
@@ -323,7 +328,7 @@ function textCard({ headline, chips, maxW, s, sizes, anchorRight, anchorY, place
   let svg =
     `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${20 * s}" fill="${C.ink}"/>` +
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${20 * s}" fill="${C.b50}" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
-    textLines({ lines, size, x: x + w - pad, y: baseline0, lh: 1.28 });
+    textLines({ lines, size, x: x + w - pad, y: baseline0, lh: LH });
   let cx, cy;
   if (inline) {
     // چیپ‌ها از لبه‌ی چپِ کارت، هم‌ترازِ خطِ آخر
@@ -454,7 +459,7 @@ async function renderTwitter({ photoBytes, headline, categoryLabel, facts, desig
     `<text x="${colRight}" y="160" text-anchor="end" direction="rtl" font-family="${FA}" font-size="24" fill="${C.red}">${esc(categoryLabel)}ِ امروزِ میزطوری</text>` +
     textLines({ lines, size, x: colRight, y: hy + size * 0.9 });
   let cx = colRight;
-  const cy = Math.round(hy + lines.length * size * 1.32 + 34);
+  const cy = Math.round(hy + lines.length * size * LH + 34);
   for (const c of factChips(facts)) {
     const p = pill({ x: cx, y: cy, h: 50, text: c.text, fill: c.fill, color: c.color, stroke: c.stroke, family: c.family || FA });
     svg += p.svg;
@@ -558,7 +563,7 @@ async function renderInfo({ facts, categoryLabel, format = "post" }) {
     `<text x="${W - inset}" y="${y}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="28" fill="${C.red}">هر چی قبلِ خرید باید بدونی</text>`;
   y += 26;
   svg += textLines({ lines: t.lines, size: t.size, x: W - inset, y: y + t.size });
-  y += t.lines.length * t.size * 1.32 + 40;
+  y += t.lines.length * t.size * LH + 40;
 
   const rows = [];
   if (facts.colors?.length) rows.push({ icon: "palette", k: "رنگ‌ها", v: `${faDigits(facts.colors.length)} رنگ`, swatches: facts.colors });
@@ -612,9 +617,9 @@ function servicePanelHeight(panel, w, s) {
     return Math.ceil(n / cols) * (r * 2 + gap) - gap + pad * 2;
   }
   if (id === "sizes") return pad * 2 + 2 * 104 * s + 12 * s + 48 * s;
-  if (id === "big") return pad * 2 + 96 * s + 30 * s + (panel.sub ? 2 * 34 * s * 1.3 : 0);
+  if (id === "big") return pad * 2 + 96 * s + 30 * s + (panel.sub ? 2 * 34 * s * LH : 0);
   if (id === "list") return pad * 2 + (panel.items || []).length * 72 * s;
-  return pad * 2 + 124 * s + 44 * s + 56 * s;
+  return pad * 2 + 150 * s + 44 * s + 56 * s;
 }
 
 function servicePanel(panel, { x, y, w, h, s }) {
@@ -654,7 +659,7 @@ function servicePanel(panel, { x, y, w, h, s }) {
     svg += `<text x="${x + w - pad}" y="${y + pad + 64 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${big.size}" fill="${C.red}">${esc(big.lines[0] || "")}</text>`;
     if (panel.sub) {
       const sub = fit(panel.sub, { maxW: w - pad * 2, maxLines: 1, sizes: [30, 27, 24, 21].map((v) => Math.round(v * s)) });
-      svg += `<text x="${x + w - pad}" y="${y + pad + 124 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${sub.size}" fill="${C.ink}">${esc(sub.lines[0] || "")}</text>`;
+      svg += `<text x="${x + w - pad}" y="${y + pad + 150 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${sub.size}" fill="${C.ink}">${esc(sub.lines[0] || "")}</text>`;
     }
     const steps = panel.steps || [];
     const last = steps.length - 1;
@@ -677,7 +682,7 @@ function servicePanel(panel, { x, y, w, h, s }) {
     svg += `<text x="${x + w - pad}" y="${y + pad + big.size * 0.95}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${big.size}" fill="${C.red}">${esc(big.lines[0] || "")}</text>`;
     if (panel.sub) {
       const sub = fit(panel.sub, { maxW: w - pad * 2, maxLines: 2, sizes: [34, 30, 27, 24].map((v) => Math.round(v * s)) });
-      svg += textLines({ lines: sub.lines, size: sub.size, x: x + w - pad, y: y + h - pad - (sub.lines.length - 1) * sub.size * 1.3, lh: 1.3 });
+      svg += textLines({ lines: sub.lines, size: sub.size, x: x + w - pad, y: y + h - pad - (sub.lines.length - 1) * sub.size * LH, lh: LH });
     }
   } else if (panel.type === "list") {
     const items = panel.items || [];
@@ -723,10 +728,10 @@ async function renderServicePost({ format, headline, body, cta, id, panel }) {
     brand.svg +
     `<text x="${W - inset}" y="${y}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(32 * s)}" fill="${C.red}">خدماتِ میزطوری</text>`;
   y += Math.round(24 * s);
-  svg += textLines({ lines: hl, size: hs, x: W - inset, y: y + hs, lh: 1.22 });
-  y += hl.length * hs * 1.22 + Math.round(26 * s);
-  svg += textLines({ lines: b.lines, size: b.size, x: W - inset, y: y + b.size, color: C.g20, lh: 1.6 });
-  y += b.lines.length * b.size * 1.6 + Math.round(36 * s);
+  svg += textLines({ lines: hl, size: hs, x: W - inset, y: y + hs, lh: LH });
+  y += hl.length * hs * LH + Math.round(20 * s);
+  svg += textLines({ lines: b.lines, size: b.size, x: W - inset, y: y + b.size, color: C.g20, lh: LH_BODY });
+  y += b.lines.length * b.size * LH_BODY + Math.round(30 * s);
   const c = pill({ x: W - inset, y, h: Math.round(72 * s), text: cta, fill: C.red, color: C.b50 });
   svg += c.svg;
   svg += `<text x="${W - inset - c.w - Math.round(24 * s)}" y="${y + Math.round(47 * s)}" text-anchor="end" font-family="${LATIN}" font-size="${Math.round(28 * s)}" fill="${C.ink}">miztore.com</text>`;
@@ -768,7 +773,7 @@ async function productImage(url, w, h) {
 async function productCard({ item, x, y, w, h, s, badge }) {
   const pad = Math.round(18 * s);
   const nameFit = fit(item.shortName || item.name, { maxW: w - pad * 2, maxLines: 2, sizes: [34, 31, 28, 25, 22].map((v) => Math.round(v * s)) });
-  const nameH = Math.round(nameFit.lines.length * nameFit.size * 1.3);
+  const nameH = Math.round(nameFit.lines.length * nameFit.size * LH);
   const priceFs = Math.round(26 * s);
   const textH = pad + Math.round(36 * s) + nameH + priceFs + pad;
   const imgH = Math.max(Math.round(80 * s), h - textH);
@@ -788,7 +793,7 @@ async function productCard({ item, x, y, w, h, s, badge }) {
   if (item.kind)
     over += `<text x="${x + w - pad}" y="${ty + 18 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(20 * s)}" fill="${C.red}">${esc(item.kind)}</text>`;
   ty += Math.round(36 * s);
-  over += textLines({ lines: nameFit.lines, size: nameFit.size, x: x + w - pad, y: ty + nameFit.size, lh: 1.3 });
+  over += textLines({ lines: nameFit.lines, size: nameFit.size, x: x + w - pad, y: ty + nameFit.size, lh: LH });
   ty += nameH;
   if (item.priceText)
     over += `<text x="${x + w - pad}" y="${ty + priceFs + 4 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${priceFs}" fill="${C.ink}">${esc(item.priceText)}</text>`;
@@ -847,8 +852,8 @@ async function renderGrid({ format, eyebrow, title, items, badges }) {
   let y = topY + Math.round((horizontal ? 0 : 100) * s);
   let svg = `<text x="${titleRight}" y="${y + 30 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(30 * s)}" fill="${C.red}">${esc(eyebrow)}</text>`;
   y += Math.round(44 * s);
-  svg += textLines({ lines: tl, size: ts, x: titleRight, y: y + ts, lh: 1.2 });
-  y += Math.round(tl.length * ts * 1.2 + 34 * s);
+  svg += textLines({ lines: tl, size: ts, x: titleRight, y: y + ts, lh: LH });
+  y += Math.round(tl.length * ts * LH + 24 * s);
 
   const bottomSafe = format === "story" ? H - Math.round(250 * s) : H - Math.round(40 * s);
   const footerH = Math.round(96 * s);
@@ -875,8 +880,8 @@ async function renderVersus({ format, question, a, b }) {
   let y = topY + Math.round((horizontal ? 0 : 100) * s);
   let svg = `<text x="${qRight}" y="${y + 30 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(30 * s)}" fill="${C.red}">این یا اون؟</text>`;
   y += Math.round(44 * s);
-  svg += textLines({ lines: qFit.lines, size: qFit.size, x: qRight, y: y + qFit.size, lh: 1.2 });
-  y += Math.round(qFit.lines.length * qFit.size * 1.2 + 36 * s);
+  svg += textLines({ lines: qFit.lines, size: qFit.size, x: qRight, y: y + qFit.size, lh: LH });
+  y += Math.round(qFit.lines.length * qFit.size * LH + 26 * s);
   const bottomSafe = format === "story" ? H - Math.round(430 * s) : H - Math.round(110 * s);
   const grid = await gridLayout({ s, items: [a, b], top: y, bottom: bottomSafe, left: inset + Math.round(8 * s), right: W - inset, cols: 2, badges: ["الف", "ب"] });
   const r = Math.round(54 * s);
