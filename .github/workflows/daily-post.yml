@@ -9,6 +9,11 @@ on:
         description: "true = فقط پیش‌نمایش برای ادمین، پست واقعی نه"
         type: boolean
         default: false
+      content_type:
+        description: "نوعِ محتوا (خالی = تصادفی طبقِ ترکیبِ روزانه)"
+        type: choice
+        default: ""
+        options: ["", "product", "service", "bestsellers", "collection", "gift", "versus"]
 
 permissions:
   contents: write
@@ -34,6 +39,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}
+          CONTENT_TYPE: ${{ inputs.content_type }}
         run: node automation/generate.js
 
       - name: Commit output + state

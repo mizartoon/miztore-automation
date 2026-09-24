@@ -153,7 +153,23 @@ async function roundedPhoto(buffer, w, h, r) {
 // ---------------------------------------------------------------------------
 const MAX_BLIND_CROP = 0.14;
 
-async function framePhoto(photoBytes, w, h, box, reserveBottom = 0) {
+async function framePhoto(photoBytes, w, h, box, reserveBottom = 0, studio = false) {
+  if (studio) {
+    // عکسِ استودیوییِ محصول (پس‌زمینه‌ی ساده): کلِ لباس رویِ رنگِ پس‌زمینه‌ی خودِ عکس،
+    // کمی بالاتر از وسط تا کارتِ متنِ پایین روش نیفته — نه پس‌زمینه‌ی تار.
+    // عکس‌هایِ سایت پس‌زمینه‌یِ شفاف دارن → اول رویِ bone-200 (رنگِ کارت‌هایِ سایت)
+    photoBytes = await sharp(photoBytes).flatten({ background: C.b200 }).jpeg({ quality: 95 }).toBuffer();
+    const { data } = await sharp(photoBytes).resize(8, 8, { fit: "fill" }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    const bg = { r: data[0], g: data[1], b: data[2] };
+    const boxH = Math.round(h * (1 - reserveBottom) * 0.94);
+    const fg = await sharp(photoBytes).resize({ width: Math.round(w * 0.92), height: boxH, fit: "inside" }).toBuffer({ resolveWithObject: true });
+    const top = Math.round(Math.max(h * 0.05, (h * (1 - reserveBottom) - fg.info.height) / 2));
+    const buffer = await sharp({ create: { width: w, height: h, channels: 3, background: bg } })
+      .composite([{ input: fg.data, left: Math.round((w - fg.info.width) / 2), top }])
+      .jpeg()
+      .toBuffer();
+    return { buffer, design: null };
+  }
   const meta = await sharp(photoBytes).metadata();
   const sw = meta.width;
   const sh = meta.height;
@@ -349,7 +365,7 @@ async function compose(W, H, bg, under, svg, over = []) {
 // ---------------------------------------------------------------------------
 // پستِ اصلی
 // ---------------------------------------------------------------------------
-async function renderPost({ photoBytes, headline, categoryLabel, facts, designBox, format }) {
+async function renderPost({ photoBytes, headline, categoryLabel, facts, designBox, format, studio = false }) {
   const F = FORMATS[format];
   if (!F) throw new Error(`فرمت ناشناخته: ${format}`);
   if (format === "twitter") return renderTwitter({ photoBytes, headline, categoryLabel, facts, designBox });
@@ -361,7 +377,7 @@ async function renderPost({ photoBytes, headline, categoryLabel, facts, designBo
   const fw = W - m * 2;
   const fh = H - m * 2;
   const reserve = { post: 0.24, telegram: 0.3, story: 0.3 }[format] || 0.25;
-  const { buffer, design } = await framePhoto(photoBytes, fw, fh, designBox, reserve);
+  const { buffer, design } = await framePhoto(photoBytes, fw, fh, designBox, reserve, studio);
   const photo = await roundedPhoto(buffer, fw, fh, R);
   const designAbs = design ? { x: design.x + m, y: design.y + m, w: design.w, h: design.h } : null;
 
@@ -587,7 +603,8 @@ async function renderInfo({ facts, categoryLabel, format = "post" }) {
 // پستِ خدمات (بدونِ عکسِ محصول)
 // ---------------------------------------------------------------------------
 // پنلِ تصویریِ هر خدمت — فضایِ پایین‌راست رو با یه چیزِ واقعی و مرتبط پر می‌کنه
-function servicePanelHeight(id, w, s) {
+function servicePanelHeight(panel, w, s) {
+  const id = panel.type;
   const pad = 28 * s;
   if (id === "colors") {
     const n = Object.keys(SWATCH).length - 1, r = 22 * s, gap = 14 * s;
@@ -595,10 +612,13 @@ function servicePanelHeight(id, w, s) {
     return Math.ceil(n / cols) * (r * 2 + gap) - gap + pad * 2;
   }
   if (id === "sizes") return pad * 2 + 2 * 104 * s + 12 * s + 48 * s;
+  if (id === "big") return pad * 2 + 96 * s + 30 * s + (panel.sub ? 2 * 34 * s * 1.3 : 0);
+  if (id === "list") return pad * 2 + (panel.items || []).length * 72 * s;
   return pad * 2 + 124 * s + 44 * s + 56 * s;
 }
 
-function servicePanel(id, { x, y, w, h, s }) {
+function servicePanel(panel, { x, y, w, h, s }) {
+  const id = panel.type;
   let svg = `<rect x="${x - 9 * s}" y="${y + 9 * s}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.ink}"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${22 * s}" fill="${C.bone}" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
   const pad = 28 * s;
   if (id === "colors") {
@@ -629,27 +649,53 @@ function servicePanel(id, { x, y, w, h, s }) {
     });
     const foot = fit("عرضِ سینه، سانتی‌متر · تیشرت اسلیم", { maxW: w - pad * 2, maxLines: 1, sizes: [24, 22, 20, 18].map((v) => Math.round(v * s)) });
     svg += `<text x="${x + w - pad}" y="${y + h - pad * 0.8}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${foot.size}" fill="${C.g40}">${esc(foot.lines[0] || "")}</text>`;
-  } else {
-    svg += `<text x="${x + w - pad}" y="${y + pad + 64 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${64 * s}" fill="${C.red}">دیجی‌پی</text>`;
-    const sub = fit("موقعِ پرداخت انتخابش کن", { maxW: w - pad * 2, maxLines: 1, sizes: [30, 27, 24, 21].map((v) => Math.round(v * s)) });
-    svg += `<text x="${x + w - pad}" y="${y + pad + 124 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${sub.size}" fill="${C.ink}">${esc(sub.lines[0] || "")}</text>`;
-    const steps = ["سبد", "پرداخت", "دیجی‌پی"];
+  } else if (panel.type === "steps") {
+    const big = fit(panel.big || "", { maxW: w - pad * 2, maxLines: 1, sizes: [64, 56, 48].map((v) => Math.round(v * s)) });
+    svg += `<text x="${x + w - pad}" y="${y + pad + 64 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${big.size}" fill="${C.red}">${esc(big.lines[0] || "")}</text>`;
+    if (panel.sub) {
+      const sub = fit(panel.sub, { maxW: w - pad * 2, maxLines: 1, sizes: [30, 27, 24, 21].map((v) => Math.round(v * s)) });
+      svg += `<text x="${x + w - pad}" y="${y + pad + 124 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${sub.size}" fill="${C.ink}">${esc(sub.lines[0] || "")}</text>`;
+    }
+    const steps = panel.steps || [];
+    const last = steps.length - 1;
     let chipH = 56 * s;
-    const stepsW = (hh) => steps.reduce((a, t) => a + textWidth(t, Math.round(hh * 0.44)) + hh * 0.9, 0) + 2 * 34 * s;
-    while (chipH > 34 * s && stepsW(chipH) > w - pad * 2) chipH -= 4 * s;
+    const stepsW = (hh) => steps.reduce((a, t) => a + textWidth(t, Math.round(hh * 0.44)) + hh * 0.9, 0) + last * 34 * s;
+    while (chipH > 30 * s && stepsW(chipH) > w - pad * 2) chipH -= 4 * s;
     let cx = x + w - pad;
     const cy = y + h - pad - chipH;
     steps.forEach((t, i) => {
-      const p = pill({ x: cx, y: cy, h: chipH, text: t, fill: i === 2 ? C.red : C.b50, color: i === 2 ? C.b50 : C.ink, stroke: i === 2 ? null : C.ink });
+      const p = pill({ x: cx, y: cy, h: chipH, text: t, fill: i === last ? C.red : C.b50, color: i === last ? C.b50 : C.ink, stroke: i === last ? null : C.ink });
       svg += p.svg;
       cx -= p.w;
-      if (i < 2) { svg += `<text x="${cx - 12 * s}" y="${cy + chipH * 0.68}" text-anchor="end" font-family="${LATIN}" font-size="${30 * s}" fill="${C.g40}">‹</text>`; cx -= 34 * s; }
+      if (i < last) {
+        svg += `<text x="${cx - 12 * s}" y="${cy + chipH * 0.68}" text-anchor="end" font-family="${LATIN}" font-size="${30 * s}" fill="${C.g40}">‹</text>`;
+        cx -= 34 * s;
+      }
+    });
+  } else if (panel.type === "big") {
+    const big = fit(panel.big || "", { maxW: w - pad * 2, maxLines: 1, sizes: [96, 84, 72, 60].map((v) => Math.round(v * s)) });
+    svg += `<text x="${x + w - pad}" y="${y + pad + big.size * 0.95}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${big.size}" fill="${C.red}">${esc(big.lines[0] || "")}</text>`;
+    if (panel.sub) {
+      const sub = fit(panel.sub, { maxW: w - pad * 2, maxLines: 2, sizes: [34, 30, 27, 24].map((v) => Math.round(v * s)) });
+      svg += textLines({ lines: sub.lines, size: sub.size, x: x + w - pad, y: y + h - pad - (sub.lines.length - 1) * sub.size * 1.3, lh: 1.3 });
+    }
+  } else if (panel.type === "list") {
+    const items = panel.items || [];
+    const rowH = (h - pad * 2) / items.length;
+    items.forEach((t, i) => {
+      const cy = y + pad + rowH * i + rowH / 2;
+      const r = 22 * s;
+      const cx = x + w - pad - r;
+      svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.ink}"/><path d="M${cx - 9 * s} ${cy} l${6 * s} ${6 * s} l${12 * s} ${-12 * s}" fill="none" stroke="${C.b50}" stroke-width="${4 * s}" stroke-linecap="round" stroke-linejoin="round"/>`;
+      const f = fit(t, { maxW: w - pad * 2 - r * 2 - 18 * s, maxLines: 1, sizes: [34, 30, 27, 24].map((v) => Math.round(v * s)) });
+      svg += `<text x="${cx - r - 16 * s}" y="${cy + f.size * 0.35}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${f.size}" fill="${C.ink}">${esc(f.lines[0] || "")}</text>`;
     });
   }
   return svg;
 }
 
-async function renderServicePost({ format, headline, body, cta, id }) {
+async function renderServicePost({ format, headline, body, cta, id, panel }) {
+  panel = panel || { type: id === "digipay" ? "steps" : id, big: "دیجی‌پی", sub: "موقعِ پرداخت انتخابش کن", steps: ["سبد", "پرداخت", "دیجی‌پی"] };
   const F = FORMATS[format];
   if (!F) throw new Error(`فرمت ناشناخته: ${format}`);
   const { W, H } = F;
@@ -701,10 +747,144 @@ async function renderServicePost({ format, headline, body, cta, id }) {
     const px = mx + mascot.w + Math.round(24 * s);
     const pw = W - inset - px;
     const room = bottomY - y;
-    const need = pw > 300 * s ? servicePanelHeight(id, pw, s) : Infinity;
-    if (need <= room) svg += servicePanel(id, { x: px, y: Math.round(bottomY - need), w: pw, h: need, s });
+    const need = pw > 300 * s ? servicePanelHeight(panel, pw, s) : Infinity;
+    if (need <= room) svg += servicePanel(panel, { x: px, y: Math.round(bottomY - need), w: pw, h: need, s });
   }
   return compose(W, H, C.bone, [], svg, [brand.layer, { input: mascot.buffer, left: mx, top: horizontal ? my : Math.max(my, Math.round(y - 40 * s)) }]);
+}
+
+// ---------------------------------------------------------------------------
+// پست‌هایِ گروهی: شبکه‌یِ محصول (پرفروش‌ها/کالکشن/هدیه) و «این یا اون؟»
+// کارتِ محصول هم‌زبانِ کارت‌هایِ فروشگاهِ سایته: عکس رویِ bone-200، خطِ مشکی،
+// سایه‌یِ سخت، نوع + اسم + قیمت.
+// ---------------------------------------------------------------------------
+async function productImage(url, w, h) {
+  const bytes = await fetchBytes(url);
+  // عکس‌هایِ محصولِ سایت استودیویی‌ان؛ contain رویِ bone-200 تا کلِ لباس دیده بشه
+  return sharp(bytes).resize(w, h, { fit: "contain", background: C.b200 }).flatten({ background: C.b200 }).png().toBuffer();
+}
+
+// کارت دو تکه SVG داره: under (سایه + بدنه، زیرِ عکس) و over (خط/متن، رویِ عکس)
+async function productCard({ item, x, y, w, h, s, badge }) {
+  const pad = Math.round(18 * s);
+  const nameFit = fit(item.shortName || item.name, { maxW: w - pad * 2, maxLines: 2, sizes: [34, 31, 28, 25, 22].map((v) => Math.round(v * s)) });
+  const nameH = Math.round(nameFit.lines.length * nameFit.size * 1.3);
+  const priceFs = Math.round(26 * s);
+  const textH = pad + Math.round(36 * s) + nameH + priceFs + pad;
+  const imgH = Math.max(Math.round(80 * s), h - textH);
+  const r = Math.round(16 * s);
+  const img = await productImage(item.image, w, imgH);
+  // فقط گوشه‌هایِ بالایِ عکس گِرد
+  const mask = Buffer.from(`<svg width="${w}" height="${imgH}"><rect width="${w}" height="${imgH + r}" rx="${r}" fill="#fff"/></svg>`);
+  const photo = await sharp(img).composite([{ input: mask, blend: "dest-in" }]).png().toBuffer();
+  const sh = Math.round(8 * s);
+  const under =
+    `<rect x="${x - sh}" y="${y + sh}" width="${w}" height="${h}" rx="${r}" fill="${C.ink}"/>` +
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${C.b50}"/>`;
+  let over =
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="none" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
+    `<line x1="${x}" y1="${y + imgH}" x2="${x + w}" y2="${y + imgH}" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
+  let ty = y + imgH + pad;
+  if (item.kind)
+    over += `<text x="${x + w - pad}" y="${ty + 18 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(20 * s)}" fill="${C.red}">${esc(item.kind)}</text>`;
+  ty += Math.round(36 * s);
+  over += textLines({ lines: nameFit.lines, size: nameFit.size, x: x + w - pad, y: ty + nameFit.size, lh: 1.3 });
+  ty += nameH;
+  if (item.priceText)
+    over += `<text x="${x + w - pad}" y="${ty + priceFs + 4 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${priceFs}" fill="${C.ink}">${esc(item.priceText)}</text>`;
+  if (badge) over += pill({ x: x + w - Math.round(12 * s), y: y + Math.round(12 * s), h: Math.round(46 * s), text: badge, fill: C.ink, color: C.b50 }).svg;
+  return { under, over, layer: { input: photo, left: Math.round(x), top: Math.round(y) } };
+}
+
+async function gridLayout({ s, items, top, bottom, left, right, cols, badges }) {
+  const gap = Math.round(26 * s);
+  const rows = Math.ceil(items.length / cols);
+  const cw = Math.floor((right - left - gap * (cols - 1)) / cols);
+  const ch = Math.floor((bottom - top - gap * (rows - 1)) / rows);
+  const layers = [];
+  let under = "";
+  let over = "";
+  for (let i = 0; i < items.length; i++) {
+    const c = i % cols;
+    const rr = Math.floor(i / cols);
+    const x = right - cw - c * (cw + gap); // راست‌به‌چپ
+    const y = top + rr * (ch + gap);
+    const card = await productCard({ item: items[i], x, y, w: cw, h: ch, s, badge: badges ? badges[i] : null });
+    under += card.under;
+    over += card.over;
+    layers.push(card.layer);
+  }
+  return { under, over, layers };
+}
+
+function svgLayer(W, H, body) {
+  return { input: svgToPng(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">${body}</svg>`, W), left: 0, top: 0 };
+}
+
+async function renderGrid({ format, eyebrow, title, items, badges }) {
+  const { W, H } = FORMATS[format];
+  const horizontal = W > H;
+  const s = horizontal ? H / 1080 : W / 1080;
+  const inset = Math.round(56 * s);
+  const topY = format === "story" ? Math.round(200 * s) : Math.round(48 * s);
+  const icon = await asset("palas-mark.png", { height: Math.round(46 * s) });
+  const brand = brandPill({ right: W - inset, top: topY, h: Math.round(64 * s), icon });
+  const mascot = horizontal ? null : await asset(pickMascot(title), { height: Math.round((format === "story" ? 230 : 190) * s) });
+  const titleRight = horizontal ? W - inset - brand.w - Math.round(30 * s) : W - inset;
+  const titleMaxW = titleRight - inset - (mascot ? mascot.w + Math.round(10 * s) : 0);
+  const sizes = (format === "story" ? [92, 84, 76, 68] : horizontal ? [60, 54, 48] : [76, 70, 64, 58, 52]).map((v) => Math.round(v * s));
+  let tl = null;
+  let ts = sizes[sizes.length - 1];
+  for (const sz of sizes) {
+    const l = balanced(title, sz, titleMaxW);
+    if (l) {
+      tl = l;
+      ts = sz;
+      break;
+    }
+  }
+  if (!tl) tl = fit(title, { maxW: titleMaxW, maxLines: 2, sizes: [ts] }).lines;
+  let y = topY + Math.round((horizontal ? 0 : 100) * s);
+  let svg = `<text x="${titleRight}" y="${y + 30 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(30 * s)}" fill="${C.red}">${esc(eyebrow)}</text>`;
+  y += Math.round(44 * s);
+  svg += textLines({ lines: tl, size: ts, x: titleRight, y: y + ts, lh: 1.2 });
+  y += Math.round(tl.length * ts * 1.2 + 34 * s);
+
+  const bottomSafe = format === "story" ? H - Math.round(250 * s) : H - Math.round(40 * s);
+  const footerH = Math.round(96 * s);
+  const cols = horizontal ? Math.min(4, items.length) : 2;
+  const grid = await gridLayout({ s, items, top: y, bottom: bottomSafe - footerH, left: inset + Math.round(8 * s), right: W - inset, cols, badges });
+  const url = pill({ x: W - inset, y: bottomSafe - Math.round(60 * s), h: Math.round(60 * s), text: "miztore.com", fill: C.red, color: C.b50, family: LATIN });
+  const note = `<text x="${W - inset - url.w - Math.round(20 * s)}" y="${bottomSafe - Math.round(20 * s)}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(26 * s)}" fill="${C.g40}">قسطی با دیجی‌پی · ۷ روز ضمانتِ بازگشت</text>`;
+  const over = [brand.layer];
+  if (mascot) over.push({ input: mascot.buffer, left: inset - Math.round(6 * s), top: Math.round(topY + 8 * s) });
+  return compose(W, H, C.bone, [svgLayer(W, H, grid.under), ...grid.layers], brand.svg + svg + grid.over + url.svg + note, over);
+}
+
+// «این یا اون؟» — دو محصول، یه سؤال، دایره‌یِ «یا» وسط (برایِ نظرسنجی/کامنت)
+async function renderVersus({ format, question, a, b }) {
+  const { W, H } = FORMATS[format];
+  const horizontal = W > H;
+  const s = horizontal ? H / 1080 : W / 1080;
+  const inset = Math.round(56 * s);
+  const topY = format === "story" ? Math.round(200 * s) : Math.round(48 * s);
+  const icon = await asset("palas-mark.png", { height: Math.round(46 * s) });
+  const brand = brandPill({ right: W - inset, top: topY, h: Math.round(64 * s), icon });
+  const qRight = horizontal ? W - inset - brand.w - Math.round(30 * s) : W - inset;
+  const qFit = fit(question, { maxW: qRight - inset, maxLines: 2, sizes: (format === "story" ? [96, 86, 76] : horizontal ? [58, 52, 46] : [84, 76, 68, 60]).map((v) => Math.round(v * s)) });
+  let y = topY + Math.round((horizontal ? 0 : 100) * s);
+  let svg = `<text x="${qRight}" y="${y + 30 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(30 * s)}" fill="${C.red}">این یا اون؟</text>`;
+  y += Math.round(44 * s);
+  svg += textLines({ lines: qFit.lines, size: qFit.size, x: qRight, y: y + qFit.size, lh: 1.2 });
+  y += Math.round(qFit.lines.length * qFit.size * 1.2 + 36 * s);
+  const bottomSafe = format === "story" ? H - Math.round(430 * s) : H - Math.round(110 * s);
+  const grid = await gridLayout({ s, items: [a, b], top: y, bottom: bottomSafe, left: inset + Math.round(8 * s), right: W - inset, cols: 2, badges: ["الف", "ب"] });
+  const r = Math.round(54 * s);
+  const cx = Math.round(W / 2 + 4 * s);
+  const cy = Math.round(y + (bottomSafe - y) * 0.36);
+  svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.red}" stroke="${C.ink}" stroke-width="${4 * s}"/><text x="${cx}" y="${cy + r * 0.32}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${Math.round(44 * s)}" fill="${C.b50}">یا</text>`;
+  svg += `<text x="${W / 2}" y="${bottomSafe + Math.round(66 * s)}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="${Math.round(32 * s)}" fill="${C.g40}">${format === "story" ? "تو نظرسنجیِ پایین جواب بده" : "جوابتو کامنت کن: الف یا ب؟"}</text>`;
+  return compose(W, H, C.bone, [svgLayer(W, H, grid.under), ...grid.layers], brand.svg + grid.over + svg, [brand.layer]);
 }
 
 // سازگاری با کدِ قدیمی
@@ -713,4 +893,4 @@ function pickTemplateName() {
 }
 const TEMPLATES = { frame: {} };
 
-module.exports = { renderPost, renderDetail, renderInfo, renderServicePost, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
+module.exports = { renderPost, renderDetail, renderInfo, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };

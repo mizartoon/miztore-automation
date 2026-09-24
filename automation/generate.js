@@ -13,11 +13,26 @@ const { writePost } = require("./copywriter.js");
 const { getProductFacts } = require("./product-facts.js");
 const { getDesignInfo } = require("./design-lookup.js");
 const { pickServicePost, buildServiceCaption } = require("./services.js");
+const { runCampaign } = require("./campaigns.js");
+const store = require("./store.js");
 
-// یه روز از هر ~۵ روز (نه هر روز — تا کانال از پستِ محصول خالی نشه)، به‌جای
-// عکسِ محصول، یه پستِ «خدمات» (قسطیِ دیجی‌پی/تنوعِ رنگ/سایز) می‌ره — طبقِ
-// خواستِ کاربر: «یه سری پست اضافه کن درباره خدمات میزطوری».
-const SERVICE_POST_CHANCE = 0.2;
+// ترکیبِ محتوایِ روزانه (کاربر: «محتواهایی برای تشویقِ مشتری به خرید اضافه کن»).
+// بیشترِ روزها هنوز عکسِ یه محصول، بقیه: خدمات، پرفروش‌ها، کالکشن، راهنمایِ
+// هدیه، «این یا اون؟». با CONTENT_TYPE=... می‌شه یه نوعِ خاص رو اجبار کرد (تست).
+const CONTENT_MIX = [
+  ["product", 0.5],
+  ["service", 0.13],
+  ["bestsellers", 0.08],
+  ["collection", 0.1],
+  ["gift", 0.1],
+  ["versus", 0.09],
+];
+function pickContentType(forced) {
+  if (forced && CONTENT_MIX.some(([t]) => t === forced)) return forced;
+  let r = Math.random();
+  for (const [t, w] of CONTENT_MIX) if ((r -= w) < 0) return t;
+  return "product";
+}
 
 const GITHUB_OWNER = "mizartoon";
 const GITHUB_REPO = "miztore-library";
@@ -53,7 +68,8 @@ function withUtm(url, source, campaign = "daily_post") {
 // دو نمی‌ذاره) — فقط بدون عکسِ محصول، بدون pickNextImage/pool. key این‌جا
 // فقط برای audit-logِ state.json (markUsed) استفاده می‌شه، نه دیدوپِ واقعی.
 async function runServicePost(env, dryRun) {
-  const service = pickServicePost();
+  const [shipping, custom] = await Promise.all([store.shippingNote().catch(() => null), store.customDesign().catch(() => null)]);
+  const service = pickServicePost({ shipping, custom });
   const caption = buildServiceCaption(service);
 
   const dateStr = new Date().toISOString().slice(0, 10);
@@ -64,7 +80,7 @@ async function runServicePost(env, dryRun) {
 
   const outputs = {};
   for (const format of ["telegram", "post", "story", "twitter"]) {
-    const buffer = await renderServicePost({ format, headline: service.headline, body: service.body, cta: service.cta, id: service.id });
+    const buffer = await renderServicePost({ format, ...service });
     const outRelPath = `outputs/${format}-${baseName}`;
     const outAbsPath = path.join(__dirname, "..", outRelPath);
     fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });
@@ -72,9 +88,10 @@ async function runServicePost(env, dryRun) {
     outputs[format] = outRelPath;
   }
 
-  const buyUrlTelegram = shortLink({ category: "tshirt" }, "tg");
-  const buyUrlInstagram = shortLink({ category: "tshirt" }, "ig");
-  const buyUrlTwitter = shortLink({ category: "tshirt" }, "x");
+  const svcLink = (src) => (service.id === "custom" && custom ? custom.link(src) : shortLink({ category: "tshirt" }, src));
+  const buyUrlTelegram = svcLink("tg");
+  const buyUrlInstagram = svcLink("ig");
+  const buyUrlTwitter = svcLink("x");
 
   fs.writeFileSync(
     path.join(__dirname, "last-run.json"),
@@ -102,12 +119,35 @@ async function runServicePost(env, dryRun) {
   console.log(`✅ پستِ خدمات رندر شد${dryRun ? " (dry-run)" : ""}: ${service.id}`);
 }
 
+async function runCampaignPost(env, dryRun, type) {
+  const dateStr = new Date().toISOString().slice(0, 10);
+  const runId = process.env.GITHUB_RUN_ID ? `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT || "1"}` : String(Date.now());
+  const baseName = `${dateStr}-${runId}-campaign-${type}.jpg`;
+  const write = (name, buffer) => {
+    const outRelPath = `outputs/${name}-${baseName}`;
+    const outAbsPath = path.join(__dirname, "..", outRelPath);
+    fs.mkdirSync(path.dirname(outAbsPath), { recursive: true });
+    fs.writeFileSync(outAbsPath, buffer);
+    return outRelPath;
+  };
+  const r = await runCampaign(env, { type, dryRun, write });
+  fs.writeFileSync(path.join(__dirname, "last-run.json"), JSON.stringify({ ok: true, templateName: type, ...r }, null, 2));
+  console.log(`✅ پستِ ${type} رندر شد${dryRun ? " (dry-run)" : ""}: ${r.headline} (${r.copySource})`);
+}
+
 async function main() {
   const env = process.env;
   const dryRun = env.DRY_RUN === "true";
 
-  if (Math.random() < SERVICE_POST_CHANCE) {
-    return runServicePost(env, dryRun);
+  const type = pickContentType(env.CONTENT_TYPE);
+  console.log(`🎲 نوعِ محتوایِ امروز: ${type}`);
+  if (type === "service") return runServicePost(env, dryRun);
+  if (type !== "product") {
+    try {
+      return await runCampaignPost(env, dryRun, type);
+    } catch (err) {
+      console.error(`[campaign] ${type} شکست خورد، برمی‌گردیم رویِ پستِ محصول:`, err.message);
+    }
   }
 
   const picked = pickNextImage();

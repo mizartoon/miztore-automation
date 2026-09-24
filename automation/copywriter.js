@@ -16,7 +16,7 @@
 
 const sharp = require("sharp");
 
-const MODELS = ["gemini-3.6-flash", "gemini-3.1-flash-lite", "gemini-flash-latest"];
+const MODELS = ["gemini-3.6-flash", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"];
 
 const SYSTEM_PROMPT = `تو آدمِ شبکه‌های اجتماعیِ «میزطوری» هستی — یه برندِ ایرانیِ لباسِ هنری (تیشرت، هودی، پلیور با طرح‌های شعر، خوشنویسی، تصویرسازی، شخصیت‌ها، ترانه و نوستالژی). ماسکوتِ برند یه گربه‌ی پالاسِ شیطونه به اسمِ «پالاس».
 
@@ -173,4 +173,112 @@ async function writePost(env, { photoBytes, category, label, designInfo, facts }
   return fallbackCopy({ designInfo, label, facts });
 }
 
-module.exports = { writePost };
+
+// ---------------------------------------------------------------------------
+// پست‌هایِ گروهی (پرفروش‌ها، کالکشن، راهنمایِ هدیه، «این یا اون؟») — فقط متن،
+// بدونِ عکس. همون لحنِ طبیعی؛ محصولات و قیمت‌ها از فروشگاه میان، نه از مدل.
+// ---------------------------------------------------------------------------
+const CAMPAIGN_SYSTEM = `تو آدمِ شبکه‌های اجتماعیِ «میزطوری» هستی (برندِ ایرانیِ لباسِ هنری با طرح‌های شعر، خوشنویسی، تصویرسازی، شخصیت، ترانه و نوستالژی؛ ماسکوت: گربه‌ی پالاس).
+مثلِ یه آدمِ واقعی و سرِحال برای دوستات بنویس، نه آگهی. فارسیِ محاوره‌ای، مخاطب «تو»، پرانرژی ولی طبیعی.
+ممنوع: شعار و کلیشه («منحصربه‌فرد»، «فرصت رو از دست نده»، «همین حالا»، «استایلتو کامل کن»)، امریِ پوک («مال خودت کن»، «امتحانش کن»)، «کشو»، «ببرش»، «کمد»، «یه تیشرت دیگه»، تخفیف/زمان‌بندی/موجودیِ ساختگی، و هر ادعایی که تو اطلاعات نیست. بدونِ هشتگ. ارقامِ فارسی. حداکثر یک ایموجی.
+خروجی فقط JSON طبقِ schema.`;
+
+const CAMPAIGN_SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    headline: { type: "STRING" },
+    caption: { type: "STRING" },
+    ids: { type: "ARRAY", items: { type: "INTEGER" } },
+  },
+  required: ["headline", "caption"],
+};
+
+async function callText(env, model, userText) {
+  const c = new AbortController();
+  const t = setTimeout(() => c.abort(), 45000);
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: CAMPAIGN_SYSTEM }] },
+        contents: [{ role: "user", parts: [{ text: userText }] }],
+        generationConfig: { responseMimeType: "application/json", responseSchema: CAMPAIGN_SCHEMA, temperature: 0.95, maxOutputTokens: 1500, thinkingConfig: { thinkingLevel: "low" } },
+      }),
+      signal: c.signal,
+    });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const e = new Error(`${model} HTTP ${res.status}: ${(j.error?.message || "").slice(0, 150)}`);
+      e.status = res.status;
+      throw e;
+    }
+    return JSON.parse(j.candidates?.[0]?.content?.parts?.filter((p) => !p.thought).map((p) => p.text || "").join("") || "");
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+async function askCampaign(env, userText, maxHeadWords) {
+  if (!env.GEMINI_API_KEY) return null;
+  for (const model of MODELS) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const r = await callText(env, model, userText);
+        const headline = clean(r.headline).replace(/[.。!！]+$/, "").split("\n")[0];
+        const caption = clean(r.caption);
+        if (!headline || !caption) throw new Error("خروجیِ ناقص");
+        if (BANNED.some((re) => re.test(headline) || re.test(caption))) throw new Error("کلمه‌ی ممنوع");
+        if (headline.split(/\s+/).length > maxHeadWords) throw new Error("تیترِ بلند");
+        return { headline, caption, ids: Array.isArray(r.ids) ? r.ids.map(Number) : [], source: model };
+      } catch (err) {
+        console.error(`[campaign] ${model} try ${attempt + 1}: ${err.message}`);
+        if (err.status === 429 && /quota/i.test(err.message)) break;
+        if (err.status === 503 || err.status === 429) await sleep(4000);
+        else if (err.status >= 400 && err.status < 500) break;
+      }
+    }
+  }
+  return null;
+}
+
+const itemLine = (it) => `${it.id} | ${it.kind || "محصول"} «${it.shortName}» | ${it.priceText || ""}${it.collections?.length ? ` | ${it.collections.join("،")}` : ""}`;
+
+async function writeCampaign(env, { type, items, theme, collectionName, pool }) {
+  const listText = (items || []).map(itemLine).join("\n");
+  if (type === "gift") {
+    const r = await askCampaign(
+      env,
+      `راهنمایِ هدیه با موضوعِ «${theme}». از بینِ این محصولاتِ واقعیِ فروشگاه، ۴ تا که واقعاً به این موضوع می‌خورن انتخاب کن (شناسه‌ها تو ids، به ترتیبِ بهترین). بعد:
+- headline: تیترِ رویِ تصویر، ۳ تا ۷ کلمه، طبیعی و بامزه، دربارهِ همین موضوعِ هدیه.
+- caption: ۲ تا ۴ خطِ کوتاه (هر خط یه سطر): چرا این‌ها هدیه‌ی خوبی برای اون آدمن (با اشاره به طرح‌ها، نه کلی)، و آخرش یه کارِ مشخص (لینک تو بیو/سفارش از سایت).
+محصولات:
+${pool.map(itemLine).join("\n")}`,
+      8
+    );
+    return r;
+  }
+  if (type === "versus") {
+    return askCampaign(
+      env,
+      `پستِ «این یا اون؟» با دو طرح:
+الف: ${itemLine(items[0])}
+ب: ${itemLine(items[1])}
+- headline: یه سؤالِ کوتاه و بامزه (۳ تا ۸ کلمه) که آدم رو وادار کنه یکی رو انتخاب کنه، مرتبط با حال‌وهوای این دو طرح. با علامتِ سؤال تموم بشه.
+- caption: ۲ تا ۳ خط: یه جمله دربارهِ هر کدوم (مشخص، نه کلی)، بعد بخواد تو کامنت بنویسه الف یا ب، و اینکه لینکِ هر دو تو سایته.`,
+      9
+    );
+  }
+  const what = type === "bestsellers" ? "پرفروش‌ترین طرح‌هایِ میزطوری (واقعی، بر اساسِ فروشِ سایت)" : `چند طرح از کالکشنِ «${collectionName}»`;
+  return askCampaign(
+    env,
+    `پستِ گروهی: ${what}.
+محصولات:
+${listText}
+- headline: تیترِ رویِ تصویر، ۳ تا ۷ کلمه، طبیعی و پرانرژی، مخصوصِ همین ${type === "bestsellers" ? "پرفروش‌ها" : "کالکشن"} (نه جمله‌ی کلی).
+- caption: ۲ تا ۴ خطِ کوتاه (هر خط یه سطر). اسمِ یکی دو تا از طرح‌ها رو بیار و بگو چی دارن، و آخرش یه کارِ مشخص برایِ خرید.`,
+    8
+  );
+}
+
+module.exports = { writePost, writeCampaign };
