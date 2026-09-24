@@ -173,7 +173,7 @@ const shortFact = (t) => {
   let x = t.split("؛")[0].trim();
   if (x.length > 30 && x.includes("،")) x = x.split("،")[0].trim();
   // فقط بخشِ اصلیِ جمله (بدونِ «از کارخانه‌هایِ…»، «نسبت به…»)
-  if (x.length > 30) x = x.replace(/\s+(از کارخانه|نسبت به|و مطابق)\s.*$/, "").trim();
+  if (x.length > 30) x = x.replace(/\s+(از کارخانه|نسبت به|و مطابق).*$/, "").trim();
   return x;
 };
 const GENERIC = /^پارچه ۱۰۰٪ پنبه$|^چاپ|^شست/;

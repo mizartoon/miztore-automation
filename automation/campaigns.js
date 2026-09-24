@@ -10,7 +10,9 @@
 const fs = require("fs");
 const path = require("path");
 const store = require("./store.js");
-const { renderGrid, renderVersus, renderPost, fetchBytes } = require("./render.js");
+const sharp = require("sharp");
+const { renderGrid, renderVersus, renderPost, renderSpotlight, renderDetail, fetchBytes } = require("./render.js");
+const { studioDesignBox } = require("./design-box.js");
 const { writeCampaign } = require("./copywriter.js");
 const { loadState, saveState } = require("./state.js");
 
@@ -98,7 +100,135 @@ async function buildCampaign(env, type) {
   return { items, copy, eyebrow, label, keySuffix, listLink };
 }
 
+// ---------------------------------------------------------------------------
+// «معرفیِ محصول»: یه محصول + یه جنبه‌یِ تصادفی (رنگ‌ها، سایزها، جنس و کیفیت، مدل‌هایِ
+// دوخت) رویِ جلد؛ بقیه‌یِ جنبه‌ها + «طرح از نزدیک» + عکس‌هایِ گالری تو کاروسل.
+// همه‌یِ اطلاعات از صفحه‌یِ خودِ محصول (store.productDetail)، نه ساختگی.
+// ---------------------------------------------------------------------------
+const fa = store.faDigits;
+const FOCI = {
+  colors: {
+    ok: (d) => d.colorNames.length >= 3,
+    eyebrow: (d) => `${fa(d.colorNames.length)} رنگ برایِ همین طرح`,
+    slide: (d) => `${fa(d.colorNames.length)} رنگ، یه طرح`,
+    panel: (d) => ({ type: "swatches", colors: d.colorNames }),
+    facts: (d) => `رنگ‌ها (${fa(d.colorNames.length)} تا): ${d.colorNames.join("، ")}`,
+    fallback: (d) => `${fa(d.colorNames.length)} رنگ، یه ${d.kind}`,
+    short: (d) => `${fa(d.colorNames.length)} رنگ داره، از ${d.colorNames.slice(0, 3).join(" و ")} تا کلی رنگِ دیگه.`,
+  },
+  sizes: {
+    ok: (d) => d.sizes.length >= 3,
+    eyebrow: (d) => `سایزها از ${d.sizes[0]} تا ${d.sizes[d.sizes.length - 1]}`,
+    slide: () => "سایزتو پیدا کن",
+    panel: (d) => ({ type: "chips", items: d.sizes, foot: "جدولِ سایزِ دقیق تو صفحه‌یِ محصوله" }),
+    facts: (d) => `سایزها: ${d.sizes.join("، ")}`,
+    fallback: () => "سایزت حتماً هست",
+    short: (d) => `سایزش از ${d.sizes[0]} تا ${d.sizes[d.sizes.length - 1]} هست.`,
+  },
+  fabric: {
+    ok: (d) => d.fabric.length >= 2,
+    eyebrow: () => "جنس و کیفیت",
+    slide: () => "جنس و دوختش",
+    panel: (d) => ({ type: "list", items: d.fabric.slice(0, 4) }),
+    facts: (d) => `${d.fabricTitle}: ${d.fabric.join("؛ ")}`,
+    fallback: (d) => `${d.kind}ی که ارزشِ طرحشو داره`,
+    short: (d) => `${d.fabric.slice(0, 2).join("، ")}.`,
+  },
+  cuts: {
+    ok: (d) => d.cuts.length >= 2,
+    eyebrow: (d) => `${fa(d.cuts.length)} مدلِ دوخت`,
+    slide: () => "مدلتو انتخاب کن",
+    panel: (d) => ({ type: "cuts", rows: d.cuts }),
+    facts: (d) => d.cuts.map((c) => `${c.name}: ${c.desc}`).join("؛ "),
+    fallback: (d) => `یه طرح، ${fa(d.cuts.length)} مدلِ دوخت`,
+    short: (d) => `مدل‌ها: ${d.cuts.map((c) => c.name).join("، ")}.`,
+  },
+};
+const FOCUS_TEXT = { colors: "تنوعِ رنگ", sizes: "سایزبندی", fabric: "جنس و کیفیتِ پارچه و چاپ", cuts: "مدل‌هایِ دوخت (برش)" };
+
+async function pickSpotlight(dryRun) {
+  const st = loadState();
+  const rec = st.spotlight || { recent: [], lastFocus: null };
+  const pool = (await store.pool(60)).filter((p) => p.kind && !rec.recent.includes(p.id));
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  for (const p of pool.slice(0, 8)) {
+    const d = await store.productDetail(p.id).catch(() => null);
+    if (!d) continue;
+    const foci = Object.keys(FOCI).filter((k) => FOCI[k].ok(d));
+    if (foci.length < 2) continue;
+    const fresh = foci.filter((k) => k !== rec.lastFocus);
+    const focus = pick(fresh.length ? fresh : foci);
+    if (!dryRun) {
+      st.spotlight = { recent: [d.id, ...rec.recent].slice(0, 30), lastFocus: focus };
+      saveState(st);
+    }
+    return { d, focus, foci };
+  }
+  return null;
+}
+
+async function runSpotlight(env, { dryRun, write }) {
+  const sp = await pickSpotlight(dryRun);
+  if (!sp) throw new Error("محصولی برایِ معرفی پیدا نشد");
+  const { d, focus, foci } = sp;
+  const F = FOCI[focus];
+  let copy = await writeCampaign(env, { type: "spotlight", spot: { item: d, focusText: FOCUS_TEXT[focus], facts: F.facts(d) } });
+  copy = copy || { headline: F.fallback(d), caption: `${d.kind} «${d.shortName}»\n${F.short(d)}\nلینکش تو سایته.`, source: "fallback" };
+
+  const photoBytes = await fetchBytes(d.images[0]);
+  const base = { photoBytes, kind: d.kind, name: d.shortName, priceText: d.priceText };
+  const outputs = {};
+  for (const format of ["telegram", "post", "story", "twitter"])
+    outputs[format] = write(format, await renderSpotlight({ ...base, format, eyebrow: F.eyebrow(d), title: copy.headline, panel: F.panel(d) }));
+
+  // کاروسل: جلد → طرح از نزدیک → بقیه‌یِ جنبه‌ها → عکس‌هایِ دیگه‌یِ گالری
+  const carousel = [outputs.post];
+  try {
+    const flat = await sharp(photoBytes).flatten({ background: "#E8E4D9" }).jpeg({ quality: 95 }).toBuffer();
+    const box = await studioDesignBox(flat);
+    const detail = box ? await renderDetail({ photoBytes: flat, designBox: box }) : null;
+    if (detail) carousel.push(write("detail", detail));
+  } catch (e) {
+    console.error("spotlight detail:", e.message);
+  }
+  for (const k of foci.filter((x) => x !== focus)) {
+    const G = FOCI[k];
+    carousel.push(write(`slide-${k}`, await renderSpotlight({ ...base, format: "post", eyebrow: G.eyebrow(d), title: G.slide(d), panel: G.panel(d) })));
+  }
+  for (const [i, src] of d.images.slice(1, 3).entries()) {
+    if (carousel.length >= 7) break;
+    try {
+      const b = await fetchBytes(src);
+      const facts = { scope: "product", priceText: d.priceText, colors: d.colorNames };
+      carousel.push(write(`gallery${i + 1}`, await renderPost({ photoBytes: b, headline: d.shortName, categoryLabel: d.kind, facts, designBox: null, format: "post", studio: true })));
+    } catch (e) {
+      console.error("gallery:", e.message);
+    }
+  }
+  outputs.carousel = carousel;
+
+  const line = `${d.kind} «${d.shortName}»`;
+  return {
+    key: `campaign/spotlight/${d.id}-${focus}`,
+    category: "معرفیِ محصول",
+    outputs,
+    headline: copy.headline,
+    caption: `${copy.caption}\n\n${escHtml(line)} — ${d.link("tg")}`,
+    instagramCaption: `${copy.caption}\n\n${line}\nلینکش تو بیو 👆\n\n#میزطوری #Miztore #پوشاک_ایرانی #استریت_ویر`,
+    twitterCaption: `${copy.caption.split("\n")[0]}\n\n#میزطوری\n${d.link("x")}`,
+    buyUrlTelegram: d.link("tg"),
+    buyUrlInstagram: d.link("ig"),
+    buyUrlTwitter: d.link("x"),
+    copySource: copy.source || "fallback",
+    dryRun,
+  };
+}
+
 async function runCampaign(env, { type, dryRun, write }) {
+  if (type === "spotlight") return runSpotlight(env, { dryRun, write });
   const c = await buildCampaign(env, type);
   const outputs = {};
   for (const format of ["telegram", "post", "story", "twitter"]) {

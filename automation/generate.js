@@ -20,12 +20,13 @@ const store = require("./store.js");
 // بیشترِ روزها هنوز عکسِ یه محصول، بقیه: خدمات، پرفروش‌ها، کالکشن، راهنمایِ
 // هدیه، «این یا اون؟». با CONTENT_TYPE=... می‌شه یه نوعِ خاص رو اجبار کرد (تست).
 const CONTENT_MIX = [
-  ["product", 0.5],
-  ["service", 0.13],
-  ["bestsellers", 0.08],
-  ["collection", 0.1],
-  ["gift", 0.1],
-  ["versus", 0.09],
+  ["product", 0.45],
+  ["service", 0.12],
+  ["spotlight", 0.12], // معرفیِ یه محصول: رنگ‌ها / سایزها / جنس و کیفیت / مدل‌هایِ دوخت
+  ["bestsellers", 0.07],
+  ["collection", 0.08],
+  ["gift", 0.08],
+  ["versus", 0.08],
 ];
 function pickContentType(forced) {
   if (forced && CONTENT_MIX.some(([t]) => t === forced)) return forced;

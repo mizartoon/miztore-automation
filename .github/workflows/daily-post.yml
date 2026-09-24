@@ -13,7 +13,7 @@ on:
         description: "نوعِ محتوا (خالی = تصادفی طبقِ ترکیبِ روزانه)"
         type: choice
         default: ""
-        options: ["", "product", "service", "bestsellers", "collection", "gift", "versus"]
+        options: ["", "product", "service", "spotlight", "bestsellers", "collection", "gift", "versus"]
       theme:
         description: "تم (خالی = خودکار، حدودِ یک‌سوم تیره)"
         type: choice

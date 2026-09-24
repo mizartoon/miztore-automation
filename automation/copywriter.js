@@ -250,8 +250,21 @@ async function askCampaign(env, userText, maxHeadWords) {
 
 const itemLine = (it) => `${it.id} | ${it.kind || "محصول"} «${it.shortName}» | ${it.priceText || ""}${it.collections?.length ? ` | ${it.collections.join("،")}` : ""}`;
 
-async function writeCampaign(env, { type, items, theme, collectionName, pool }) {
+async function writeCampaign(env, { type, items, theme, collectionName, pool, spot }) {
   const listText = (items || []).map(itemLine).join("\n");
+  if (type === "spotlight") {
+    return askCampaign(
+      env,
+      `پستِ «معرفیِ محصول» دربارهِ یه جنبه‌یِ واقعیِ یک محصول.
+محصول: ${itemLine(spot.item)}
+جنبه‌یِ این پست: ${spot.focusText}
+اطلاعاتِ واقعی از صفحه‌یِ محصول (فقط از همین‌ها استفاده کن؛ هیچ عدد، جنس یا ویژگیِ دیگه‌ای نساز):
+${spot.facts}
+- headline: تیترِ رویِ تصویر، ۳ تا ۷ کلمه، طبیعی و پرانرژی، دربارهِ همین جنبه (رنگ/سایز/جنس/مدل) و مخصوصِ همین طرح.
+- caption: ۲ تا ۴ خطِ کوتاه (هر خط یه سطر): یه هوکِ مخصوصِ همین طرح، یکی دو جزئیاتِ واقعی از همین جنبه، و آخرش یه کارِ مشخص برایِ خرید.`,
+      8
+    );
+  }
   if (type === "gift") {
     const r = await askCampaign(
       env,
