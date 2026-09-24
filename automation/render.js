@@ -23,6 +23,7 @@
 const sharp = require("sharp");
 const { Resvg } = require("@resvg/resvg-js");
 const path = require("path");
+const { studioDesignBox } = require("./design-box.js");
 
 const C = {
   ink: "#0B0B0B",
@@ -160,9 +161,10 @@ const MAX_BLIND_CROP = 0.14;
 
 async function framePhoto(photoBytes, w, h, box, reserveBottom = 0, studio = false) {
   if (studio) {
-    // عکسِ استودیوییِ محصول (پس‌زمینه‌ی ساده): کلِ لباس رویِ رنگِ پس‌زمینه‌ی خودِ عکس،
-    // کمی بالاتر از وسط تا کارتِ متنِ پایین روش نیفته — نه پس‌زمینه‌ی تار.
-    // عکس‌هایِ سایت پس‌زمینه‌یِ شفاف دارن → اول رویِ bone-200 (رنگِ کارت‌هایِ سایت)
+    // عکسِ استودیوییِ محصول (لباس رویِ پس‌زمینه‌یِ شفاف): رویِ bone-200 (رنگِ کارت‌هایِ سایت)
+    // و زوم رویِ خودِ طرح، تا طرح دیده بشه نه فقط شکلِ لباس. کارتِ متنِ پایین رویِ طرح نمی‌افته.
+    const sbox = await studioDesignBox(photoBytes).catch(() => null);
+    if (sbox) return studioCrop(photoBytes, sbox, w, h, { fill: 0.52, reserveBottom });
     photoBytes = await sharp(photoBytes).flatten({ background: C.b200 }).jpeg({ quality: 95 }).toBuffer();
     const { data } = await sharp(photoBytes).resize(8, 8, { fit: "fill" }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
     const bg = { r: data[0], g: data[1], b: data[2] };
@@ -194,6 +196,20 @@ async function framePhoto(photoBytes, w, h, box, reserveBottom = 0, studio = fal
       bt = box.top * sh,
       bb = box.bottom * sh;
     const margin = 0.04;
+    // زوم به سمتِ طرح: تو عکس‌هایِ تمام‌قد طرح کوچیک دیده می‌شد. پنجره رو کوچیک‌تر می‌کنیم
+    // تا طرح دستِ‌کم ~نصفِ عرضِ قاب رو بگیره — ولی نه کمتر از ۵۵٪ِ قابِ کامل (آدم و لباس
+    // هنوز معلوم باشن) و نه آن‌قدر که عکس بیشتر از ۱.۶ برابر بزرگ و تار بشه.
+    const maxW = winW;
+    // صورتِ مدل هم باید تو قاب بمونه: از بالایِ سر تا زیرِ طرح بالایِ کارتِ متن جا بشه.
+    // headTop رو Gemini می‌ده (null یعنی آدمی تو عکس نیست)؛ اگه نداد، حدودی بالایِ طرح فرض می‌شه.
+    const headTop = box.headTop === null ? null : box.headTop !== undefined ? box.headTop * sh : Math.max(0, bt - (bb - bt) * 1.4);
+    const needH = headTop === null ? 0 : (bb - headTop + sh * 0.07) / (1 - reserveBottom);
+    const need = Math.max((br - bl) / 0.5, ((bb - bt) * a) / (0.86 * (1 - reserveBottom)), needH * a);
+    const zw = Math.min(maxW, Math.max(need, maxW * 0.55, w / 1.6));
+    if (zw < maxW) {
+      winW = Math.round(zw);
+      winH = Math.round(zw / a);
+    }
     if (br - bl <= winW * (1 - margin * 2) && bb - bt <= winH * (1 - margin * 2)) {
       const cx = (bl + br) / 2;
       const cy = (bt + bb) / 2;
@@ -228,6 +244,33 @@ async function framePhoto(photoBytes, w, h, box, reserveBottom = 0, studio = fal
     ? { x: x + box.left * sw * k, y: y + box.top * sh * k, w: (box.right - box.left) * sw * k, h: (box.bottom - box.top) * sh * k }
     : null;
   return { buffer, design };
+}
+
+// برش حولِ طرح برایِ عکس‌هایِ استودیویی؛ بیرونِ عکس با bone-200 پر می‌شه (هم‌رنگِ پس‌زمینه)
+// fill: سهمِ طرح از عرضِ قاب. طرح تو ناحیه‌یِ بالایِ reserveBottom و کمی بالاتر از وسطش می‌شینه.
+async function studioCrop(bytes, box, w, h, { fill = 0.6, reserveBottom = 0 } = {}) {
+  const flat = await sharp(bytes).flatten({ background: C.b200 }).png().toBuffer();
+  const { width: sw, height: sh } = await sharp(flat).metadata();
+  const a = w / h;
+  const bl = box.left * sw,
+    br = box.right * sw,
+    bt = box.top * sh,
+    bb = box.bottom * sh;
+  const usable = 1 - reserveBottom;
+  let winW = Math.max((br - bl) / fill, ((bb - bt) * a) / (0.84 * usable), w / 1.6); // بیشتر از ۱.۶ برابر بزرگ نشه (تار می‌شه) و لباس هم معلوم بمونه
+  winW = Math.min(winW, Math.max(sw, sh * a) * 1.1);
+  const winH = winW / a;
+  const left = Math.round((bl + br) / 2 - winW / 2);
+  const top = Math.round((bt + bb) / 2 - winH * usable * 0.5);
+  const pad = Math.ceil(Math.max(0, -left, -top, left + winW - sw, top + winH - sh)) + 2;
+  const ext = await sharp(flat).extend({ top: pad, bottom: pad, left: pad, right: pad, background: C.b200 }).png().toBuffer();
+  const buffer = await sharp(ext)
+    .extract({ left: left + pad, top: top + pad, width: Math.round(winW), height: Math.round(winH) })
+    .resize(w, h, { kernel: "lanczos3" })
+    .jpeg({ quality: 95 })
+    .toBuffer();
+  const k = w / winW;
+  return { buffer, design: { x: (bl - left) * k, y: (bt - top) * k, w: (br - bl) * k, h: (bb - bt) * k } };
 }
 
 function overlap(a, b) {
@@ -765,7 +808,9 @@ async function renderServicePost({ format, headline, body, cta, id, panel }) {
 // ---------------------------------------------------------------------------
 async function productImage(url, w, h) {
   const bytes = await fetchBytes(url);
-  // عکس‌هایِ محصولِ سایت استودیویی‌ان؛ contain رویِ bone-200 تا کلِ لباس دیده بشه
+  // عکس‌هایِ محصولِ سایت استودیویی‌ان؛ زوم رویِ طرح (سینه‌یِ لباس) تا طرح تو کارت دیده بشه
+  const box = await studioDesignBox(bytes).catch(() => null);
+  if (box) return (await studioCrop(bytes, box, w, h, { fill: 0.74 })).buffer;
   return sharp(bytes).resize(w, h, { fit: "contain", background: C.b200 }).flatten({ background: C.b200 }).png().toBuffer();
 }
 

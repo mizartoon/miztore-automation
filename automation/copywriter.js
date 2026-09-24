@@ -35,9 +35,11 @@ const SYSTEM_PROMPT = `تو آدمِ شبکه‌های اجتماعیِ «میز
   "headline": "جمله‌ی رویِ عکس: ۳ تا ۸ کلمه، طبیعی و خودمونی، مخصوصِ همین طرح (مثلاً یه برداشتِ بامزه، یه نیمچه‌دیالوگ، یا یه اشاره به جمله‌ی رویِ لباس). بدونِ ایموجی، بدونِ نقطه‌ی پایانی.",
   "caption": "کپشن: ۲ تا ۴ خطِ کوتاه، هر خط در یک سطرِ جدا.خطِ اول یه هوکِ کاملاً مستقل و مخصوصِ همین طرح (همون چیزیه که قبل از «بیشتر» دیده می‌شه). وسط اگه جا داشت یه جزئیاتِ واقعی از «واقعیت‌های محصول». خطِ آخر یه کارِ مشخص برای خرید، هر بار با یه جمله‌ی تازه (مثلاً لینک تو بیو، سفارش از سایت، سایزتو دایرکت بپرس). حداکثر یک ایموجی.",
   "designBox": [ymin, xmin, ymax, xmax],
-  "designVisible": true
+  "designVisible": true,
+  "headTop": 120
 }
-designBox: کادرِ دورِ «کلِ طرحِ چاپ‌شده رویِ لباس» (تصویر + همه‌ی نوشته‌هاش، نه کلِ لباس)، به مقیاسِ ۰ تا ۱۰۰۰ نسبت به عکس. اگه طرح در عکس دیده نمی‌شه، designVisible=false و designBox=[0,0,0,0].`;
+designBox: کادرِ دورِ «کلِ طرحِ چاپ‌شده رویِ لباس» (تصویر + همه‌ی نوشته‌هاش، نه کلِ لباس)، به مقیاسِ ۰ تا ۱۰۰۰ نسبت به عکس. اگه طرح در عکس دیده نمی‌شه، designVisible=false و designBox=[0,0,0,0].
+headTop: اگه آدم در عکس هست، y بالاترین نقطه‌ی سرش (مو هم حساب می‌شه) به همون مقیاسِ ۰ تا ۱۰۰۰؛ اگه آدمی در عکس نیست (لباس رویِ چوب‌لباسی/زمین/مانکنِ بی‌سر)، -1.`;
 
 const RESPONSE_SCHEMA = {
   type: "OBJECT",
@@ -46,6 +48,7 @@ const RESPONSE_SCHEMA = {
     caption: { type: "STRING" },
     designBox: { type: "ARRAY", items: { type: "NUMBER" } },
     designVisible: { type: "BOOLEAN" },
+    headTop: { type: "NUMBER" },
   },
   required: ["headline", "caption", "designBox", "designVisible"],
 };
@@ -159,7 +162,10 @@ async function writePost(env, { photoBytes, category, label, designInfo, facts }
         if (!headline || !caption) throw new Error("خروجیِ ناقص");
         if (BANNED.some((re) => re.test(headline) || re.test(caption))) throw new Error("کلمه‌ی ممنوع");
         if (headline.split(/\s+/).length > 10) throw new Error("هدلاین بلند");
-        return { headline, caption, designBox: r.designVisible ? validBox(r.designBox) : null, source: model };
+        const designBox = r.designVisible ? validBox(r.designBox) : null;
+        // بالایِ سرِ مدل: render.js موقعِ زوم رویِ طرح صورت رو نمی‌بُره (null = آدمی در عکس نیست)
+        if (designBox && typeof r.headTop === "number") designBox.headTop = r.headTop >= 0 && r.headTop / 1000 < designBox.top ? r.headTop / 1000 : null;
+        return { headline, caption, designBox, source: model };
       } catch (err) {
         lastErr = err;
         console.error(`[copywriter] ${model} try ${attempt + 1}: ${err.message}`);
