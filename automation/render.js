@@ -257,7 +257,7 @@ async function studioCrop(bytes, box, w, h, { fill = 0.6, reserveBottom = 0 } = 
     bt = box.top * sh,
     bb = box.bottom * sh;
   const usable = 1 - reserveBottom;
-  let winW = Math.max((br - bl) / fill, ((bb - bt) * a) / (0.84 * usable), w / 1.6); // بیشتر از ۱.۶ برابر بزرگ نشه (تار می‌شه) و لباس هم معلوم بمونه
+  let winW = Math.max((br - bl) / fill, ((bb - bt) * a) / (0.84 * usable), Math.min(w / 1.35, Math.max(w / 1.7, sw * 0.62))); // دستِ‌کم ۶۲٪ِ عکس (لباس معلوم بمونه)، و حداکثر ۱.۷ برابر بزرگ‌نمایی (تار نشه)
   winW = Math.min(winW, Math.max(sw, sh * a) * 1.1);
   const winH = winW / a;
   const left = Math.round((bl + br) / 2 - winW / 2);
@@ -424,10 +424,10 @@ async function renderPost({ photoBytes, headline, categoryLabel, facts, designBo
   const R = Math.round(30 * s);
   const fw = W - m * 2;
   const fh = H - m * 2;
-  const reserve = { post: 0.24, telegram: 0.3, story: 0.3 }[format] || 0.25;
-  const { buffer, design } = await framePhoto(photoBytes, fw, fh, designBox, reserve, studio);
-  const photo = await roundedPhoto(buffer, fw, fh, R);
-  const designAbs = design ? { x: design.x + m, y: design.y + m, w: design.w, h: design.h } : null;
+  const reserve = { post: 0.24, telegram: 0.3, story: 0.34 }[format] || 0.25;
+  let fhP = fh; // ارتفاعِ قابِ عکس (در چیدمانِ «کارت رویِ لبه» کوتاه‌تر می‌شه)
+  let { buffer, design } = await framePhoto(photoBytes, fw, fh, designBox, reserve, studio);
+  let designAbs = design ? { x: design.x + m, y: design.y + m, w: design.w, h: design.h } : null;
 
   // ناحیه‌ی امنِ استوری (رابطِ اینستاگرام بالا و پایین رو می‌پوشونه)
   const safeTop = format === "story" ? Math.round(210 * s) : m + Math.round(26 * s);
@@ -445,8 +445,16 @@ async function renderPost({ photoBytes, headline, categoryLabel, facts, designBo
   let card = textCard({ ...cardArgs, anchorY: safeBottom, placeTop: false });
   if (designAbs && overlap(card.rect, designAbs) > 0.08) {
     const topCard = textCard({ ...cardArgs, anchorY: safeTop + Math.round(96 * s), placeTop: true });
-    if (overlap(topCard.rect, designAbs) < overlap(card.rect, designAbs)) card = topCard;
+    if (designBox && designBox.headTop !== null) {
+      // آدم تو عکسه: کارتِ بالا صورت رو می‌پوشوند. به‌جاش قابِ عکس کوتاه‌تر می‌شه و کارت
+      // رویِ لبه‌یِ پایینش می‌شینه (نصفش بیرونِ عکس)، تا هم صورت بمونه هم طرح.
+      fhP = Math.round(card.y + card.h * 0.5 - m);
+      const r2 = Math.min(0.5, (m + fhP - card.y + 14 * s) / fhP);
+      ({ buffer, design } = await framePhoto(photoBytes, fw, fhP, designBox, r2, studio));
+      designAbs = design ? { x: design.x + m, y: design.y + m, w: design.w, h: design.h } : null;
+    } else if (overlap(topCard.rect, designAbs) < overlap(card.rect, designAbs)) card = topCard;
   }
+  const photo = await roundedPhoto(buffer, fw, fhP, R);
 
   // ماسکوت کنارِ کارت می‌ایسته، انگار داره متن رو معرفی می‌کنه
   const over = [brand.layer];
@@ -465,7 +473,7 @@ async function renderPost({ photoBytes, headline, categoryLabel, facts, designBo
   }
 
   const svg =
-    `<rect x="${m}" y="${m}" width="${fw}" height="${fh}" rx="${R}" fill="none" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
+    `<rect x="${m}" y="${m}" width="${fw}" height="${fhP}" rx="${R}" fill="none" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
     brand.svg +
     cat.svg +
     card.svg;
