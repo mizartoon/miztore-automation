@@ -1,0 +1,49 @@
+name: Miztore Batch (NovinHub month)
+
+# ساختِ یک‌جایِ چند پستِ اینستاگرام/توییتر برایِ زمان‌بندی در نوین‌هاب. چیزی منتشر نمی‌کنه؛
+# خروجی به‌صورتِ artifact («batch») دانلود می‌شه. state.json (عکس‌هایِ مصرف‌شده) commit می‌شه.
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "تعدادِ پست"
+        default: "30"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: miztore-daily-post
+  cancel-in-progress: false
+
+jobs:
+  batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci || npm install
+      - name: Build batch
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BATCH_COUNT: ${{ inputs.count }}
+        run: node scripts/batch.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: batch
+          path: batch/
+          retention-days: 30
+      - name: Commit state
+        run: |
+          git config user.name "miztore-bot"
+          git config user.email "miztore-bot@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || git commit -m "Batch render: mark used"
+          for i in 1 2 3 4 5; do
+            git push && break
+            git pull --rebase origin main
+            sleep 2
+          done
