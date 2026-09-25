@@ -32,6 +32,20 @@ const GIFT_THEMES = [
 ];
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+// توییت: خطِ اولِ کپشن + #میزطوری + لینک، زیرِ سقفِ ۲۸۰ (لینک رو X همیشه ۲۳ حساب می‌کنه).
+// اگه بلند بود، سرِ آخرین «،»/«.»/«؛» (یا فاصله) که جا می‌شه بریده می‌شه.
+function tweetOf(caption, link) {
+  const tail = `\n\n#میزطوری\n${link}`;
+  const budget = 280 - (tail.length - link.length + 23) - 2;
+  let line = String(caption || "").split("\n")[0].trim();
+  if (line.length > budget) {
+    const cut = line.slice(0, budget);
+    const at = Math.max(cut.lastIndexOf("،"), cut.lastIndexOf("."), cut.lastIndexOf("؛"));
+    line = at > budget * 0.5 ? cut.slice(0, at).trim() : cut.slice(0, cut.lastIndexOf(" ")).trim() + "…";
+  }
+  return line + tail;
+}
 const escHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // کمتر-استفاده‌شده: از state.json، تا یه کالکشن/موضوع پشتِ‌سرِهم تکرار نشه
@@ -225,7 +239,7 @@ async function runSpotlight(env, { dryRun, write }) {
     headline: copy.headline,
     caption: `${copy.caption}\n\n${escHtml(line)} — ${d.link("tg")}`,
     instagramCaption: `${copy.caption}\n\n${line}\nلینکش تو بیو 👆\n\n#میزطوری #Miztore #پوشاک_ایرانی #استریت_ویر`,
-    twitterCaption: `${copy.caption.split("\n")[0]}\n\n#میزطوری\n${d.link("x")}`,
+    twitterCaption: tweetOf(copy.caption, d.link("x")),
     buyUrlTelegram: d.link("tg"),
     buyUrlInstagram: d.link("ig"),
     buyUrlTwitter: d.link("x"),
@@ -267,7 +281,7 @@ async function runCampaign(env, { type, dryRun, write }) {
     headline: c.copy.headline,
     caption,
     instagramCaption: `${c.copy.caption}\n\n${c.items.map((it, i) => `${type === "versus" ? ["الف", "ب"][i] : "•"} ${it.kind ? it.kind + " " : ""}«${it.shortName}»`).join("\n")}\n\nلینکِ همه تو بیو 👆\n\n#میزطوری #Miztore #پوشاک_ایرانی #استریت_ویر`,
-    twitterCaption: `${c.copy.caption.split("\n")[0]}\n\n#میزطوری\n${c.listLink("x")}`,
+    twitterCaption: tweetOf(c.copy.caption, c.listLink("x")),
     buyUrlTelegram: c.listLink("tg"),
     buyUrlInstagram: c.listLink("ig"),
     buyUrlTwitter: c.listLink("x"),
@@ -276,4 +290,4 @@ async function runCampaign(env, { type, dryRun, write }) {
   };
 }
 
-module.exports = { runCampaign, GIFT_THEMES };
+module.exports = { runCampaign, GIFT_THEMES, tweetOf };
