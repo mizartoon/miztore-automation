@@ -752,6 +752,32 @@ function sizeTable(table, { x, y, w }) {
   return svg;
 }
 
+// ---------------------------------------------------------------------------
+// استوریِ «پستِ جدید»: خودِ پستِ اینستاگرامِ همون روز (۴:۵) وسطِ استوری، با یه برچسب
+// بالا و یه جمله‌یِ کوتاه پایین — تا کسی که فقط استوری می‌بینه، پستِ امروز رو هم ببینه.
+// ---------------------------------------------------------------------------
+async function renderStoryTeaser({ postBytes, label = "پستِ جدید", line }) {
+  const { W, H } = FORMATS.story;
+  const pw = 900,
+    ph = 1125,
+    R = 28;
+  const px = Math.round((W - pw) / 2),
+    py = Math.round((H - ph) / 2) + 10;
+  const photo = await roundedPhoto(await sharp(postBytes).resize(pw, ph, { fit: "cover" }).toBuffer(), pw, ph, R);
+  const icon = await asset("palas-mark.png", { height: 46 });
+  const brand = brandPill({ right: W - 90, top: 120, h: 64, icon });
+  // سایه باید زیرِ عکس باشه (لایه‌یِ svg رویِ عکس کشیده می‌شه)
+  const shadow = svgToPng(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><rect x="${px - 9}" y="${py + 12}" width="${pw}" height="${ph}" rx="${R}" fill="${C.shadow}"/></svg>`, W);
+  let svg = `<rect x="${px}" y="${py}" width="${pw}" height="${ph}" rx="${R}" fill="none" stroke="${C.ink}" stroke-width="4"/>`;
+  svg += brand.svg;
+  svg += pill({ x: px + pw, y: py - 92, h: 66, text: label, fill: LIGHT.red, color: LIGHT.onRed }).svg;
+  if (line) {
+    const t = fit(line, { maxW: pw, maxLines: 2, sizes: [50, 46, 42, 38] });
+    svg += textLines({ lines: t.lines, size: t.size, x: px + pw, y: py + ph + 70 + t.size * 0.8 });
+  }
+  return compose(W, H, C.bone, [{ input: shadow, left: 0, top: 0 }, { input: photo, left: px, top: py }], svg, [brand.layer]);
+}
+
 async function renderChart({ facts, category, title, format = "post" }) {
   const { W, H } = FORMATS[format];
   const m = 26,
@@ -1373,4 +1399,4 @@ function pickTemplateName() {
 }
 const TEMPLATES = { frame: {} };
 
-module.exports = { setTheme, renderSpotlight, renderPost, renderDetail, renderInfo, renderAlt, renderChart, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
+module.exports = { setTheme, renderSpotlight, renderPost, renderDetail, renderInfo, renderAlt, renderChart, renderStoryTeaser, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
