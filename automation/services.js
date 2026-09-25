@@ -99,7 +99,10 @@ const SERVICE_POSTS = [
 
 // ctx: { shipping, custom } — مقادیرِ زنده از سایت
 function pickServicePost(ctx = {}) {
-  const usable = SERVICE_POSTS.filter((p) => !p.needs || (p.needs === "shipping" ? ctx.shipping : ctx.custom));
+  const avail = SERVICE_POSTS.filter((p) => !p.needs || (p.needs === "shipping" ? ctx.shipping : ctx.custom));
+  // تکراری نشه: چند پستِ خدماتِ اخیر (ctx.recent از state.json) کنار گذاشته می‌شن
+  const fresh = avail.filter((p) => !(ctx.recent || []).includes(p.id));
+  const usable = fresh.length ? fresh : avail;
   const forced = process.env.SERVICE_ID && usable.find((x) => x.id === process.env.SERVICE_ID); // برای تست
   let r = Math.random() * usable.reduce((a, x) => a + (x.weight || 1), 0);
   const chosen = forced || usable.find((x) => (r -= x.weight || 1) < 0) || usable[0];

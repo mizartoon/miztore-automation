@@ -93,7 +93,12 @@ function withUtm(url, source, campaign = "daily_post") {
 // فقط برای audit-logِ state.json (markUsed) استفاده می‌شه، نه دیدوپِ واقعی.
 async function runServicePost(env, dryRun) {
   const [shipping, custom] = await Promise.all([store.shippingNote().catch(() => null), store.customDesign().catch(() => null)]);
-  const service = pickServicePost({ shipping, custom });
+  const st = loadState();
+  const service = pickServicePost({ shipping, custom, recent: st.serviceRecent || [] });
+  if (!dryRun) {
+    st.serviceRecent = [service.id, ...(st.serviceRecent || []).filter((x) => x !== service.id)].slice(0, 6);
+    saveState(st);
+  }
   const caption = buildServiceCaption(service);
 
   const dateStr = new Date().toISOString().slice(0, 10);

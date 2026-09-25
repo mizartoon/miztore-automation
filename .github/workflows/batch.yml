@@ -8,6 +8,9 @@ on:
       count:
         description: "تعدادِ پست"
         default: "30"
+      content_type:
+        description: "نوعِ محتوا (خالی = ترکیبِ عادی)"
+        default: ""
 
 permissions:
   contents: write
@@ -30,6 +33,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           BATCH_COUNT: ${{ inputs.count }}
+          CONTENT_TYPE: ${{ inputs.content_type }}
         run: node scripts/batch.js
       - uses: actions/upload-artifact@v4
         with:
