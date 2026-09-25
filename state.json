@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 1,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1150,7 +1150,6 @@
   },
   "pools": {
     "tshirt": [
-      "tshirt/مردم-آزاری-مکن.jpg",
       "tshirt/حاصل-عمر-چیست-دردم-هیچ.jpg",
       "tshirt/tshirt-0419.jpg",
       "tshirt/ما-داریم-زحمت-میکشیم-3.jpg",
@@ -2166,7 +2165,6 @@
       "pullover/خوشنویسی-ماه.jpg"
     ],
     "longsleeve": [
-      "longsleeve/تنها-اردک-در-تاک-تاک-اردک.jpg",
       "longsleeve/ما-را-به-رندی-افسانه-کردند.jpg",
       "longsleeve/کمک-های-اولیه-استکان-چای.jpg",
       "longsleeve/به-کسی-کین-ورزیدیم-و-کین.jpg",
@@ -2293,7 +2291,9 @@
     "longsleeve/چهره-خط-خطی.jpg": "2026-09-25T00:13:59.701Z",
     "tshirt/ما-را-به-رندی-افسانه-2.jpg": "2026-09-25T00:16:30.079Z",
     "hoodie/دریم-کچر-سنتی.jpg": "2026-09-25T00:16:44.660Z",
-    "pullover/مرا-به-سخت-جانی-2.jpg": "2026-09-25T00:19:47.062Z"
+    "pullover/مرا-به-سخت-جانی-2.jpg": "2026-09-25T00:19:47.062Z",
+    "longsleeve/تنها-اردک-در-تاک-تاک-اردک.jpg": "2026-09-25T00:36:00.663Z",
+    "tshirt/مردم-آزاری-مکن.jpg": "2026-09-25T00:36:42.615Z"
   },
   "campaigns": {
     "gift": [
@@ -2308,7 +2308,7 @@
       "work"
     ]
   },
-  "lastTheme": "dark",
+  "lastTheme": "light",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2393,6 +2393,16 @@
       "at": "2026-09-25"
     },
     "مرا به سخت جانی": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-09-25"
+    },
+    "تنها اردک در تاک تاک اردک": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-09-25"
+    },
+    "مردم آزاری مکن": {
       "found": false,
       "via": "ganjoor",
       "at": "2026-09-25"
