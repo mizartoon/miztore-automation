@@ -66,7 +66,12 @@ async function findAltPhoto(key, facts) {
   const st = loadState();
   const base = baseOf(key);
   const sibs = [];
-  for (const [cat, list] of Object.entries(st.manifests || {})) for (const k of list || []) if (k !== key && baseOf(k) === base) sibs.push({ k, cat });
+  // فقط وقتی هر دو عکس به یه محصولِ سایت لینک شدن: اسمِ یکسان همیشه یعنی طرحِ یکسان نیست
+  // (دو طرحِ مختلف با یه اسم بودن و اسلایدِ دوم طرحِ دیگه‌ای رو نشون داد)
+  const link = productLinks[key];
+  if (link)
+    for (const [cat, list] of Object.entries(st.manifests || {}))
+      for (const k of list || []) if (k !== key && baseOf(k) === base && productLinks[k] === link) sibs.push({ k, cat });
   if (sibs.length) {
     const s = sibs[Math.floor(Math.random() * sibs.length)];
     const bytes = await fetchBytes(`https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/${GITHUB_BRANCH}/${s.k}`);
