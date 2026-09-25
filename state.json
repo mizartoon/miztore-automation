@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 1,
+  "rotationCursor": 2,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1836,7 +1836,6 @@
       "tshirt/هیچ-و-از-آنِ-دنیام.jpg"
     ],
     "hoodie": [
-      "hoodie/رقص-سماع.jpg",
       "hoodie/خوشنویسی-عربی.jpg",
       "hoodie/تعصب-بجامانده.jpg",
       "hoodie/ماسک-و-صورت.jpg",
@@ -2308,7 +2307,7 @@
       "work"
     ]
   },
-  "lastTheme": "light",
+  "lastTheme": "dark",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2403,6 +2402,11 @@
       "at": "2026-09-25"
     },
     "مردم آزاری مکن": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-09-25"
+    },
+    "رقص سماع": {
       "found": false,
       "via": "ganjoor",
       "at": "2026-09-25"
