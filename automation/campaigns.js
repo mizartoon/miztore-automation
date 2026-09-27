@@ -200,7 +200,7 @@ async function runSpotlight(env, { dryRun, write }) {
   if (!sp) throw new Error("محصولی برایِ معرفی پیدا نشد");
   const { d, focus, foci } = sp;
   const F = FOCI[focus];
-  let copy = await writeCampaign(env, { type: "spotlight", spot: { item: d, focusText: FOCUS_TEXT[focus], facts: F.facts(d) } });
+  let copy = await writeCampaign(env, { type: "spotlight", spot: { item: d, focusText: FOCUS_TEXT[focus], facts: F.facts(d), eyebrow: F.eyebrow(d) } });
   copy = copy || { headline: F.fallback(d), caption: `${d.kind} «${d.shortName}»\n${F.short(d)}\nلینکش تو سایته.`, source: "fallback" };
 
   const photoBytes = await fetchBytes(d.images[0]);
