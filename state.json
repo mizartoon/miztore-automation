@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 2,
+  "rotationCursor": 3,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2002,7 +2002,6 @@
       "hoodie/فضانورد-مثنوی-مولوی-2.jpg"
     ],
     "pullover": [
-      "pullover/مولانا-قمارباز.jpg",
       "pullover/میخور-منبر-بسوزان-مردم-آزاری-مکن-2.jpg",
       "pullover/دونه-دونه-مروارید-2.jpg",
       "pullover/هیتمن-بلاد.jpg",
@@ -2413,6 +2412,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-09-25"
+    },
+    "مولانا قمارباز": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-09-28"
     }
   },
   "spotlight": {
