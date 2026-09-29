@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 0,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2163,7 +2163,6 @@
       "pullover/خوشنویسی-ماه.jpg"
     ],
     "longsleeve": [
-      "longsleeve/ما-را-به-رندی-افسانه-کردند.jpg",
       "longsleeve/کمک-های-اولیه-استکان-چای.jpg",
       "longsleeve/به-کسی-کین-ورزیدیم-و-کین.jpg",
       "longsleeve/ما-را-نعمت-دوست-و-حرص.jpg",
@@ -2419,6 +2418,18 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-09-28"
+    },
+    "ما را به رندی افسانه کردند": {
+      "found": true,
+      "summary": "این عبارت تو شعرِ حافظ اومده (غزلیات، غزل شمارهٔ ۴۱۷)، طبقِ گنجور: «ما را به رندی افسانه کردند»",
+      "sources": [
+        {
+          "title": "گنجور: حافظ » غزلیات » غزل شمارهٔ ۴۱۷",
+          "uri": "https://ganjoor.net/hafez/ghazal/sh417"
+        }
+      ],
+      "via": "ganjoor",
+      "at": "2026-09-29"
     }
   },
   "spotlight": {
