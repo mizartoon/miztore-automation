@@ -2432,10 +2432,16 @@
       ],
       "via": "ganjoor",
       "at": "2026-09-29"
+    },
+    "ذوقی چنان ندارد بی گربه زندگانی مردانه": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-01"
     }
   },
   "spotlight": {
     "recent": [
+      8739,
       3149,
       3177,
       2553,
@@ -2445,7 +2451,7 @@
       2568,
       3204
     ],
-    "lastFocus": "fabric"
+    "lastFocus": "colors"
   },
   "serviceRecent": [
     "shipping"
