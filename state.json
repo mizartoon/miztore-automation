@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 0,
+  "rotationCursor": 1,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1150,7 +1150,6 @@
   },
   "pools": {
     "tshirt": [
-      "tshirt/حاصل-عمر-چیست-دردم-هیچ.jpg",
       "tshirt/tshirt-0419.jpg",
       "tshirt/ما-داریم-زحمت-میکشیم-3.jpg",
       "tshirt/محبوب-منبر-بسوزان-مرو-از.jpg",
@@ -2315,7 +2314,7 @@
       "work"
     ]
   },
-  "lastTheme": "light",
+  "lastTheme": "dark",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2440,6 +2439,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-01"
+    },
+    "حاصل عمر چیست دردم هیچ": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-03"
     }
   },
   "spotlight": {
