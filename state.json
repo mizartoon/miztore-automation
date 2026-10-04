@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 1,
+  "rotationCursor": 2,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1835,7 +1835,6 @@
       "tshirt/هیچ-و-از-آنِ-دنیام.jpg"
     ],
     "hoodie": [
-      "hoodie/خوشنویسی-عربی.jpg",
       "hoodie/تعصب-بجامانده.jpg",
       "hoodie/ماسک-و-صورت.jpg",
       "hoodie/کوسه-خط-خطی-فارسی.jpg",
@@ -2445,6 +2444,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-03"
+    },
+    "خوشنویسی عربی": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-04"
     }
   },
   "spotlight": {
