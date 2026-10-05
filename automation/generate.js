@@ -173,6 +173,7 @@ async function runCampaignPost(env, dryRun, type) {
   const r = await runCampaign(env, { type, dryRun, write });
   fs.writeFileSync(path.join(__dirname, "last-run.json"), JSON.stringify({ ok: true, templateName: type, ...r }, null, 2));
   console.log(`✅ پستِ ${type} رندر شد${dryRun ? " (dry-run)" : ""}: ${r.headline} (${r.copySource})`);
+  if (dryRun) console.log(`--- کپشنِ تلگرام ---\n${r.caption}\n--- کپشنِ اینستاگرام ---\n${r.instagramCaption}\n--- توییت ---\n${r.twitterCaption}\n---`);
 }
 
 // تمِ تیره پیش‌فرضه (کاربر، ۲۰۲۶-۰۹-۲۵: «تم دارک مد بیشتر به قالب میاد»). روشن فقط گاهی
