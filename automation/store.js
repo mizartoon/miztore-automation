@@ -14,6 +14,7 @@ const COLLECTIONS = {
   music: "ترانه",
   nostalgia: "نوستالژی",
   work: "کار",
+  "cat-lovers": "گربه‌دوستان",
 };
 const KIND = { "t-shirt": "تیشرت", hoodie: "هودی", sweatshirt: "پلیور", "crop-top": "کراپ تاپ" };
 const HIDDEN = new Set(["test-v2"]);
@@ -44,8 +45,14 @@ function compact(p) {
   if (cats.some((c) => HIDDEN.has(c.slug)) || p.id === CUSTOM_DESIGN_ID || !p.is_in_stock) return null;
   const kind = cats.map((c) => KIND[c.slug]).find(Boolean) || null;
   const range = p.prices?.price_range;
-  const min = Number(range?.min_amount || p.prices?.price || 0);
-  const max = Number(range?.max_amount || p.prices?.price || 0);
+  let min = Number(range?.min_amount || p.prices?.price || 0);
+  let max = Number(range?.max_amount || p.prices?.price || 0);
+  // قیمتِ سطحِ محصولِ متغیر گاهی کهنه می‌مونه (قبلِ تخفیف)؛ اگه تخفیف داره قیمتِ تخفیفی ملاکه
+  const salePrice = p.on_sale ? Number(p.prices?.sale_price || 0) : 0;
+  if (salePrice && salePrice < min) {
+    min = salePrice;
+    if (!range) max = salePrice;
+  }
   const colors = (p.attributes || []).find((a) => a.taxonomy === "pa_color")?.terms?.length || 0;
   const img = p.images?.[0];
   if (!img) return null;
@@ -53,11 +60,15 @@ function compact(p) {
     id: p.id,
     name: p.name.replace(/\s+/g, " ").trim(),
     shortName: p.name
-      .replace(/^(تیشرت|هودی|پلیور|کراپ\s*تاپ|نیم\s*تنه|توت\s*بگ(\s*پارچه\s*ای)?|قاب\s*موبایل|کلاه(\s*نقاب\s*دار|\s*باکت)?)\s+/, "")
+      .replace(/^(تیشرت|هودی|پلیور(\s+دورس)?|کراپ\s*تاپ|نیم\s*تنه|توت\s*بگ(\s*پارچه\s*ای)?|قاب\s*موبایل|کلاه(\s*نقاب\s*دار|\s*باکت)?)\s+/, "")
       .replace(/\s+/g, " ")
       .replace(/\s+([،,])/g, "$1")
       .trim(),
     kind,
+    kindLabel: kind || (/^توت\s*بگ/.test(p.name) ? "توت‌بگ" : null), // فقط برایِ برچسبِ کارت؛ kind دست‌نخورده می‌مونه
+    onSale: !!p.on_sale,
+    regularPrice: Number(p.prices?.regular_price || 0),
+    salePrice,
     collections: cats.map((c) => COLLECTIONS[c.slug]).filter(Boolean),
     priceText: min ? (max > min ? `از ${money(min)}` : money(min)) + " تومان" : null,
     colors,
@@ -87,9 +98,9 @@ function distinctDesigns(items, n) {
 
 const bestsellers = async (n = 4) => distinctDesigns(await list("orderby=popularity&order=desc", 12), n);
 const newest = async (n = 4) => distinctDesigns(await list("orderby=date&order=desc", 12), n);
-async function collection(slug, n = 4) {
+async function collection(slug, n = 4, { mix = false } = {}) {
   const items = await list(`category=${slug}&orderby=popularity&order=desc`, 12);
-  return distinctDesigns(items, n);
+  return mix ? mixOfKinds(items, n) : distinctDesigns(items, n);
 }
 // نمونه‌یِ بزرگ برایِ راهنمایِ هدیه (Gemini از بینشون انتخاب می‌کنه)
 async function pool(n = 60) {
@@ -215,4 +226,108 @@ async function productDetail(id) {
   };
 }
 
-module.exports = { COLLECTIONS, productDetail, bestsellers, newest, collection, pool, shippingNote, customDesign, faDigits };
+// ---------------------------------------------------------------------------
+// تخفیفِ واقعی: فقط محصولاتی که ووکامرس خودش «on_sale» حساب می‌کنه (تاریخِ شروع/پایانِ
+// تخفیف رو هم خودش رعایت می‌کنه). قیمتِ سطحِ محصولِ متغیر کهنه می‌مونه، پس قیمتِ هر
+// تنوع (variation) خونده می‌شه و فقط تنوع‌هایی که الان موجودن و واقعاً تخفیف دارن حساب می‌شن.
+// ---------------------------------------------------------------------------
+const designKey = (it) => it.shortName.replace(/[\s،,]+/g, " ").trim();
+
+async function saleDetail(it) {
+  let vs = [];
+  try {
+    vs = await getJson(`${API}/products?type=variation&parent=${it.id}&per_page=100&_fields=id,on_sale,prices,is_in_stock`);
+  } catch {
+    return null;
+  }
+  let price, regular, partial;
+  if (vs.length) {
+    const live = vs.filter((v) => v.is_in_stock && v.on_sale && Number(v.prices?.regular_price) > Number(v.prices?.price));
+    if (!live.length) return null;
+    const cheapest = live.reduce((a, b) => (Number(b.prices.price) < Number(a.prices.price) ? b : a));
+    price = Number(cheapest.prices.price);
+    regular = Number(cheapest.prices.regular_price);
+    partial = new Set(live.map((v) => Number(v.prices.price))).size > 1 || vs.some((v) => v.is_in_stock && !v.on_sale);
+  } else {
+    // محصولِ ساده (بدونِ تنوع)
+    price = it.salePrice;
+    regular = it.regularPrice;
+    partial = false;
+  }
+  const pct = regular ? Math.round((1 - price / regular) * 100) : 0;
+  if (!price || pct < 5) return null;
+  return {
+    ...it,
+    sale: { price, regular, pct },
+    priceText: `${partial ? "از " : ""}${money(price)} تومان`,
+    regularText: money(regular),
+  };
+}
+
+// n محصولِ تخفیف‌دار با طرحِ متفاوت؛ اونایی که تازه استفاده شدن (avoid) آخر صف می‌رن
+async function saleItems(n = 4, avoid = []) {
+  const all = [];
+  for (let page = 1; page <= 8; page++) {
+    const items = await getJson(`${API}/products?per_page=100&page=${page}&orderby=popularity&order=desc&${FIELDS},on_sale`);
+    all.push(...items.filter((p) => p.on_sale).map(compact).filter(Boolean));
+    if (items.length < 100) break;
+  }
+  const fresh = distinctDesigns(all.filter((it) => !avoid.includes(it.id)), 30);
+  const used = distinctDesigns(all.filter((it) => avoid.includes(it.id)), 30);
+  const out = [];
+  for (const it of [...fresh, ...used]) {
+    const d = await saleDetail(it);
+    if (d) out.push(d);
+    if (out.length >= n) break;
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// محصولاتِ مناسبتی (دسته‌یِ «occasions»): n کارت، اول از هر طرح یکی، با تنوعِ نوعِ لباس
+// (تیشرت/هودی/پلیور/توت‌بگ)؛ اگه طرحِ کم بود، با لباسِ دیگه‌یِ همون طرح‌ها پر می‌شه.
+// ---------------------------------------------------------------------------
+const KIND_ORDER = ["تیشرت", "هودی", "پلیور", "توت‌بگ"];
+
+function mixOfKinds(items, n) {
+  const byDesign = new Map();
+  for (const it of items) {
+    const k = designKey(it);
+    if (!byDesign.has(k)) byDesign.set(k, []);
+    byDesign.get(k).push(it);
+  }
+  const designs = [...byDesign.values()];
+  const used = new Set();
+  const out = [];
+  const take = (list, start) => {
+    for (let i = 0; i < KIND_ORDER.length; i++) {
+      const kind = KIND_ORDER[(start + i) % KIND_ORDER.length];
+      const f = list.find((x) => (x.kindLabel || x.kind) === kind && !used.has(x.id));
+      if (f) return f;
+    }
+    return list.find((x) => !used.has(x.id));
+  };
+  designs.slice(0, n).forEach((list, i) => {
+    const it = take(list, i);
+    if (it) {
+      used.add(it.id);
+      out.push(it);
+    }
+  });
+  for (let r = 0; out.length < n && r < designs.length * KIND_ORDER.length; r++) {
+    const it = take(designs[r % designs.length], r + out.length);
+    if (it) {
+      used.add(it.id);
+      out.push(it);
+    }
+  }
+  return out;
+}
+
+async function occasionItems(keywords, n = 4) {
+  const items = await getJson(`${API}/products?category=occasions&per_page=100&orderby=popularity&order=desc&${FIELDS}`);
+  const mine = items.map(compact).filter(Boolean).filter((it) => keywords.some((k) => it.name.includes(k)));
+  return mixOfKinds(mine, n);
+}
+
+module.exports = { COLLECTIONS, productDetail, bestsellers, newest, collection, pool, saleItems, occasionItems, shippingNote, customDesign, faDigits, money };

@@ -420,6 +420,7 @@ function factChips(facts) {
   const chips = [];
   if (facts && facts.scope === "product") {
     if (facts.priceText) chips.push({ text: facts.priceText, fill: C.red, color: C.onRed });
+    if (facts.saleText) chips.push({ text: facts.saleText, fill: C.ink, color: C.b50 }); // «۱۵٪ تخفیف» — فقط وقتی تخفیفِ واقعی هست
     if (facts.colors?.length > 1) chips.push({ text: `${faDigits(facts.colors.length)} رنگ`, fill: C.b50, color: C.ink, stroke: C.ink });
   }
   if (!chips.length) chips.push({ text: "miztore.com", fill: C.red, color: C.onRed, family: LATIN });
@@ -1042,7 +1043,14 @@ async function productCard({ item, x, y, w, h, s, badge }) {
   const nameH = Math.round(nameFit.lines.length * nameFit.size * LH);
   const priceFit = item.priceText ? fit(item.priceText, { maxW: w - pad * 2, maxLines: 1, sizes: [26, 24, 22, 20, 18].map((v) => Math.round(v * s)) }) : null;
   const priceFs = priceFit ? priceFit.size : Math.round(26 * s);
-  const textH = pad + Math.round(36 * s) + nameH + priceFs + pad;
+  // کارتِ تخفیف: قیمتِ قبل (خط‌خورده، کوچیک‌تر) کنارِ قیمتِ تازه؛ جا نشد، یه ردیفِ بالاترش
+  const oldText = item.sale && item.regularText ? item.regularText : null;
+  const oldFs = Math.max(Math.round(16 * s), Math.round(priceFs * 0.92));
+  const newW = oldText ? textWidth(item.priceText, priceFs) : 0;
+  const oldW = oldText ? textWidth(oldText, oldFs) : 0;
+  const stacked = !!oldText && newW + oldW + Math.round(14 * s) > w - pad * 2;
+  const oldRowH = stacked ? Math.round(oldFs * 1.5) : 0;
+  const textH = pad + Math.round(36 * s) + nameH + oldRowH + priceFs + pad;
   const imgH = Math.max(Math.round(80 * s), h - textH);
   const r = Math.round(16 * s);
   const img = await productImage(item.image, w, imgH);
@@ -1057,13 +1065,27 @@ async function productCard({ item, x, y, w, h, s, badge }) {
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="none" stroke="${C.ink}" stroke-width="${3 * s}"/>` +
     `<line x1="${x}" y1="${y + imgH}" x2="${x + w}" y2="${y + imgH}" stroke="${C.ink}" stroke-width="${3 * s}"/>`;
   let ty = y + imgH + pad;
-  if (item.kind)
-    over += `<text x="${x + w - pad}" y="${ty + 18 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(20 * s)}" fill="${C.red}">${esc(item.kind)}</text>`;
+  if (item.kindLabel || item.kind)
+    over += `<text x="${x + w - pad}" y="${ty + 18 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${Math.round(20 * s)}" fill="${C.red}">${esc(item.kindLabel || item.kind)}</text>`;
   ty += Math.round(36 * s);
   over += textLines({ lines: nameFit.lines, size: nameFit.size, x: x + w - pad, y: ty + nameFit.size, lh: LH });
   ty += nameH;
-  if (item.priceText)
-    over += `<text x="${x + w - pad}" y="${ty + priceFs + 4 * s}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${priceFs}" fill="${C.ink}">${esc(item.priceText)}</text>`;
+  const xr = x + w - pad;
+  const strike = (xEnd, base, wid) => `<line x1="${xEnd - wid - 3 * s}" y1="${base - oldFs * 0.3}" x2="${xEnd + 3 * s}" y2="${base - oldFs * 0.3}" stroke="${C.red}" stroke-width="${Math.max(1.5, 1.8 * s)}"/>`;
+  if (oldText && stacked) {
+    const base = ty + oldFs + 2 * s;
+    over += `<text x="${xr}" y="${base}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${oldFs}" fill="${C.g20}">${esc(oldText)}</text>` + strike(xr, base, oldW);
+    ty += oldRowH;
+  }
+  if (item.priceText) {
+    const base = ty + priceFs + 4 * s;
+    over += `<text x="${xr}" y="${base}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${priceFs}" fill="${item.sale ? C.red : C.ink}">${esc(item.priceText)}</text>`;
+    if (oldText && !stacked) {
+      const xo = xr - newW - Math.round(14 * s);
+      over += `<text x="${xo}" y="${base}" text-anchor="end" direction="rtl" font-family="${FA}" font-size="${oldFs}" fill="${C.g20}">${esc(oldText)}</text>` + strike(xo, base, oldW);
+    }
+  }
+  if (item.sale) over += pill({ x: x + Math.round(12 * s), y: y + Math.round(12 * s), h: Math.round(42 * s), text: `${faDigits(item.sale.pct)}٪`, fill: C.red, color: C.onRed, anchor: "left" }).svg;
   if (badge) over += pill({ x: x + w - Math.round(12 * s), y: y + Math.round(12 * s), h: Math.round(46 * s), text: badge, fill: C.ink, color: C.b50 }).svg;
   return { under, over, layer: { input: photo, left: Math.round(x), top: Math.round(y) } };
 }
@@ -1079,7 +1101,10 @@ async function gridLayout({ s, items, top, bottom, left, right, cols, badges }) 
   for (let i = 0; i < items.length; i++) {
     const c = i % cols;
     const rr = Math.floor(i / cols);
-    const x = right - cw - c * (cw + gap); // راست‌به‌چپ
+    // ردیفِ آخرِ ناقص (مثلاً ۳ کارت تو دو ستون) وسط‌چین می‌شه
+    const inRow = Math.min(cols, items.length - rr * cols);
+    const shift = inRow < cols ? ((cols - inRow) * (cw + gap)) / 2 : 0;
+    const x = right - cw - c * (cw + gap) - shift; // راست‌به‌چپ
     const y = top + rr * (ch + gap);
     const card = await productCard({ item: items[i], x, y, w: cw, h: ch, s, badge: badges ? badges[i] : null });
     under += card.under;

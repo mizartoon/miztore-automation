@@ -15,6 +15,7 @@ const { renderGrid, renderVersus, renderPost, renderSpotlight, renderChart, fetc
 const { studioDesignBox } = require("./design-box.js");
 const { writeCampaign } = require("./copywriter.js");
 const { loadState, saveState } = require("./state.js");
+const { activeOccasion, nextOccasion } = require("./occasions.js");
 
 const GIFT_THEMES = [
   "برایِ کسی که شعرِ فارسی حفظه",
@@ -68,10 +69,12 @@ const FALLBACK = {
     caption: `چند تا ایده‌یِ هدیه ${theme}.\nاین طرح‌ها فقط تو میزطوری پیدا می‌شن، پس هدیه‌ت تکراری درنمیاد.\nرنگ و سایزشو خودت انتخاب کن؛ جور نشد، ۷ روز ضمانتِ بازگشت داره.\nلینکش تو سایته.`,
   }),
   versus: () => ({ headline: "کدوم رو می‌پوشی؟", caption: "الف یا ب؟ جوابتو کامنت کن.\nلینکِ هر دو تو سایته." }),
+  sale: () => ({ headline: "قیمتِ این طرح‌ها اومد پایین", caption: "چند تا از طرح‌هایِ میزطوری الان با قیمتِ کمتر تو سایتن.\nقیمتِ قبل و بعدشون رو پایین نوشتم.\nلینکِ همه‌شون تو سایته." }),
+  occasion: (name) => ({ headline: `برایِ ${name} آماده‌ایم`, caption: `برایِ ${name} طرح‌هایِ مخصوصِ خودشو داریم.\nلینکِ هر کدوم پایینه.` }),
 };
 
-async function buildCampaign(env, type) {
-  let items, copy, eyebrow, label, keySuffix, listLink;
+async function buildCampaign(env, type, dryRun = true) {
+  let items, copy, eyebrow, label, keySuffix, listLink, extra;
   if (type === "bestsellers") {
     items = await store.bestsellers(4);
     copy = await writeCampaign(env, { type, items });
@@ -80,15 +83,55 @@ async function buildCampaign(env, type) {
     keySuffix = "top";
     listLink = (src) => `https://miztore.com/shop/?orderby=popularity&utm_source=${src}`;
   } else if (type === "collection") {
-    const slug = pickFresh("collection", Object.keys(store.COLLECTIONS));
+    const slug = env.COLLECTION && store.COLLECTIONS[env.COLLECTION] ? env.COLLECTION : pickFresh("collection", Object.keys(store.COLLECTIONS));
     const name = store.COLLECTIONS[slug];
-    items = await store.collection(slug, 4);
+    items = await store.collection(slug, 4, { mix: slug === "cat-lovers" }); // گربه‌دوستان: تیشرت/هودی/پلیور/توت‌بگ کنارِ هم
     copy = await writeCampaign(env, { type, items, collectionName: name });
     copy = copy || FALLBACK.collection(name);
     eyebrow = `کالکشنِ ${name}`;
     label = `کالکشنِ ${name}`;
     keySuffix = slug;
     listLink = (src) => `https://miztore.com/?product_cat=${slug}&utm_source=${src}`;
+  } else if (type === "sale") {
+    // تخفیفِ واقعی: فقط محصولاتی که الان ووکامرس on_sale حساب می‌کنه؛ اونایی که تازه استفاده شدن آخرِ صف
+    const st = loadState();
+    st.campaigns = st.campaigns || {};
+    const recent = st.campaigns.saleRecent || [];
+    items = await store.saleItems(4, recent);
+    if (items.length < 3) throw new Error("تخفیفِ فعالِ کافی نیست");
+    if (!dryRun) {
+      st.campaigns.saleRecent = [...items.map((i) => i.id), ...recent].slice(0, 16);
+      saveState(st);
+    }
+    const hi = Math.max(...items.map((i) => i.sale.pct));
+    const lo = Math.min(...items.map((i) => i.sale.pct));
+    eyebrow = lo === hi ? `${fa(hi)}٪ تخفیف` : `تا ${fa(hi)}٪ تخفیف`;
+    copy = await writeCampaign(env, { type, items, eyebrow });
+    label = "تخفیف";
+    keySuffix = items.map((i) => i.id).join("-");
+    listLink = (src) => `https://miztore.com/shop/?utm_source=${src}`;
+    extra = { sale: true };
+  } else if (type === "occasion") {
+    // مناسبت: اگه الان تو پنجره‌یِ یه مناسبته همون، وگرنه (فقط موقعِ تست) نزدیک‌ترینِ آینده
+    const act = activeOccasion() || nextOccasion().find((x) => x);
+    if (!act) throw new Error("مناسبتی تعریف نشده");
+    const cands = activeOccasion() ? [act] : nextOccasion();
+    let chosen = null;
+    for (const c of cands) {
+      const its = await store.occasionItems(c.occ.keywords, 4);
+      if (its.length >= 3) {
+        chosen = { c, its };
+        break;
+      }
+    }
+    if (!chosen) throw new Error("برایِ این مناسبت محصولِ کافی تو سایت نیست");
+    items = chosen.its;
+    eyebrow = chosen.c.label;
+    copy = await writeCampaign(env, { type, items, occasion: { name: chosen.c.occ.name, daysLeft: chosen.c.daysLeft, label: chosen.c.label } });
+    copy = copy || FALLBACK.occasion(chosen.c.occ.name);
+    label = chosen.c.occ.name;
+    keySuffix = chosen.c.occ.key;
+    listLink = (src) => `https://miztore.com/?product_cat=occasions&utm_source=${src}`;
   } else if (type === "gift") {
     const theme = pickFresh("gift", GIFT_THEMES);
     const pool = await store.pool(60);
@@ -118,7 +161,7 @@ async function buildCampaign(env, type) {
   }
   if (!items || items.length < (type === "versus" ? 2 : 3)) throw new Error(`محصولِ کافی برایِ ${type} پیدا نشد`);
   copy = copy || FALLBACK[type]();
-  return { items, copy, eyebrow, label, keySuffix, listLink };
+  return { items, copy, eyebrow, label, keySuffix, listLink, extra };
 }
 
 // ---------------------------------------------------------------------------
@@ -250,7 +293,7 @@ async function runSpotlight(env, { dryRun, write }) {
 
 async function runCampaign(env, { type, dryRun, write }) {
   if (type === "spotlight") return runSpotlight(env, { dryRun, write });
-  const c = await buildCampaign(env, type);
+  const c = await buildCampaign(env, type, dryRun);
   const outputs = {};
   for (const format of ["telegram", "post", "story", "twitter"]) {
     const buf =
@@ -264,23 +307,27 @@ async function runCampaign(env, { type, dryRun, write }) {
   for (const [i, it] of c.items.entries()) {
     try {
       const photoBytes = await fetchBytes(it.image);
-      const facts = { scope: "product", priceText: it.priceText, colors: new Array(it.colors || 0).fill(0) };
-      carousel.push(write(`slide${i + 1}`, await renderPost({ photoBytes, headline: it.shortName, categoryLabel: it.kind || "میزطوری", facts, designBox: null, format: "post", studio: true })));
+      const facts = { scope: "product", priceText: it.priceText, saleText: it.sale ? `${fa(it.sale.pct)}٪ تخفیف` : null, colors: new Array(it.colors || 0).fill(0) };
+      carousel.push(write(`slide${i + 1}`, await renderPost({ photoBytes, headline: it.shortName, categoryLabel: it.kindLabel || it.kind || "میزطوری", facts, designBox: null, format: "post", studio: true })));
     } catch (e) {
       console.error("slide:", e.message);
     }
   }
   outputs.carousel = carousel;
 
-  const lines = c.items.map((it, i) => `${type === "versus" ? ["الف", "ب"][i] : "•"} ${it.kind ? it.kind + " " : ""}«${it.shortName}» — ${it.link("tg")}`);
-  const caption = `${c.copy.caption}\n\n${lines.map(escHtml).join("\n")}`;
+  const bullet = (i) => (type === "versus" ? ["الف", "ب"][i] : "•");
+  const kindOf = (it) => (it.kindLabel || it.kind ? (it.kindLabel || it.kind) + " " : "");
+  // تخفیف: قیمتِ قبل (خط‌خورده) و قیمتِ الان کنارِ هر محصول؛ بقیه‌یِ نوع‌ها مثلِ قبل
+  const lines = c.items.map((it, i) => `${escHtml(`${bullet(i)} ${kindOf(it)}«${it.shortName}»`)} — ${it.sale ? `<s>${it.regularText}</s> ← ${escHtml(it.priceText)} — ` : ""}${it.link("tg")}`);
+  const saleNote = c.extra?.sale ? "\n\nقیمت‌ها مالِ امروزِ سایته." : "";
+  const caption = `${c.copy.caption}\n\n${lines.join("\n")}${saleNote}`;
   return {
     key: `campaign/${type}/${c.keySuffix}`,
     category: c.label,
     outputs,
     headline: c.copy.headline,
     caption,
-    instagramCaption: `${c.copy.caption}\n\n${c.items.map((it, i) => `${type === "versus" ? ["الف", "ب"][i] : "•"} ${it.kind ? it.kind + " " : ""}«${it.shortName}»`).join("\n")}\n\nلینکِ همه تو بیو 👆\n\n#میزطوری #Miztore #پوشاک_ایرانی #استریت_ویر`,
+    instagramCaption: `${c.copy.caption}\n\n${c.items.map((it, i) => `${bullet(i)} ${kindOf(it)}«${it.shortName}»${it.sale ? ` (قبلاً ${it.regularText}، الان ${it.priceText})` : ""}`).join("\n")}${saleNote}\n\nلینکِ همه تو بیو 👆\n\n#میزطوری #Miztore #پوشاک_ایرانی #استریت_ویر`,
     twitterCaption: tweetOf(c.copy.caption, c.listLink("x")),
     buyUrlTelegram: c.listLink("tg"),
     buyUrlInstagram: c.listLink("ig"),

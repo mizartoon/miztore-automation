@@ -298,7 +298,7 @@ async function callText(env, model, userText) {
   }
 }
 
-async function askCampaign(env, userText, maxHeadWords) {
+async function askCampaign(env, userText, maxHeadWords, extraBanned = []) {
   if (!env.GEMINI_API_KEY) return null;
   for (const model of MODELS) {
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -308,6 +308,7 @@ async function askCampaign(env, userText, maxHeadWords) {
         const caption = clean(r.caption);
         if (!headline || !caption) throw new Error("خروجیِ ناقص");
         if (BANNED.some((re) => re.test(headline) || re.test(caption))) throw new Error("کلمه‌ی ممنوع");
+        if (extraBanned.some((re) => re.test(headline) || re.test(caption))) throw new Error("ادعایِ بی‌پشتوانه (فشار/تحویل/زمان)");
         if (HEADLINE_BANNED.some((re) => re.test(headline))) throw new Error("صفتِ خالی تو تیتر");
         if (/کد\s*[۰-۹0-9]{3,}/.test(caption)) throw new Error("شناسه‌یِ داخلی به‌عنوانِ کد");
         if (headline.split(/\s+/).length > maxHeadWords) throw new Error("تیترِ بلند");
@@ -330,8 +331,41 @@ const itemLine = (it) => {
   return `${it.id} | ${it.kind || "محصول"} «${it.shortName}» | ${it.priceText || ""}${it.collections?.length ? ` | ${it.collections.join("،")}` : ""}${about}`;
 };
 
-async function writeCampaign(env, { type, items, theme, collectionName, pool, spot }) {
+// ادعاهایِ فشار/زمان/تحویل که اطلاعاتی براشون نداریم (برایِ پستِ تخفیف و مناسبتی)
+const PRESSURE_BANNED = [
+  /فقط\s*تا/, /آخرین\s*(فرصت|روز|ساعت)/, /تعداد(ِ|\s)?\s*محدود/, /محدود/, /رو\s*به\s*اتمام/, /تموم\s*می‌?شه/, /شمارش/, /ثانیه/, /ساعت\s*دیگه/, /تا\s*فردا/, /امشب\s*آخر/,
+  /می‌?رسه/, /می‌?رسن/, /برسه/, /برسن/, /تحویل/, /ارسال\s*(سریع|فوری)/, /زودتر\s*از/,
+];
+
+const saleLine = (it) => `${it.id} | ${it.kindLabel || it.kind || "محصول"} «${it.shortName}» | قبلاً ${it.regularText} تومان ← الان ${it.priceText} (${(it.sale?.pct ?? 0)}٪ کمتر)`;
+
+async function writeCampaign(env, { type, items, theme, collectionName, pool, spot, occasion, eyebrow }) {
   const listText = (items || []).map(itemLine).join("\n");
+  if (type === "sale") {
+    return askCampaign(
+      env,
+      `پستِ «تخفیف»: چند محصولِ واقعی که الان تو سایت قیمتِ تخفیف‌خورده دارن. این عددها (قیمتِ قبل، قیمتِ الان، درصد) واقعی و همین الان از سایت خونده شده‌ن، پس می‌تونی دقیقاً همین‌ها رو بگی ولی هیچ عددِ دیگه‌ای نساز.
+محصولات:
+${items.map(saleLine).join("\n")}
+برچسبِ بالایِ تیتر رویِ تصویر (از قبل هست): «${eyebrow || ""}» — تیتر نباید فقط همینو تکرار کنه.
+- headline: تیترِ رویِ تصویر، ۳ تا ۷ کلمه، طبیعی و بامزه (مثلاً از نگاهِ آدمی که منتظرِ همین قیمت بوده)، نه فقط «تخفیف».
+- caption: ۲ تا ۴ خطِ کوتاه (هر خط یه سطر): بگو قیمتِ این طرح‌ها الان کمتره؛ یکی دو تاشون رو با قیمتِ قبل و بعدِ دقیقِ بالا بیار (ارقامِ فارسی)؛ بدونِ هیچ فشار و عجله — نه «فقط تا …»، نه «تعدادِ محدود»، نه «آخرین فرصت»، نه شمارشِ معکوس، چون زمانِ تموم‌شدنِ تخفیف رو نمی‌دونیم. آخرش یه کارِ مشخص (لینک تو بیو/سایت).`,
+      8,
+      PRESSURE_BANNED
+    );
+  }
+  if (type === "occasion") {
+    return askCampaign(
+      env,
+      `پستِ مناسبتی برایِ «${occasion.name}». روزهایِ مانده تا مناسبت: ${occasion.daysLeft} (واقعیتِ تقویمه، پس می‌تونی بگی) و برچسبِ رویِ تصویر این‌ـه: «${occasion.label}» — تیتر نباید همینو تکرار کنه.
+محصولاتِ واقعیِ فروشگاه که مخصوصِ این مناسبت‌ان (اسم‌ها رو همون‌طور که هست بگو؛ توصیفِ تصویرِ طرح نکن):
+${listText}
+- headline: تیترِ رویِ تصویر، ۳ تا ۷ کلمه، طبیعی و گرم، مخصوصِ همین مناسبت.
+- caption: ۲ تا ۴ خطِ کوتاه (هر خط یه سطر): حس‌وحالِ مناسبت (دورهمی، هدیه دادن، پوشیدن تو جمع …)، اینکه این طرح‌ها رو تو تیشرت، هودی، پلیور و … (فقط همونایی که تو لیسته) می‌شه گرفت، و آخرش یه کارِ مشخص (لینک تو بیو/سایت). هیچ ادعایی درباره‌یِ تخفیف، ارسال یا زمانِ رسیدنِ سفارش نکن.`,
+      8,
+      PRESSURE_BANNED
+    );
+  }
   if (type === "spotlight") {
     if (!findDesignNote(spot.item.name, spot.item.shortName)) await researchDesign(env, { siteName: spot.item.name }).catch(() => null); // کش می‌شه → itemLine
     return askCampaign(

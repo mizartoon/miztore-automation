@@ -13,7 +13,12 @@ on:
         description: "نوعِ محتوا (خالی = تصادفی طبقِ ترکیبِ روزانه)"
         type: choice
         default: ""
-        options: ["", "product", "service", "spotlight", "bestsellers", "collection", "gift", "versus"]
+        options: ["", "product", "service", "spotlight", "bestsellers", "collection", "gift", "versus", "sale", "occasion"]
+      collection:
+        description: "کالکشن (فقط برایِ نوعِ collection؛ خالی = چرخشی)"
+        type: choice
+        default: ""
+        options: ["", "gilding", "illustration", "celebrity", "music", "nostalgia", "work", "cat-lovers"]
       theme:
         description: "تم (خالی = خودکار، بیشترِ وقت‌ها تیره)"
         type: choice
@@ -45,6 +50,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DRY_RUN: ${{ inputs.dry_run == true && 'true' || 'false' }}
           CONTENT_TYPE: ${{ inputs.content_type }}
+          COLLECTION: ${{ inputs.collection }}
           THEME: ${{ inputs.theme }}
         run: node automation/generate.js
 

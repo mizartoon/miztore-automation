@@ -15,6 +15,7 @@ const { getProductFacts } = require("./product-facts.js");
 const { getDesignInfo } = require("./design-lookup.js");
 const { pickServicePost, buildServiceCaption } = require("./services.js");
 const { runCampaign } = require("./campaigns.js");
+const { activeOccasion } = require("./occasions.js");
 const store = require("./store.js");
 
 // ترکیبِ محتوایِ روزانه (کاربر: «محتواهایی برای تشویقِ مشتری به خرید اضافه کن»).
@@ -22,16 +23,21 @@ const store = require("./store.js");
 // هدیه، «این یا اون؟». با CONTENT_TYPE=... می‌شه یه نوعِ خاص رو اجبار کرد (تست).
 // ۲۰۲۶-۰۹-۲۵ (کاربر): تمرکزِ بیشتر رویِ طرح‌هایِ اختصاصی، بعد تنوعِ رنگ و سایز، و هدیه.
 const CONTENT_MIX = [
-  ["product", 0.38],
-  ["service", 0.17], // اولویت با «طرح‌هایِ اختصاصی»، بعد رنگ/سایز/ست‌شدن و هدیه — services.js
+  ["product", 0.31],
+  ["service", 0.16], // اولویت با «طرح‌هایِ اختصاصی»، بعد رنگ/سایز/ست‌شدن و هدیه — services.js
   ["spotlight", 0.13], // معرفیِ یه محصول: رنگ‌ها / سایزها / جنس و کیفیت / مدل‌هایِ دوخت
-  ["gift", 0.14],
-  ["collection", 0.08],
+  ["gift", 0.13],
+  ["collection", 0.09], // شاملِ «گربه‌دوستان» (دسته‌یِ cat-lovers)
   ["bestsellers", 0.05],
   ["versus", 0.05],
+  ["sale", 0.08], // تخفیفِ واقعیِ سایت (on_sale)؛ اگه تخفیفِ فعالی نباشه ربات پستِ محصول می‌سازه
 ];
+// «occasion» تو قرعه‌کشی نیست: وقتی یه مناسبت (یلدا، ولنتاین، نوروز) تو پنجره‌یِ تبلیغش باشه،
+// هرچی به روزش نزدیک‌تر شیم شانسش بیشتر می‌شه (CONTENT_TYPE=occasion برایِ تست اجبارش می‌کنه)
 function pickContentType(forced) {
-  if (forced && CONTENT_MIX.some(([t]) => t === forced)) return forced;
+  if (forced && (forced === "occasion" || CONTENT_MIX.some(([t]) => t === forced))) return forced;
+  const oc = activeOccasion();
+  if (oc && Math.random() < (oc.daysLeft <= 3 ? 0.6 : oc.daysLeft <= 10 ? 0.4 : 0.25)) return "occasion";
   let r = Math.random();
   for (const [t, w] of CONTENT_MIX) if ((r -= w) < 0) return t;
   return "product";
