@@ -310,6 +310,7 @@ async function main() {
     );
 
     console.log(`✅ رندر شد${dryRun ? " (dry-run)" : ""}: ${Object.values(outputs).flat().join(", ")}`);
+    if (dryRun) console.log(`--- کپشنِ اینستاگرام ---\n${instagramCaption}\n--- توییت ---\n${twitterCaption}\n---`);
   } catch (err) {
     requeueImage(category, key);
     console.error("::error::" + (err && err.stack ? err.stack : err));
