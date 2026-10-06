@@ -10,7 +10,7 @@
 const fs = require("fs");
 const path = require("path");
 const { markUsed } = require("./state.js");
-const { sendPhotoFile, sendMediaGroupFiles, sendMessage, notifyAdmin } = require("./telegram.js");
+const { sendPhotoFile, sendVideoFile, sendMediaGroupFiles, sendMessage, notifyAdmin } = require("./telegram.js");
 
 // عکس‌ها مستقیم از رویِ دیسکِ همین اجرا آپلود می‌شن، نه با لینکِ raw گیت‌هاب:
 // publish.js فقط ~۱ ثانیه بعدِ push اجرا می‌شه و CDNِ گیت‌هاب هنوز فایلِ تازه
@@ -39,7 +39,15 @@ async function sendInstagramPackage(env, lastRun) {
   if (!env.TELEGRAM_ADMIN_CHAT_ID) return;
 
   const carousel = (lastRun.outputs.carousel || [lastRun.outputs.post]).filter(Boolean);
-  if (carousel.length > 1) {
+  if (lastRun.outputs.reel) {
+    await sendVideoFile(
+      env,
+      env.TELEGRAM_ADMIN_CHAT_ID,
+      localPath(lastRun.outputs.reel),
+      "🎬 <b>اینستاگرام — ریلز</b> (۹:۱۶)\nسیو کن و به‌عنوانِ ریلز پست کن. ویدیو صدا نداره: موقعِ انتشار یه آهنگِ ترند از خودِ اینستاگرام روش بذار. کاورش همون فریمِ اوله (عکسِ بعدی)."
+    );
+    await sendPhotoFile(env, env.TELEGRAM_ADMIN_CHAT_ID, localPath(lastRun.outputs.cover), "🖼 <b>کاورِ ریلز</b> (برایِ گریدِ پیج)");
+  } else if (carousel.length > 1) {
     // پستِ چنداسلایدی: همه‌ی اسلایدها یک‌جا و به ترتیب (عکسِ اصلی ← طرح از نزدیک ← اطلاعاتِ خرید)
     await sendMediaGroupFiles(
       env,
@@ -50,12 +58,13 @@ async function sendInstagramPackage(env, lastRun) {
   } else {
     await sendPhotoFile(env, env.TELEGRAM_ADMIN_CHAT_ID, localPath(lastRun.outputs.post), "📸 <b>اینستاگرام — پست</b> (۴:۵)\nسیو کن و دستی پست کن.");
   }
-  await sendPhotoFile(
-    env,
-    env.TELEGRAM_ADMIN_CHAT_ID,
-    localPath(lastRun.outputs.story),
-    "📱 <b>اینستاگرام — استوری</b> (۹:۱۶)\nلینکِ کوتاه برای استیکرِ Link (لمس کن تا کپی شه):\n<code>" + escHtml(lastRun.buyUrlInstagram) + "</code>"
-  );
+  if (!lastRun.outputs.reel)
+    await sendPhotoFile(
+      env,
+      env.TELEGRAM_ADMIN_CHAT_ID,
+      localPath(lastRun.outputs.story),
+      "📱 <b>اینستاگرام — استوری</b> (۹:۱۶)\nلینکِ کوتاه برای استیکرِ Link (لمس کن تا کپی شه):\n<code>" + escHtml(lastRun.buyUrlInstagram) + "</code>"
+    );
   // کپشن به‌صورت پیامِ جدا، داخلِ <pre> که با یه لمس کپی بشه
   await sendMessage(
     env,
@@ -71,12 +80,15 @@ async function sendTwitterPackage(env, lastRun) {
   // رندرِ جداگانه نیست. کپشن اما جداست: کوتاه‌تر، بدون سؤالِ تعاملی، با
   // لینکِ کلیک‌پذیر — نه کپیِ کپشنِ اینستاگرام (که در NovinHub هم به‌جای
   // کپشنِ اختصاصیِ توییتر انتخاب می‌شه اگه این پیام رو نداشته باشیم).
-  await sendPhotoFile(
-    env,
-    env.TELEGRAM_ADMIN_CHAT_ID,
-    localPath(lastRun.outputs.twitter || lastRun.outputs.post),
-    "🐦 <b>توییتر/X</b> (۱۶:۹)\nسیو کن و دستی از طریق نوین‌هاب پست کن — کپشنِ زیر رو استفاده کن، نه کپشنِ اینستاگرام."
-  );
+  if (lastRun.outputs.reel)
+    await sendMessage(env, env.TELEGRAM_ADMIN_CHAT_ID, "🐦 <b>توییتر/X</b>: همون ویدیویِ ریلزِ بالا رو با کپشنِ زیر بذار.");
+  else
+    await sendPhotoFile(
+      env,
+      env.TELEGRAM_ADMIN_CHAT_ID,
+      localPath(lastRun.outputs.twitter || lastRun.outputs.post),
+      "🐦 <b>توییتر/X</b> (۱۶:۹)\nسیو کن و دستی از طریق نوین‌هاب پست کن — کپشنِ زیر رو استفاده کن، نه کپشنِ اینستاگرام."
+    );
   await sendMessage(
     env,
     env.TELEGRAM_ADMIN_CHAT_ID,
@@ -100,14 +112,16 @@ async function main() {
     if (lastRun.dryRun) {
       if (!env.TELEGRAM_ADMIN_CHAT_ID) throw new Error("TELEGRAM_ADMIN_CHAT_ID تنظیم نشده — پیش‌نمایش رو کجا بفرستم؟");
       const previewCaption = `🧪 <b>پیش‌نمایش تلگرام</b> (${lastRun.category} — متن: ${lastRun.copySource || "?"}) — پست نشده، عکس هنوز تو pool هست.\n\n${lastRun.caption}`;
-      await sendPhotoFile(env, env.TELEGRAM_ADMIN_CHAT_ID, localPath(lastRun.outputs.telegram), previewCaption, telegramButton);
+      if (lastRun.outputs.reel) await sendVideoFile(env, env.TELEGRAM_ADMIN_CHAT_ID, localPath(lastRun.outputs.reel), previewCaption, telegramButton);
+      else await sendPhotoFile(env, env.TELEGRAM_ADMIN_CHAT_ID, localPath(lastRun.outputs.telegram), previewCaption, telegramButton);
       await sendInstagramPackage(env, lastRun);
       await sendTwitterPackage(env, lastRun);
       console.log("✅ پیش‌نمایشِ کامل (تلگرام + اینستاگرام + توییتر) به ادمین فرستاده شد.");
       return;
     }
 
-    await sendPhotoFile(env, env.TELEGRAM_CHANNEL_ID, localPath(lastRun.outputs.telegram), lastRun.caption, telegramButton);
+    if (lastRun.outputs.reel) await sendVideoFile(env, env.TELEGRAM_CHANNEL_ID, localPath(lastRun.outputs.reel), lastRun.caption, telegramButton);
+    else await sendPhotoFile(env, env.TELEGRAM_CHANNEL_ID, localPath(lastRun.outputs.telegram), lastRun.caption, telegramButton);
     await sendInstagramPackage(env, lastRun);
     await sendTwitterPackage(env, lastRun);
     markUsed(lastRun.key);

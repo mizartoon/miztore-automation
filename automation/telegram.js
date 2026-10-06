@@ -59,6 +59,28 @@ async function sendPhotoFile(env, chatId, filePath, caption, { buttonText, butto
   });
 }
 
+// ریلز (mp4 ۹:۱۶) — همون آپلودِ مستقیم از دیسک
+async function sendVideoFile(env, chatId, filePath, caption, { buttonText, buttonUrl } = {}) {
+  const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendVideo`;
+  const replyMarkup = buildReplyMarkup({ buttonText, buttonUrl });
+  const bytes = fs.readFileSync(filePath);
+  return withRetry(async () => {
+    const form = new FormData();
+    form.append("chat_id", String(chatId));
+    if (caption) form.append("caption", caption);
+    form.append("parse_mode", "HTML");
+    form.append("supports_streaming", "true");
+    form.append("width", "1080");
+    form.append("height", "1920");
+    if (replyMarkup) form.append("reply_markup", replyMarkup);
+    form.append("video", new Blob([bytes], { type: "video/mp4" }), path.basename(filePath) || "reel.mp4");
+    const res = await fetch(url, { method: "POST", body: form });
+    const body = await res.json();
+    if (!res.ok || body.ok === false) throw new Error(`Telegram sendVideo failed: ${body.description || res.status}`);
+    return body.result;
+  });
+}
+
 // چند عکس به‌صورتِ یک آلبوم (برایِ کاروسلِ اینستاگرام: ادمین همه‌ی اسلایدها رو
 // یک‌جا، به همون ترتیب، سیو می‌کنه). کپشن فقط رویِ اولین عکس.
 async function sendMediaGroupFiles(env, chatId, filePaths, caption) {
@@ -105,4 +127,4 @@ async function notifyAdmin(env, text) {
   }
 }
 
-module.exports = { sendPhotoFile, sendMediaGroupFiles, sendMessage, notifyAdmin };
+module.exports = { sendPhotoFile, sendVideoFile, sendMediaGroupFiles, sendMessage, notifyAdmin };

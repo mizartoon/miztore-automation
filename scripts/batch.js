@@ -46,6 +46,7 @@ for (let i = 1; i <= N; i++) {
       headline: r.headline,
       slides,
       story: copy(r.outputs.story, "story.jpg"),
+      reel: copy(r.outputs.reel, "reel.mp4"), // ریلز: ویدیو + کاور (کاورِ گرید همون slides[0] ـه)
       twitter: copy(r.outputs.twitter || r.outputs.post, "twitter.jpg"),
       instagramCaption: r.instagramCaption || r.caption,
       twitterCaption: r.twitterCaption || r.caption,

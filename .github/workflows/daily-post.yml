@@ -13,7 +13,7 @@ on:
         description: "نوعِ محتوا (خالی = تصادفی طبقِ ترکیبِ روزانه)"
         type: choice
         default: ""
-        options: ["", "product", "service", "spotlight", "bestsellers", "collection", "gift", "versus", "sale", "occasion"]
+        options: ["", "reel", "product", "service", "spotlight", "bestsellers", "collection", "gift", "versus", "sale", "occasion"]
       collection:
         description: "کالکشن (فقط برایِ نوعِ collection؛ خالی = چرخشی)"
         type: choice
@@ -44,6 +44,10 @@ jobs:
 
       - name: Install dependencies
         run: npm ci || npm install
+
+      # ریلز (reel.js) با ffmpeg ساخته می‌شه؛ رویِ ubuntu-latest معمولاً نصبه
+      - name: ffmpeg
+        run: which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
 
       - name: Generate render
         env:

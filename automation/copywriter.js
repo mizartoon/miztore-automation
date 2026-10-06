@@ -30,7 +30,12 @@ const HEADLINE_CRAFT = `قاعده‌هایِ تیتر و کپشن (مثلِ ک�
 - کپشن: خطِ اول همون حسِ اصلیه؛ هر خط یه کار می‌کنه و هیچ دو خطی یه حرف رو تکرار نمی‌کنن.
 - فارسیِ کاملاً آدمیزادی: گفتاریِ یکدست و درست (شکسته‌نویسیِ استاندارد مثلِ «می‌شه»، «می‌خوای»، «بهت میاد» — نه نصفه‌رسمی نصفه‌شکسته)، نیم‌فاصله‌یِ درست («می‌شه»، «طرح‌ها»)، بدونِ ترجمه‌زدگی («می‌باشد»، «توسط»، «انجام دادن» به‌جایِ فعلِ ساده، «یک»ِ اضافی جلویِ اسم). هر جمله رو تو ذهنت بلند بخون؛ اگه یه ایرانی این‌جوری حرف نمی‌زنه، عوضش کن.`;
 
-const SYSTEM_PROMPT = `تو آدمِ شبکه‌های اجتماعیِ «میزطوری» هستی — یه برندِ ایرانیِ لباسِ هنری (تیشرت، هودی، پلیور با طرح‌های شعر، خوشنویسی، تصویرسازی، شخصیت‌ها، ترانه و نوستالژی). ماسکوتِ برند یه گربه‌ی پالاسِ شیطونه به اسمِ «پالاس».
+// توییت جدا از کپشنِ اینستاگرام نوشته می‌شه (آدیتِ پیج، ۲۰۲۶-۱۰-۰۶: کپیِ یه متن تو همه‌یِ شبکه‌ها
+// «نویز» ـه؛ X لحنِ خودشو می‌خواد — همون جنسِ توییت‌هایِ متنیِ زمان‌بندی‌شده تو نوین‌هاب)
+const TWEET_RULE =
+  "یه توییتِ مستقل برایِ X، حداکثر ۲۰۰ کاراکتر، با لحنِ توییترِ فارسی: یه مشاهده‌یِ بامزه‌یِ روزمره یا نیش‌خندِ هوشمندانه که به حس‌وحالِ همین طرح یا آدمی که می‌پوشدش ربط داره و بدونِ دیدنِ عکس هم فهمیده می‌شه. شبیهِ آگهی نباشه؛ بدونِ CTA، هشتگ و لینک؛ حداکثر یک ایموجی؛ جمله‌یِ اولِ کپشن رو تکرار نکنه. خاطره، سن یا حرفِ ساختگی از خودت یا مشتری‌ها (مثلاً «یکی تو دایرکت گفت») نساز.";
+
+const SYSTEM_PROMPT = `تو آدمِ شبکه‌های اجتماعیِ «میزطوری» هستی —یه برندِ ایرانیِ لباسِ هنری (تیشرت، هودی، پلیور با طرح‌های شعر، خوشنویسی، تصویرسازی، شخصیت‌ها، ترانه و نوستالژی). ماسکوتِ برند یه گربه‌ی پالاسِ شیطونه به اسمِ «پالاس».
 
 کارت: یه عکسِ محصول می‌بینی و برای پستِ امروز می‌نویسی. مثلِ یه آدمِ واقعی بنویس که خودش عاشقِ این طرحه و داره برای دوستاش تعریفش می‌کنه — نه مثلِ آگهی، نه مثلِ ربات.
 
@@ -51,6 +56,7 @@ ${HEADLINE_CRAFT}
   "caption": "کپشن: ۲ تا ۴ خطِ کوتاه، هر خط در یک سطرِ جدا.خطِ اول یه هوکِ کاملاً مستقل که به حس‌وحالِ همین محصول بخوره، بدونِ توصیفِ تصویرِ طرح (همون چیزیه که قبل از «بیشتر» دیده می‌شه). وسط اگه جا داشت یه جزئیاتِ واقعی از «واقعیت‌های محصول». خطِ آخر یه کارِ مشخص برای خرید، هر بار با یه جمله‌ی تازه (مثلاً لینک تو بیو، سفارش از سایت، سایزتو دایرکت بپرس). حداکثر یک ایموجی.",
   "altLine": "جمله‌یِ اسلایدِ دوم (یه عکسِ دیگه از همین طرح، شاید رو یه لباس یا رنگِ دیگه): ۴ تا ۱۰ کلمه، کاملاً آدمیزادی، مثلِ حرفی که یه رفیق زیرِ عکس می‌گه — دربارهِ یه لحظه‌یِ پوشیدنش، یا یه برتریِ میزطوری. با headline و caption فرق داشته باشه. بدونِ ایموجی.",
   "chartLine": "تیترِ اسلایدِ رنگ و سایز: ۳ تا ۸ کلمه، خودمونی و سرِحال، که آدم رو به انتخابِ رنگ و سایز دعوت کنه (مثلاً دربارهِ ست کردن یا اینکه سایزش هست). هر بار یه جمله‌یِ تازه، نه قالبی. بدونِ ایموجی.",
+  "tweet": "${TWEET_RULE}",
   "designBox": [ymin, xmin, ymax, xmax],
   "designVisible": true,
   "headTop": 120
@@ -65,6 +71,7 @@ const RESPONSE_SCHEMA = {
     caption: { type: "STRING" },
     altLine: { type: "STRING" },
     chartLine: { type: "STRING" },
+    tweet: { type: "STRING" },
     designBox: { type: "ARRAY", items: { type: "NUMBER" } },
     designVisible: { type: "BOOLEAN" },
     headTop: { type: "NUMBER" },
@@ -78,6 +85,19 @@ const HEADLINE_BANNED = [/جذاب/, /فوق ?العاده/, /بی ?نظیر/, /
 const BANNED = [/می ?‌?باشد/, /لازم به ذکر است/, /کشو/, /ببرش/, /کمد/, /یه تیشرت دیگه/, /مال خودت کن/, /امتحانش کن/, /بزنش تو تنت/, /بپوشش،? حرف بزن/, /منحصر ?به ?فرد/];
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// توییتِ مدل: اگه بلند/تبلیغی/ممنوع بود null (اون‌وقت social.tweetText خطِ اولِ کپشن رو برمی‌داره)
+function cleanTweet(t, caption) {
+  const s = String(t || "")
+    .replace(/[#＃]\S+/g, "")
+    .replace(/https?:\/\/\S+/g, "")
+    .replace(/[ \t]+/g, " ")
+    .trim();
+  if (!s || s.length > 220) return null;
+  if (BANNED.some((re) => re.test(s)) || /دایرکت\s*گفت|تو\s*دایرکت\s*(پرسید|نوشت)/.test(s)) return null;
+  if (caption && s === String(caption).split("\n")[0].trim()) return null;
+  return s;
+}
 
 // ۲۰۲۶-۰۹-۲۵ (کاربر): به این ترتیبِ اولویت تبلیغ بشن.
 const BRAND_POINTS =
@@ -233,7 +253,7 @@ async function writePost(env, { photoBytes, category, label, designInfo, facts, 
           return t && t.split(/\s+/).length <= max && !BANNED.some((re) => re.test(t)) ? t : null;
         };
         const fb = fallbackLines();
-        return { headline, caption, designBox, source: model, about, altLine: line(r.altLine, 12) || fb.altLine, chartLine: line(r.chartLine, 9) || fb.chartLine };
+        return { headline, caption, tweet: cleanTweet(r.tweet, caption), designBox, source: model, about, altLine: line(r.altLine, 12) || fb.altLine, chartLine: line(r.chartLine, 9) || fb.chartLine };
       } catch (err) {
         lastErr = err;
         console.error(`[copywriter] ${model} try ${attempt + 1}: ${err.message}`);
@@ -260,6 +280,7 @@ ${BRAND_POINTS}
 عددِ اولِ هر خطِ محصول شناسه‌یِ داخلیِ سیستمه، نه «کد» — هیچ‌وقت تو متن نیارش و نگو «کد … رو سرچ کن»؛ برایِ خرید بگو لینکش تو بیو/سایته.
 ممنوع: شعار و کلیشه («منحصربه‌فرد»، «فرصت رو از دست نده»، «همین حالا»، «استایلتو کامل کن»)، امریِ پوک («مال خودت کن»، «امتحانش کن»)، «کشو»، «ببرش»، «کمد»، «یه تیشرت دیگه»، تخفیف/زمان‌بندی/موجودیِ ساختگی، و هر ادعایی که تو اطلاعات نیست. بدونِ هشتگ. ارقامِ فارسی. حداکثر یک ایموجی.
 ${HEADLINE_CRAFT}
+- tweet: ${TWEET_RULE}
 خروجی فقط JSON طبقِ schema.`;
 
 const CAMPAIGN_SCHEMA = {
@@ -267,6 +288,8 @@ const CAMPAIGN_SCHEMA = {
   properties: {
     headline: { type: "STRING" },
     caption: { type: "STRING" },
+    tweet: { type: "STRING" },
+    beats: { type: "ARRAY", items: { type: "STRING" } },
     ids: { type: "ARRAY", items: { type: "INTEGER" } },
   },
   required: ["headline", "caption"],
@@ -312,7 +335,11 @@ async function askCampaign(env, userText, maxHeadWords, extraBanned = []) {
         if (HEADLINE_BANNED.some((re) => re.test(headline))) throw new Error("صفتِ خالی تو تیتر");
         if (/کد\s*[۰-۹0-9]{3,}/.test(caption)) throw new Error("شناسه‌یِ داخلی به‌عنوانِ کد");
         if (headline.split(/\s+/).length > maxHeadWords) throw new Error("تیترِ بلند");
-        return { headline, caption, ids: Array.isArray(r.ids) ? r.ids.map(Number) : [], source: model };
+        // جمله‌هایِ کوتاهِ رویِ فریم‌هایِ ریلز (فقط نوعِ reel می‌خوادشون)
+        const beats = (Array.isArray(r.beats) ? r.beats : [])
+          .map((b) => clean(b).replace(/[.。!！]+$/, "").split("\n")[0])
+          .filter((b) => b && b.split(/\s+/).length <= 9 && !BANNED.some((re) => re.test(b)) && !extraBanned.some((re) => re.test(b)));
+        return { headline, caption, tweet: cleanTweet(r.tweet, caption), beats, ids: Array.isArray(r.ids) ? r.ids.map(Number) : [], source: model };
       } catch (err) {
         console.error(`[campaign] ${model} try ${attempt + 1}: ${err.message}`);
         if (err.status === 429 && /quota/i.test(err.message)) break;
@@ -339,8 +366,25 @@ const PRESSURE_BANNED = [
 
 const saleLine = (it) => `${it.id} | ${it.kindLabel || it.kind || "محصول"} «${it.shortName}» | قبلاً ${it.regularText} تومان ← الان ${it.priceText} (${(it.sale?.pct ?? 0)}٪ کمتر)`;
 
-async function writeCampaign(env, { type, items, theme, collectionName, pool, spot, occasion, eyebrow }) {
+async function writeCampaign(env, { type, items, theme, collectionName, pool, spot, occasion, eyebrow, reel }) {
   const listText = (items || []).map(itemLine).join("\n");
+  if (type === "reel") {
+    if (!findDesignNote(reel.item.name, reel.item.shortName)) await researchDesign(env, { siteName: reel.item.name }).catch(() => null); // کش → itemLine
+    const what =
+      reel.variant === "colors"
+        ? `ریلزِ «یه طرح، ${reel.count} رنگ»: اول یه هوک رویِ عکس، بعد رنگ‌هایِ همین طرح تند‌تند پشتِ‌سرِ هم عوض می‌شن، آخرش کارتِ خرید. زیرِ هوک از قبل نوشته شده «یه طرح، ${reel.count} رنگ» — headline اینو تکرار نکنه.`
+        : `ریلزِ «رویِ تن»: چند عکسِ واقعی از آدم‌هایی که همین طرح رو پوشیدن، هر کدوم ۲ ثانیه با یه جمله‌یِ کوتاه رویِ تصویر، آخرش کارتِ خرید.`;
+    return askCampaign(
+      env,
+      `${what}
+محصول: ${itemLine(reel.item)}
+اطلاعاتِ واقعی (فقط از همین‌ها؛ هیچ عدد یا ویژگیِ دیگه‌ای نساز):
+${reel.facts}
+- headline: هوکِ ثانیه‌یِ اول رویِ تصویر، ۳ تا ۷ کلمه، طوری که آدمِ درحالِ اسکرول وایسه (یه سؤال یا یه حرفِ بامزه دربارهِ آدمی که اینو می‌پوشه)، نه توصیفِ طرح.
+${reel.variant === "look" ? "- beats: دقیقاً ۳ جمله‌یِ خیلی کوتاه (۳ تا ۷ کلمه)، هر کدوم رویِ یکی از عکس‌ها؛ با هم یه رشته‌یِ کوچیک بسازن (مثلاً موقعیت‌هایی که این لباس به کار میاد، یا حرف‌هایی که دیگرون بهت می‌زنن). توصیفِ تصویر ممنوع.\n" : ""}- caption: ۲ تا ۳ خطِ کوتاه (هر خط یه سطر) برایِ زیرِ ریلز: یه هوکِ تازه (نه تکرارِ headline)، یه جزئیاتِ واقعی از بالا. کارِ خرید رو ننویس، جداگانه اضافه می‌شه.`,
+      7
+    );
+  }
   if (type === "sale") {
     return askCampaign(
       env,

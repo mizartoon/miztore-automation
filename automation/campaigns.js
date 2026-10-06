@@ -33,6 +33,7 @@ const GIFT_THEMES = [
 ];
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const social = require("./social.js");
 
 // توییت: خطِ اولِ کپشن + #میزطوری + لینک، زیرِ سقفِ ۲۸۰ (لینک رو X همیشه ۲۳ حساب می‌کنه).
 // اگه بلند بود، سرِ آخرین «،»/«.»/«؛» (یا فاصله) که جا می‌شه بریده می‌شه.
@@ -281,8 +282,8 @@ async function runSpotlight(env, { dryRun, write }) {
     outputs,
     headline: copy.headline,
     caption: `${copy.caption}\n\n${escHtml(line)} — ${d.link("tg")}`,
-    instagramCaption: `${copy.caption}\n\n${line}\nلینکش تو بیو 👆\n\n#میزطوری #Miztore #پوشاک_ایرانی #استریت_ویر`,
-    twitterCaption: tweetOf(copy.caption, d.link("x")),
+    instagramCaption: social.instagramCaption({ caption: copy.caption, type: "spotlight", focus, category: d.kind, extra: [line], topicText: `${d.name} ${(d.collections || []).join(" ")}` }),
+    twitterCaption: social.tweetText({ tweet: copy.tweet, caption: copy.caption, link: d.link("x") }),
     buyUrlTelegram: d.link("tg"),
     buyUrlInstagram: d.link("ig"),
     buyUrlTwitter: d.link("x"),
@@ -327,8 +328,14 @@ async function runCampaign(env, { type, dryRun, write }) {
     outputs,
     headline: c.copy.headline,
     caption,
-    instagramCaption: `${c.copy.caption}\n\n${c.items.map((it, i) => `${bullet(i)} ${kindOf(it)}«${it.shortName}»${it.sale ? ` (قبلاً ${it.regularText}، الان ${it.priceText})` : ""}`).join("\n")}${saleNote}\n\nلینکِ همه تو بیو 👆\n\n#میزطوری #Miztore #پوشاک_ایرانی #استریت_ویر`,
-    twitterCaption: tweetOf(c.copy.caption, c.listLink("x")),
+    instagramCaption: social.instagramCaption({
+      caption: c.copy.caption,
+      type,
+      keepBuyLine: type === "versus", // «این یا اون؟» خودش سؤالِ کامنته
+      extra: [c.items.map((it, i) => `${bullet(i)} ${kindOf(it)}«${it.shortName}»${it.sale ? ` (قبلاً ${it.regularText}، الان ${it.priceText})` : ""}`).join("\n") + saleNote.replace(/^\n\n/, "\n")],
+      topicText: `${c.label} ${c.eyebrow || ""} ${c.items.map((it) => it.name).join(" ")}`,
+    }),
+    twitterCaption: social.tweetText({ tweet: c.copy.tweet, caption: c.copy.caption, link: c.listLink("x") }),
     buyUrlTelegram: c.listLink("tg"),
     buyUrlInstagram: c.listLink("ig"),
     buyUrlTwitter: c.listLink("x"),

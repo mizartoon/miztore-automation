@@ -15,6 +15,8 @@ const { getProductFacts } = require("./product-facts.js");
 const { getDesignInfo } = require("./design-lookup.js");
 const { pickServicePost, buildServiceCaption } = require("./services.js");
 const { runCampaign } = require("./campaigns.js");
+const { runReel } = require("./reel.js");
+const social = require("./social.js");
 const { activeOccasion } = require("./occasions.js");
 const store = require("./store.js");
 
@@ -22,20 +24,24 @@ const store = require("./store.js");
 // بیشترِ روزها هنوز عکسِ یه محصول، بقیه: خدمات، پرفروش‌ها، کالکشن، راهنمایِ
 // هدیه، «این یا اون؟». با CONTENT_TYPE=... می‌شه یه نوعِ خاص رو اجبار کرد (تست).
 // ۲۰۲۶-۰۹-۲۵ (کاربر): تمرکزِ بیشتر رویِ طرح‌هایِ اختصاصی، بعد تنوعِ رنگ و سایز، و هدیه.
+// ۲۰۲۶-۱۰-۰۶ (بازنگری بعد از آدیتِ پیج): ریلز اضافه شد (~۲ تا در هفته از رباتِ روزانه)، پستِ
+// خدمات از فید کم شد (جاش هایلایت/استوری)، و «تخفیف» از قرعه‌کشی بیرون اومد چون تبلیغِ تخفیف
+// تصویرِ برند رو ارزون می‌کنه — هنوز با CONTENT_TYPE=sale دستی ساخته می‌شه.
 const CONTENT_MIX = [
-  ["product", 0.31],
-  ["service", 0.16], // اولویت با «طرح‌هایِ اختصاصی»، بعد رنگ/سایز/ست‌شدن و هدیه — services.js
-  ["spotlight", 0.13], // معرفیِ یه محصول: رنگ‌ها / سایزها / جنس و کیفیت / مدل‌هایِ دوخت
-  ["gift", 0.13],
+  ["reel", 0.3], // reel.js: «یه طرح، N رنگ» یا «رویِ تن»
+  ["product", 0.24],
+  ["spotlight", 0.12], // معرفیِ یه محصول: رنگ‌ها / سایزها / جنس و کیفیت / مدل‌هایِ دوخت
+  ["gift", 0.1],
   ["collection", 0.09], // شاملِ «گربه‌دوستان» (دسته‌یِ cat-lovers)
-  ["bestsellers", 0.05],
+  ["service", 0.06], // اولویت با «طرح‌هایِ اختصاصی»، بعد رنگ/سایز/ست‌شدن و هدیه — services.js
   ["versus", 0.05],
-  ["sale", 0.08], // تخفیفِ واقعیِ سایت (on_sale)؛ اگه تخفیفِ فعالی نباشه ربات پستِ محصول می‌سازه
+  ["bestsellers", 0.04],
 ];
+const MANUAL_ONLY = ["occasion", "sale"];
 // «occasion» تو قرعه‌کشی نیست: وقتی یه مناسبت (یلدا، ولنتاین، نوروز) تو پنجره‌یِ تبلیغش باشه،
 // هرچی به روزش نزدیک‌تر شیم شانسش بیشتر می‌شه (CONTENT_TYPE=occasion برایِ تست اجبارش می‌کنه)
 function pickContentType(forced) {
-  if (forced && (forced === "occasion" || CONTENT_MIX.some(([t]) => t === forced))) return forced;
+  if (forced && (MANUAL_ONLY.includes(forced) || CONTENT_MIX.some(([t]) => t === forced))) return forced;
   const oc = activeOccasion();
   if (oc && Math.random() < (oc.daysLeft <= 3 ? 0.6 : oc.daysLeft <= 10 ? 0.4 : 0.25)) return "occasion";
   let r = Math.random();
@@ -145,8 +151,8 @@ async function runServicePost(env, dryRun) {
         outputs,
         headline: service.headline,
         caption,
-        instagramCaption: caption,
-        twitterCaption: `${caption}\n\n${buyUrlTwitter}`,
+        instagramCaption: social.instagramCaption({ caption, type: "service", keepBuyLine: true, topicText: service.headline }),
+        twitterCaption: social.tweetText({ caption, link: buyUrlTwitter }),
         buyUrlTelegram,
         buyUrlInstagram,
         buyUrlTwitter,
@@ -170,7 +176,7 @@ async function runCampaignPost(env, dryRun, type) {
     fs.writeFileSync(outAbsPath, buffer);
     return outRelPath;
   };
-  const r = await runCampaign(env, { type, dryRun, write });
+  const r = type === "reel" ? await runReel(env, { dryRun, write, outDir: path.join(__dirname, "..") }) : await runCampaign(env, { type, dryRun, write });
   fs.writeFileSync(path.join(__dirname, "last-run.json"), JSON.stringify({ ok: true, templateName: type, ...r }, null, 2));
   console.log(`✅ پستِ ${type} رندر شد${dryRun ? " (dry-run)" : ""}: ${r.headline} (${r.copySource})`);
   if (dryRun) console.log(`--- کپشنِ تلگرام ---\n${r.caption}\n--- کپشنِ اینستاگرام ---\n${r.instagramCaption}\n--- توییت ---\n${r.twitterCaption}\n---`);
@@ -269,8 +275,10 @@ async function main() {
     const buyUrlTelegram = shortLink(linkTarget, "tg");
     const buyUrlInstagram = shortLink(linkTarget, "ig");
     const buyUrlTwitter = shortLink(linkTarget, "x");
-    const instagramCaption = buildInstagramCaption(caption, category);
-    const twitterCaption = buildTwitterCaption(caption, category, buyUrlTwitter);
+    // اینستاگرام: یه درخواستِ واحد + هشتگِ موضوعی؛ X: توییتِ مستقل (social.js، آدیتِ ۲۰۲۶-۱۰-۰۶)
+    const productLine = facts && facts.scope === "product" && facts.name ? [`«${facts.name}»`] : [];
+    const instagramCaption = social.instagramCaption({ caption, type: "product", category, extra: productLine, topicText: `${facts?.name || key} ${copy.about?.text || ""}` });
+    const twitterCaption = social.tweetText({ tweet: copy.tweet, caption, link: buyUrlTwitter });
 
     // dry-run: چیزی مصرف نمی‌شه — عکس فوراً به جلوی pool برمی‌گرده تا فردا
     // (یا اجرای واقعی بعدی) دوباره در دسترس باشه.

@@ -1424,4 +1424,7 @@ function pickTemplateName() {
 }
 const TEMPLATES = { frame: {} };
 
-module.exports = { setTheme, renderSpotlight, renderPost, renderDetail, renderInfo, renderAlt, renderChart, renderStoryTeaser, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };
+// ابزارهایِ پایه برایِ قالب‌هایِ دیگه (reel.js)
+const KIT = { C, LIGHT, FA, LATIN, LH, ASSET_DIR, svgToPng, textWidth, fit, textLines, pill, brandPill, asset, esc, faDigits, roundedPhoto, studioCrop, pickMascot };
+
+module.exports = { KIT, setTheme, renderSpotlight, renderPost, renderDetail, renderInfo, renderAlt, renderChart, renderStoryTeaser, renderServicePost, renderGrid, renderVersus, fetchBytes, FORMATS, pickTemplateName, TEMPLATES };

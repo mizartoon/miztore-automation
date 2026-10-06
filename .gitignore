@@ -2,3 +2,5 @@ node_modules/
 verify-telesk-output.jpg
 payload.json
 batch/
+# ریلزها تو گیت نمی‌رن (حجم)؛ publish.js تو همون اجرا از رویِ دیسک می‌فرستدشون
+outputs/*.mp4
