@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 2,
+  "rotationCursor": 3,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2452,6 +2452,11 @@
       "at": "2026-10-04"
     },
     "خوشگلا باید برقصن": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-06"
+    },
+    "میخور منبر بسوزان مردم آزاری مکن": {
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-06"
