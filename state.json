@@ -2463,6 +2463,18 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-06"
+    },
+    "بیا که در غم عشقت مشوشم بی تو": {
+      "found": true,
+      "summary": "این عبارت تو شعرِ سعدی اومده (دیوان اشعار، غزلیات، غزل شمارهٔ  ۴۸۴)، طبقِ گنجور: «بیا که در غم عشقت مشوشم بی تو»",
+      "sources": [
+        {
+          "title": "گنجور: سعدی » دیوان اشعار » غزلیات » غزل شمارهٔ  ۴۸۴",
+          "uri": "https://ganjoor.net/saadi/divan/ghazals/sh484"
+        }
+      ],
+      "via": "ganjoor",
+      "at": "2026-10-08"
     }
   },
   "spotlight": {
@@ -2481,5 +2493,11 @@
   },
   "serviceRecent": [
     "shipping"
-  ]
+  ],
+  "reel": {
+    "recent": [
+      6924
+    ],
+    "lastVariant": "colors"
+  }
 }
