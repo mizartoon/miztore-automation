@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 0,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2476,6 +2476,11 @@
       ],
       "via": "ganjoor",
       "at": "2026-10-08"
+    },
+    "کمک های اولیه استکان چای": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-09"
     }
   },
   "spotlight": {
