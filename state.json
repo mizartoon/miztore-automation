@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 0,
+  "rotationCursor": 1,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1150,7 +1150,6 @@
   },
   "pools": {
     "tshirt": [
-      "tshirt/tshirt-0419.jpg",
       "tshirt/ما-داریم-زحمت-میکشیم-3.jpg",
       "tshirt/محبوب-منبر-بسوزان-مرو-از.jpg",
       "tshirt/ما-داریم-زحمت-میکشیم.jpg",
@@ -2314,9 +2313,9 @@
       "برایِ بابا و مامانی که هنوز جوونن"
     ],
     "collection": [
+      "gilding",
       "music",
-      "nostalgia",
-      "work"
+      "nostalgia"
     ]
   },
   "lastTheme": "dark",
