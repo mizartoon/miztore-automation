@@ -2492,6 +2492,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-14"
+    },
+    "عه صبح شد عه شب شد": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-15"
     }
   },
   "spotlight": {
@@ -2513,6 +2518,7 @@
   ],
   "reel": {
     "recent": [
+      9197,
       3103,
       6924
     ],
