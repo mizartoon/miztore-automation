@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 0,
+  "rotationCursor": 1,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1150,7 +1150,6 @@
   },
   "pools": {
     "tshirt": [
-      "tshirt/ما-داریم-زحمت-میکشیم-3.jpg",
       "tshirt/محبوب-منبر-بسوزان-مرو-از.jpg",
       "tshirt/ما-داریم-زحمت-میکشیم.jpg",
       "tshirt/tshirt-0149.jpg",
@@ -2499,6 +2498,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-15"
+    },
+    "ما داریم زحمت میکشیم": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-18"
     }
   },
   "spotlight": {
