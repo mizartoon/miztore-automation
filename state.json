@@ -2322,7 +2322,7 @@
       "nostalgia"
     ]
   },
-  "lastTheme": "dark",
+  "lastTheme": "light",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2504,6 +2504,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-18"
+    },
+    "نخی طرح منجی در آینه است یونیسکس": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-19"
     }
   },
   "spotlight": {
@@ -2525,6 +2530,7 @@
   ],
   "reel": {
     "recent": [
+      9027,
       8713,
       9197,
       3103,
