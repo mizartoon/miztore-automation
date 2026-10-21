@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 2,
+  "rotationCursor": 3,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1996,7 +1996,6 @@
       "hoodie/فضانورد-مثنوی-مولوی-2.jpg"
     ],
     "pullover": [
-      "pullover/دونه-دونه-مروارید-2.jpg",
       "pullover/هیتمن-بلاد.jpg",
       "pullover/قلب-آناتومیک.jpg",
       "pullover/هر-که-در-این-حلقه-نیست.jpg",
@@ -2515,6 +2514,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-20"
+    },
+    "دونه دونه مروارید": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-21"
     }
   },
   "spotlight": {
