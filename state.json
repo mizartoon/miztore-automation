@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 0,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2155,7 +2155,6 @@
       "pullover/خوشنویسی-ماه.jpg"
     ],
     "longsleeve": [
-      "longsleeve/به-کسی-کین-ورزیدیم-و-کین.jpg",
       "longsleeve/ما-را-نعمت-دوست-و-حرص.jpg",
       "longsleeve/ماه-من-مهتاب-من.jpg",
       "longsleeve/مرا-ان-غم-دوزخ-و-حصر.jpg",
@@ -2526,6 +2525,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-22"
+    },
+    "به کسی کین ورزیدیم و کین": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-23"
     }
   },
   "spotlight": {
