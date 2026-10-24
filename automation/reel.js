@@ -20,7 +20,9 @@ const { KIT, fetchBytes } = require("./render.js");
 const store = require("./store.js");
 const { writeCampaign } = require("./copywriter.js");
 const { loadState, saveState } = require("./state.js");
-const { instagramCaption, tweetText } = require("./social.js");
+const social = require("./social.js");
+const { instagramCaption, tweetText } = social;
+const escHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 const { C, LIGHT, FA, LH, svgToPng, textWidth, fit, textLines, pill, brandPill, asset, esc, faDigits } = KIT;
 const W = 1080;
@@ -172,7 +174,7 @@ async function lookFrame({ photoBytes, beat }) {
   return frame(C.bone, [{ input: photo, left: 0, top: 0 }], svg + brand.svg, [brand.layer]);
 }
 
-// کارتِ آخر: عکسِ محصول، اسم، واقعیت‌ها (از سایت)، «لینکِ خرید تو بیو»
+// کارتِ آخر: عکسِ محصول، اسم، واقعیت‌ها (از سایت)، «خرید از سایت» (کانالِ تلگرام بیو نداره)
 async function endFrame({ d, photoBytes }) {
   const brand = await brandLayer();
   const box = await studioBox(photoBytes, 150, SAFE_TOP - 10, W - 300, 760);
@@ -215,7 +217,7 @@ async function endFrame({ d, photoBytes }) {
     y += 54;
     svg += `<text x="${W / 2}" y="${y}" text-anchor="middle" direction="rtl" font-family="${FA}" font-size="44" fill="${C.g40}">${esc(d.priceText)}</text>`;
   }
-  svg += centered({ y: Math.min(SAFE_BOTTOM - 100, y + 50), h: 96, text: "لینکِ خرید تو بیوئه", fill: C.red, color: C.onRed }).svg;
+  svg += centered({ y: Math.min(SAFE_BOTTOM - 100, y + 50), h: 96, text: "خرید از سایتِ میزطوری", fill: C.red, color: C.onRed }).svg;
   return frame(C.bone, [box.layer], svg, [brand.layer]);
 }
 
@@ -328,7 +330,7 @@ async function runReel(env, { dryRun, write, outDir }) {
     category: variant === "colors" ? "ریلز: رنگ‌ها" : "ریلز: رویِ تن",
     outputs: { reel: reelRel, cover: coverRel, post: coverRel, story: coverRel, telegram: coverRel, twitter: coverRel, carousel: [coverRel] },
     headline: copy.headline,
-    caption: `${copy.caption}\n\n${line} — ${d.link("tg")}`,
+    caption: `${escHtml(social.stripBuyLine(copy.caption))}\n\n🛍 <b>${escHtml(line)}</b>${d.priceText ? ` — ${escHtml(d.priceText)}` : ""}`,
     instagramCaption: instagramCaption({ caption: copy.caption, type: "reel", focus: variant === "colors" ? "colors" : null, category: d.kind, extra: [line], topicText: `${d.name} ${(d.collections || []).join(" ")}` }),
     twitterCaption: tweetText({ tweet: copy.tweet, caption: copy.caption, link: d.link("x") }),
     buyUrlTelegram: d.link("tg"),

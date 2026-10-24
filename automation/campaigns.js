@@ -281,7 +281,7 @@ async function runSpotlight(env, { dryRun, write }) {
     category: "معرفیِ محصول",
     outputs,
     headline: copy.headline,
-    caption: `${copy.caption}\n\n${escHtml(line)} — ${d.link("tg")}`,
+    caption: `${escHtml(social.stripBuyLine(copy.caption))}\n\n🛍 <a href="${d.link("tg")}"><b>${escHtml(line)}</b></a>${d.priceText ? ` — ${escHtml(d.priceText)}` : ""}`,
     instagramCaption: social.instagramCaption({ caption: copy.caption, type: "spotlight", focus, category: d.kind, extra: [line], topicText: `${d.name} ${(d.collections || []).join(" ")}` }),
     twitterCaption: social.tweetText({ tweet: copy.tweet, caption: copy.caption, link: d.link("x") }),
     buyUrlTelegram: d.link("tg"),
@@ -319,9 +319,10 @@ async function runCampaign(env, { type, dryRun, write }) {
   const bullet = (i) => (type === "versus" ? ["الف", "ب"][i] : "•");
   const kindOf = (it) => (it.kindLabel || it.kind ? (it.kindLabel || it.kind) + " " : "");
   // تخفیف: قیمتِ قبل (خط‌خورده) و قیمتِ الان کنارِ هر محصول؛ بقیه‌یِ نوع‌ها مثلِ قبل
-  const lines = c.items.map((it, i) => `${escHtml(`${bullet(i)} ${kindOf(it)}«${it.shortName}»`)} — ${it.sale ? `<s>${it.regularText}</s> ← ${escHtml(it.priceText)} — ` : ""}${it.link("tg")}`);
+  // اسمِ هر محصول خودش لینکه (نه URLِ خام وسطِ متن)
+  const lines = c.items.map((it, i) => `${bullet(i)} <a href="${it.link("tg")}">${escHtml(`${kindOf(it)}«${it.shortName}»`)}</a>${it.sale ? ` — <s>${it.regularText}</s> ← ${escHtml(it.priceText)}` : ""}`);
   const saleNote = c.extra?.sale ? "\n\nقیمت‌ها مالِ امروزِ سایته." : "";
-  const caption = `${c.copy.caption}\n\n${lines.join("\n")}${saleNote}`;
+  const caption = `${escHtml(type === "versus" ? c.copy.caption : social.stripBuyLine(c.copy.caption))}\n\n${lines.join("\n")}${saleNote}`;
   return {
     key: `campaign/${type}/${c.keySuffix}`,
     category: c.label,

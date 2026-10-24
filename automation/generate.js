@@ -284,6 +284,11 @@ async function main() {
     // (یا اجرای واقعی بعدی) دوباره در دسترس باشه.
     if (dryRun) requeueImage(category, key);
 
+    // کانالِ تلگرام: خطِ خرید به‌دردش نمی‌خوره (دکمه زیرِ پسته)؛ به‌جاش اسم و قیمتِ محصول. HTML-escape چون parse_mode=HTML ـه
+    const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const productTag = facts && facts.scope === "product" && facts.name ? `🛍 <b>${esc(facts.name)}</b>${facts.priceText ? ` — ${esc(facts.priceText)}` : ""}` : null;
+    const channelCaption = [esc(social.stripBuyLine(caption)), productTag].filter(Boolean).join("\n\n");
+
     fs.writeFileSync(
       path.join(__dirname, "last-run.json"),
       JSON.stringify(
@@ -297,7 +302,7 @@ async function main() {
           copySource: copy.source,
           about: copy.about || null, // ریشه‌یِ طرح: یادداشتِ صاحبِ برند یا تحقیقِ وب (برایِ بازبینیِ ادمین)
           headline,
-          caption,
+          caption: channelCaption,
           instagramCaption,
           twitterCaption,
           buyUrlTelegram,
