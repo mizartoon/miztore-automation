@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 0,
+  "rotationCursor": 1,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1150,7 +1150,6 @@
   },
   "pools": {
     "tshirt": [
-      "tshirt/محبوب-منبر-بسوزان-مرو-از.jpg",
       "tshirt/ما-داریم-زحمت-میکشیم.jpg",
       "tshirt/tshirt-0149.jpg",
       "tshirt/نیروانا-6.jpg",
@@ -2531,6 +2530,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-23"
+    },
+    "محبوب منبر بسوزان مرو از": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-24"
     }
   },
   "spotlight": {
