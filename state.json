@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 2,
+  "rotationCursor": 3,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1995,7 +1995,6 @@
       "hoodie/فضانورد-مثنوی-مولوی-2.jpg"
     ],
     "pullover": [
-      "pullover/هیتمن-بلاد.jpg",
       "pullover/قلب-آناتومیک.jpg",
       "pullover/هر-که-در-این-حلقه-نیست.jpg",
       "pullover/تو-چشام-نگاه-کن.jpg",
@@ -2547,6 +2546,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-24"
+    },
+    "هیتمن بلاد": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-26"
     }
   },
   "spotlight": {
