@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 0,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2153,7 +2153,6 @@
       "pullover/خوشنویسی-ماه.jpg"
     ],
     "longsleeve": [
-      "longsleeve/ما-را-نعمت-دوست-و-حرص.jpg",
       "longsleeve/ماه-من-مهتاب-من.jpg",
       "longsleeve/مرا-ان-غم-دوزخ-و-حصر.jpg",
       "longsleeve/مرا-نامی-در-دو-زلف-و.jpg",
@@ -2320,9 +2319,9 @@
       "برایِ رفیقِ خوره‌یِ فیلم و سریال"
     ],
     "collection": [
+      "celebrity",
       "gilding",
-      "music",
-      "nostalgia"
+      "music"
     ]
   },
   "lastTheme": "dark",
@@ -2552,6 +2551,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-10-26"
+    },
+    "ما را نعمت دوست و حرص": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-10-27"
     }
   },
   "spotlight": {
