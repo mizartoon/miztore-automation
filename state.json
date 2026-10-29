@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 0,
+  "rotationCursor": 1,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1150,7 +1150,6 @@
   },
   "pools": {
     "tshirt": [
-      "tshirt/ما-داریم-زحمت-میکشیم.jpg",
       "tshirt/tshirt-0149.jpg",
       "tshirt/نیروانا-6.jpg",
       "tshirt/دو-فیگور-قاجاری.jpg",
@@ -2326,7 +2325,7 @@
       "music"
     ]
   },
-  "lastTheme": "dark",
+  "lastTheme": "light",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
