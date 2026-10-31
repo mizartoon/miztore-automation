@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 1,
+  "rotationCursor": 2,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1831,7 +1831,6 @@
       "tshirt/هیچ-و-از-آنِ-دنیام.jpg"
     ],
     "hoodie": [
-      "hoodie/کوسه-خط-خطی-فارسی.jpg",
       "hoodie/فواید-من-2.jpg",
       "hoodie/زن-با-گیتار-الکتریک.jpg",
       "hoodie/استمرار-6.jpg",
