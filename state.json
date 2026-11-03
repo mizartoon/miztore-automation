@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 3,
+  "rotationCursor": 0,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2150,7 +2150,6 @@
       "pullover/خوشنویسی-ماه.jpg"
     ],
     "longsleeve": [
-      "longsleeve/ماه-من-مهتاب-من.jpg",
       "longsleeve/مرا-ان-غم-دوزخ-و-حصر.jpg",
       "longsleeve/مرا-نامی-در-دو-زلف-و.jpg",
       "longsleeve/خورشیدِ-قبیله-ای.jpg",
@@ -2565,6 +2564,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-11-01"
+    },
+    "ماه من مهتاب من": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-11-03"
     }
   },
   "spotlight": {
