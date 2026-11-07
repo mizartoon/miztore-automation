@@ -2330,7 +2330,7 @@
       "music"
     ]
   },
-  "lastTheme": "light",
+  "lastTheme": "dark",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2577,10 +2577,16 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-11-05"
+    },
+    "شجریان ناله سر کن": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-11-07"
     }
   },
   "spotlight": {
     "recent": [
+      76552,
       8739,
       3149,
       3177,
@@ -2591,7 +2597,7 @@
       2568,
       3204
     ],
-    "lastFocus": "colors"
+    "lastFocus": "sizes"
   },
   "serviceRecent": [
     "match",
