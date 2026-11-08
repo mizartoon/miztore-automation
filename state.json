@@ -2331,7 +2331,7 @@
       "music"
     ]
   },
-  "lastTheme": "dark",
+  "lastTheme": "light",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2583,10 +2583,16 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-11-07"
+    },
+    "نخی طرح به تو چه یونیسکس": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-11-08"
     }
   },
   "spotlight": {
     "recent": [
+      2992,
       76552,
       8739,
       3149,
@@ -2598,7 +2604,7 @@
       2568,
       3204
     ],
-    "lastFocus": "sizes"
+    "lastFocus": "colors"
   },
   "serviceRecent": [
     "match",
