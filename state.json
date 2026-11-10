@@ -2590,10 +2590,16 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-11-08"
+    },
+    "نخی طرح درونگرا یونیسکس": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-11-10"
     }
   },
   "spotlight": {
     "recent": [
+      7697,
       2992,
       76552,
       8739,
@@ -2606,7 +2612,7 @@
       2568,
       3204
     ],
-    "lastFocus": "colors"
+    "lastFocus": "sizes"
   },
   "serviceRecent": [
     "match",
