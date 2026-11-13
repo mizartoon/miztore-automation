@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 2,
+  "rotationCursor": 3,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -1991,7 +1991,6 @@
       "hoodie/فضانورد-مثنوی-مولوی-2.jpg"
     ],
     "pullover": [
-      "pullover/هر-که-در-این-حلقه-نیست.jpg",
       "pullover/تو-چشام-نگاه-کن.jpg",
       "pullover/مروغ-عجایب-نا-اسیر-کن-داغ.jpg",
       "pullover/برج-آزادی.jpg",
@@ -2330,9 +2329,9 @@
       "برایِ عاشقِ خوشنویسی و خطِ فارسی"
     ],
     "collection": [
+      "illustration",
       "celebrity",
-      "gilding",
-      "music"
+      "gilding"
     ]
   },
   "lastTheme": "dark",
@@ -2602,6 +2601,11 @@
       "found": false,
       "via": "ganjoor",
       "at": "2026-11-12"
+    },
+    "هر که در این حلقه نیست": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-11-13"
     }
   },
   "spotlight": {
