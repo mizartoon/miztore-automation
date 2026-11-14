@@ -5,7 +5,7 @@
     "pullover",
     "longsleeve"
   ],
-  "rotationCursor": 0,
+  "rotationCursor": 1,
   "manifests": {
     "tshirt": [
       "tshirt/مثنوی-مولوی-دنیا-همه-هیچ.jpg",
@@ -2609,6 +2609,11 @@
       "at": "2026-11-13"
     },
     "مرا ان غم دوزخ و حصر": {
+      "found": false,
+      "via": "ganjoor",
+      "at": "2026-11-14"
+    },
+    "نیروانا": {
       "found": false,
       "via": "ganjoor",
       "at": "2026-11-14"
