@@ -8,7 +8,7 @@
 const fs = require("fs");
 const path = require("path");
 const { markUsed } = require("./state.js");
-const { sendPhotoFile, sendVideoFile, notifyAdmin } = require("./telegram.js");
+const { sendPhotoFile, sendVideoFile, sendMessage, notifyAdmin } = require("./telegram.js");
 
 // فایل‌ها مستقیم از رویِ دیسکِ همین اجرا آپلود می‌شن، نه با لینکِ raw گیت‌هاب
 // (CDNِ گیت‌هاب ~۱ ثانیه بعدِ push هنوز فایلِ تازه رو serve نمی‌کنه).
@@ -31,6 +31,17 @@ async function main() {
       lastRun.outputs.reel
         ? sendVideoFile(env, chatId, localPath(lastRun.outputs.reel), caption, telegramButton)
         : sendPhotoFile(env, chatId, localPath(lastRun.outputs.telegram), caption, telegramButton);
+
+    if (lastRun.outputs.note) {
+      if (lastRun.dryRun) {
+        if (!env.TELEGRAM_ADMIN_CHAT_ID) throw new Error("TELEGRAM_ADMIN_CHAT_ID تنظیم نشده — پیش‌نمایش رو کجا بفرستم؟");
+        await sendMessage(env, env.TELEGRAM_ADMIN_CHAT_ID, `🧪 <b>پیش‌نمایشِ یادداشت</b>
+
+${lastRun.caption}`);
+      } else await sendMessage(env, env.TELEGRAM_CHANNEL_ID, lastRun.caption);
+      console.log("✅ یادداشت فرستاده شد.");
+      return;
+    }
 
     if (lastRun.dryRun) {
       if (!env.TELEGRAM_ADMIN_CHAT_ID) throw new Error("TELEGRAM_ADMIN_CHAT_ID تنظیم نشده — پیش‌نمایش رو کجا بفرستم؟");

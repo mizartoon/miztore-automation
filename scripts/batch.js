@@ -27,7 +27,7 @@ for (let i = 1; i <= N; i++) {
     execFileSync("node", [path.join(ROOT, "automation", "generate.js")], {
       cwd: ROOT,
       stdio: "inherit",
-      env: { ...process.env, DRY_RUN: "false", GITHUB_RUN_ID: `${process.env.GITHUB_RUN_ID || Date.now()}-b${i}` },
+      env: { ...process.env, BATCH_RUN: "1", DRY_RUN: "false", GITHUB_RUN_ID: `${process.env.GITHUB_RUN_ID || Date.now()}-b${i}` },
       timeout: 8 * 60 * 1000,
     });
     const r = JSON.parse(fs.readFileSync(path.join(ROOT, "automation", "last-run.json"), "utf-8"));

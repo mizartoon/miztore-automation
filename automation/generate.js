@@ -17,8 +17,8 @@ const { pickServicePost, buildServiceCaption } = require("./services.js");
 const { runCampaign } = require("./campaigns.js");
 const { runReel } = require("./reel.js");
 const social = require("./social.js");
-const { activeOccasion } = require("./occasions.js");
 const store = require("./store.js");
+const { renderTg, pickNewPhoto, pickNote } = require("./tg.js");
 
 // ترکیبِ محتوایِ روزانه (کاربر: «محتواهایی برای تشویقِ مشتری به خرید اضافه کن»).
 // بیشترِ روزها هنوز عکسِ یه محصول، بقیه: خدمات، پرفروش‌ها، کالکشن، راهنمایِ
@@ -27,23 +27,19 @@ const store = require("./store.js");
 // ۲۰۲۶-۱۰-۰۶ (بازنگری بعد از آدیتِ پیج): ریلز اضافه شد (~۲ تا در هفته از رباتِ روزانه)، پستِ
 // خدمات از فید کم شد (جاش هایلایت/استوری)، و «تخفیف» از قرعه‌کشی بیرون اومد چون تبلیغِ تخفیف
 // تصویرِ برند رو ارزون می‌کنه — هنوز با CONTENT_TYPE=sale دستی ساخته می‌شه.
+// ۲۰۲۶-۱۱-۱۴ (کاربر): «محتوای تبلیغاتی مخاطب جذب نمی‌کنه، یادداشتِ خلاقانه بدونِ عکس و محصول هم
+// بذار» و طراحیِ مینیمالِ تازه‌ی تلگرام (tg.js). قرعه‌کشیِ روزانه فقط این دو تاست؛ قالب‌هایِ قدیمی
+// (ریلز، اسپات‌لایت، هدیه، کالکشن، خدمات، «این یا اون؟»، پرفروش‌ها، مناسبت) هنوز هستن ولی فقط
+// با CONTENT_TYPE=... دستی ساخته می‌شن و خروجیِ تلگرامشون همون طراحیِ قدیمیه.
 const CONTENT_MIX = [
-  ["reel", 0.3], // reel.js: «یه طرح، N رنگ» یا «رویِ تن»
-  ["product", 0.24],
-  ["spotlight", 0.12], // معرفیِ یه محصول: رنگ‌ها / سایزها / جنس و کیفیت / مدل‌هایِ دوخت
-  ["gift", 0.1],
-  ["collection", 0.09], // شاملِ «گربه‌دوستان» (دسته‌یِ cat-lovers)
-  ["service", 0.06], // اولویت با «طرح‌هایِ اختصاصی»، بعد رنگ/سایز/ست‌شدن و هدیه — services.js
-  ["versus", 0.05],
-  ["bestsellers", 0.04],
+  ["product", 0.75], // عکسِ محصول با طراحیِ تازه (۸۰٪ عکس‌هایِ جدید، ۲۰٪ کتابخونه)
+  ["note", 0.25], // یادداشتِ متنی: بدونِ عکس، بدونِ محصول
 ];
-const MANUAL_ONLY = ["occasion", "sale"];
-// «occasion» تو قرعه‌کشی نیست: وقتی یه مناسبت (یلدا، ولنتاین، نوروز) تو پنجره‌یِ تبلیغش باشه،
-// هرچی به روزش نزدیک‌تر شیم شانسش بیشتر می‌شه (CONTENT_TYPE=occasion برایِ تست اجبارش می‌کنه)
+const NEW_PHOTO_SHARE = 0.8;
+const OLD_TYPES = ["reel", "spotlight", "gift", "collection", "service", "versus", "bestsellers"];
+const MANUAL_ONLY = ["occasion", "sale", ...OLD_TYPES];
 function pickContentType(forced) {
   if (forced && (MANUAL_ONLY.includes(forced) || CONTENT_MIX.some(([t]) => t === forced))) return forced;
-  const oc = activeOccasion();
-  if (oc && Math.random() < (oc.daysLeft <= 3 ? 0.6 : oc.daysLeft <= 10 ? 0.4 : 0.25)) return "occasion";
   let r = Math.random();
   for (const [t, w] of CONTENT_MIX) if ((r -= w) < 0) return t;
   return "product";
@@ -182,6 +178,41 @@ async function runCampaignPost(env, dryRun, type) {
   if (dryRun) console.log(`--- کپشنِ تلگرام ---\n${r.caption}\n--- کپشنِ اینستاگرام ---\n${r.instagramCaption}\n--- توییت ---\n${r.twitterCaption}\n---`);
 }
 
+const escHtml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const runStamp = () => {
+  const dateStr = new Date().toISOString().slice(0, 10);
+  const runId = process.env.GITHUB_RUN_ID ? `${process.env.GITHUB_RUN_ID}-${process.env.GITHUB_RUN_ATTEMPT || "1"}` : String(Date.now());
+  return `${dateStr}-${runId}`;
+};
+
+// یادداشتِ متنی: بدونِ عکس، بدونِ اشاره به محصول (publish.js فقط پیام می‌فرسته)
+function runNote(dryRun) {
+  const text = pickNote(dryRun);
+  fs.writeFileSync(
+    path.join(__dirname, "last-run.json"),
+    JSON.stringify({ ok: true, dryRun, key: `note/${runStamp()}`, category: "note", templateName: "note", outputs: { note: true }, copySource: "notes", headline: text, caption: escHtml(text) }, null, 2)
+  );
+  console.log(`✅ یادداشتِ متنی${dryRun ? " (dry-run)" : ""}: ${text.slice(0, 40)}`);
+}
+
+// عکسِ جدید با متن و آیدیِ محصولِ دستی (data/tg-posts.json)
+async function runTgNew(dryRun) {
+  const p = pickNewPhoto(dryRun);
+  const buf = await renderTg({ photoBytes: fs.readFileSync(path.join(__dirname, "..", "assets", "tg", p.file)), line: p.line, name: p.name });
+  const rel = `outputs/telegram-${runStamp()}-tg-${p.file}`;
+  fs.mkdirSync(path.join(__dirname, "..", "outputs"), { recursive: true });
+  fs.writeFileSync(path.join(__dirname, "..", rel), buf);
+  fs.writeFileSync(
+    path.join(__dirname, "last-run.json"),
+    JSON.stringify(
+      { ok: true, dryRun, key: `tg/${p.file}`, category: "tg", templateName: "tg", outputs: { telegram: rel }, copySource: "manual", headline: p.name, caption: escHtml(p.caption), buyUrlTelegram: shortLink({ productId: p.id }, "tg") },
+      null,
+      2
+    )
+  );
+  console.log(`✅ پستِ تلگرام (عکسِ جدید)${dryRun ? " (dry-run)" : ""}: ${p.name}`);
+}
+
 // تمِ تیره پیش‌فرضه (کاربر، ۲۰۲۶-۰۹-۲۵: «تم دارک مد بیشتر به قالب میاد»). روشن فقط گاهی
 // برایِ تنوعِ فید: بعد از پستِ تیره ۲۰٪ شانس، هیچ‌وقت دو روشن پشتِ‌سرِهم (در کل ~۸۵٪ تیره).
 // THEME=light|dark برایِ تست.
@@ -203,9 +234,26 @@ async function main() {
   setTheme(theme);
   console.log(`🎨 تم: ${theme === "dark" ? "تیره" : "روشن"}`);
 
-  const type = pickContentType(env.CONTENT_TYPE);
+  // scripts/batch.js (دسته‌یِ ماهانه‌یِ اینستاگرام/توییتر) خروجیِ post/story/twitter می‌خواد؛ یادداشت و
+  // عکسِ جدیدِ تلگرام اون‌ها رو نمی‌سازن، پس تو batch همیشه مسیرِ قدیمیِ «product» می‌ره.
+  const batch = env.BATCH_RUN === "1";
+  let type = pickContentType(env.CONTENT_TYPE);
+  if (batch && type === "note") type = "product";
   console.log(`🎲 نوعِ محتوایِ امروز: ${type}`);
   if (type === "service") return runServicePost(env, dryRun);
+  // اگه این دو مسیر بترکن، last-run با ok:false نوشته می‌شه تا publish.js به ادمین خبر بده
+  const safe = async (fn) => {
+    try {
+      return await fn();
+    } catch (err) {
+      console.error("::error::" + (err && err.stack ? err.stack : err));
+      fs.writeFileSync(path.join(__dirname, "last-run.json"), JSON.stringify({ ok: false, reason: "error", message: String(err.message || err) }));
+      process.exitCode = 1;
+    }
+  };
+  if (type === "note") return safe(() => runNote(dryRun));
+  // عکس‌هایِ جدید (متنِ دستی و لینکِ تأییدشده) اولویت دارن؛ بقیه از کتابخونه‌یِ قبلی با طراحیِ تازه
+  if (type === "product" && !batch && Math.random() < NEW_PHOTO_SHARE) return safe(() => runTgNew(dryRun));
   if (type !== "product") {
     try {
       return await runCampaignPost(env, dryRun, type);
@@ -254,7 +302,11 @@ async function main() {
 
     const outputs = {};
     for (const format of ["telegram", "post", "story", "twitter"]) {
-      outputs[format] = write(format, await renderPost({ photoBytes, headline, categoryLabel, facts, designBox, format }));
+      const buf =
+        format === "telegram"
+          ? await renderTg({ photoBytes, line: headline, name: (facts && facts.name) || categoryLabel })
+          : await renderPost({ photoBytes, headline, categoryLabel, facts, designBox, format });
+      outputs[format] = write(format, buf);
     }
     // کاروسلِ اینستاگرام: پستِ اصلی ← یه عکسِ واقعیِ دیگه از همین طرح ← رنگ و سایز
     // (کاربر، ۲۰۲۶-۰۹-۲۵: «طرح از نزدیک» کیفیت نداشت و اسلایدِ اطلاعات تو همه‌یِ پست‌ها تکراری بود)
