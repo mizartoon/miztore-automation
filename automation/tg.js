@@ -77,7 +77,14 @@ function pickFrom(list, stateKey, idOf, dryRun) {
   return item;
 }
 
-const pickNewPhoto = (dryRun) => pickFrom(readJson("tg-posts.json"), "tgUsed", (p) => p.file, dryRun);
+// prefer: آیدیِ محصول‌هایِ مناسبِ یه مناسبت؛ فقط وقتی هنوز استفاده‌نشده‌ای ازشون مونده (با ۷۰٪ شانس)
+// وگرنه از کلِ استخر. اینجوری تکرارِ پشت‌سرهمِ یه عکس هم پیش نمی‌آد.
+const pickNewPhoto = (dryRun, prefer = []) => {
+  const posts = readJson("tg-posts.json");
+  const used = new Set(loadState().tgUsed || []);
+  const fresh = posts.filter((p) => prefer.includes(p.id) && !used.has(p.file));
+  return pickFrom(fresh.length && Math.random() < 0.7 ? fresh : posts, "tgUsed", (p) => p.file, dryRun);
+};
 const pickNote = (dryRun) => pickFrom(readJson("tg-notes.json"), "noteUsed", (n) => n, dryRun);
 
 module.exports = { renderTg, pickNewPhoto, pickNote };

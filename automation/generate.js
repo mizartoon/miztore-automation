@@ -19,6 +19,7 @@ const { runReel } = require("./reel.js");
 const social = require("./social.js");
 const store = require("./store.js");
 const { renderTg, pickNewPhoto, pickNote } = require("./tg.js");
+const { activeEvent, nearestEvent } = require("./events.js");
 
 // ترکیبِ محتوایِ روزانه (کاربر: «محتواهایی برای تشویقِ مشتری به خرید اضافه کن»).
 // بیشترِ روزها هنوز عکسِ یه محصول، بقیه: خدمات، پرفروش‌ها، کالکشن، راهنمایِ
@@ -37,9 +38,12 @@ const CONTENT_MIX = [
 ];
 const NEW_PHOTO_SHARE = 0.8;
 const OLD_TYPES = ["reel", "spotlight", "gift", "collection", "service", "versus", "bestsellers"];
-const MANUAL_ONLY = ["occasion", "sale", ...OLD_TYPES];
+const MANUAL_ONLY = ["occasion", "sale", "event", ...OLD_TYPES];
 function pickContentType(forced) {
   if (forced && (MANUAL_ONLY.includes(forced) || CONTENT_MIX.some(([t]) => t === forced))) return forced;
+  // مناسبتی (آخر/اولِ ماه، یلدا، بلک‌فرایدی، ...): تا ۷ روز مونده، با شانسِ بالا جایِ پستِ معمولی (events.js)
+  const ev = activeEvent();
+  if (ev && Math.random() < ev.chance) return "event";
   let r = Math.random();
   for (const [t, w] of CONTENT_MIX) if ((r -= w) < 0) return t;
   return "product";
@@ -195,17 +199,23 @@ function runNote(dryRun) {
   console.log(`✅ یادداشتِ متنی${dryRun ? " (dry-run)" : ""}: ${text.slice(0, 40)}`);
 }
 
-// عکسِ جدید با متن و آیدیِ محصولِ دستی (data/tg-posts.json)
-async function runTgNew(dryRun) {
-  const p = pickNewPhoto(dryRun);
-  const buf = await renderTg({ photoBytes: fs.readFileSync(path.join(__dirname, "..", "assets", "tg", p.file)), line: p.line, name: p.name });
+// پستِ مناسبتی: مناسبتِ داخلِ پنجره؛ اگه نبود (فقط موقعِ تستِ دستی) نزدیک‌ترینِ آینده
+const runEvent = (dryRun) => runTgNew(dryRun, activeEvent() || nearestEvent());
+
+// عکسِ جدید با متن و آیدیِ محصولِ دستی (data/tg-posts.json). با ev، جملهٔ بالا شمارشِ معکوسِ مناسبت
+// می‌شه و کپشن با جمله‌ی مناسبتی شروع می‌شه (events.js)؛ لینکِ محصول همون محصولِ عکسه.
+async function runTgNew(dryRun, ev = null) {
+  const p = pickNewPhoto(dryRun, ev ? ev.prefer : []);
+  const line = ev ? ev.label : p.line;
+  const caption = ev ? `${ev.caption()}\n\n${p.caption}` : p.caption;
+  const buf = await renderTg({ photoBytes: fs.readFileSync(path.join(__dirname, "..", "assets", "tg", p.file)), line, name: p.name });
   const rel = `outputs/telegram-${runStamp()}-tg-${p.file}`;
   fs.mkdirSync(path.join(__dirname, "..", "outputs"), { recursive: true });
   fs.writeFileSync(path.join(__dirname, "..", rel), buf);
   fs.writeFileSync(
     path.join(__dirname, "last-run.json"),
     JSON.stringify(
-      { ok: true, dryRun, key: `tg/${p.file}`, category: "tg", templateName: "tg", outputs: { telegram: rel }, copySource: "manual", headline: p.name, caption: escHtml(p.caption), buyUrlTelegram: shortLink({ productId: p.id }, "tg") },
+      { ok: true, dryRun, key: `tg/${p.file}`, category: "tg", templateName: "tg", outputs: { telegram: rel }, copySource: "manual", headline: p.name, caption: escHtml(caption), buyUrlTelegram: shortLink({ productId: p.id }, "tg") },
       null,
       2
     )
@@ -238,7 +248,7 @@ async function main() {
   // عکسِ جدیدِ تلگرام اون‌ها رو نمی‌سازن، پس تو batch همیشه مسیرِ قدیمیِ «product» می‌ره.
   const batch = env.BATCH_RUN === "1";
   let type = pickContentType(env.CONTENT_TYPE);
-  if (batch && type === "note") type = "product";
+  if (batch && (type === "note" || type === "event")) type = "product";
   console.log(`🎲 نوعِ محتوایِ امروز: ${type}`);
   if (type === "service") return runServicePost(env, dryRun);
   // اگه این دو مسیر بترکن، last-run با ok:false نوشته می‌شه تا publish.js به ادمین خبر بده
@@ -252,6 +262,7 @@ async function main() {
     }
   };
   if (type === "note") return safe(() => runNote(dryRun));
+  if (type === "event") return safe(() => runEvent(dryRun));
   // عکس‌هایِ جدید (متنِ دستی و لینکِ تأییدشده) اولویت دارن؛ بقیه از کتابخونه‌یِ قبلی با طراحیِ تازه
   if (type === "product" && !batch && Math.random() < NEW_PHOTO_SHARE) return safe(() => runTgNew(dryRun));
   if (type !== "product") {
