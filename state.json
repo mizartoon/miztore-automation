@@ -2335,7 +2335,7 @@
       "gilding"
     ]
   },
-  "lastTheme": "dark",
+  "lastTheme": "light",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2654,5 +2654,8 @@
       6924
     ],
     "lastVariant": "colors"
-  }
+  },
+  "tgUsed": [
+    "mz-44-tonight-hoodie-black-overpass-night.jpg"
+  ]
 }
