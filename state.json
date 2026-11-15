@@ -2336,7 +2336,7 @@
       "gilding"
     ]
   },
-  "lastTheme": "light",
+  "lastTheme": "dark",
   "research": {
     "تنهایی گل و خط": {
       "found": false,
@@ -2658,5 +2658,8 @@
   },
   "tgUsed": [
     "mz-44-tonight-hoodie-black-overpass-night.jpg"
+  ],
+  "noteUsed": [
+    "آدم‌ها یه روزی عکس‌های امروزشون رو نگاه می‌کنن و می‌گن «چقدر خوب بود». پس همین الان هم خوبه."
   ]
 }
